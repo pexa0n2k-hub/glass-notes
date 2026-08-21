@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
-<title>Glass Notes V0.4</title>
+<title>Glass Notes V0.5 — JARVIS CORE</title>
 <style>
 :root{--accent:#66e3ff;--bg:#05070d;--text:#f5f8ff;--muted:#ffffff8c;--glass:rgba(255,255,255,.075)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -36,6 +36,22 @@ body{overflow-x:hidden}.app-bg{position:fixed;inset:0;z-index:-3;background:radi
 .toggle{position:relative;width:46px;height:26px;display:inline-block}.toggle input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;border-radius:30px;background:#ffffff1c;transition:.2s}.slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.toggle input:checked+.slider{background:var(--accent)}.toggle input:checked+.slider:before{transform:translateX(20px);background:#041017}
 .recur-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 hr{border:0;border-top:1px solid #ffffff12}
+
+.jarvis-core{padding:22px;border-radius:31px;overflow:hidden;position:relative}
+.core-stage{height:260px;display:flex;align-items:center;justify-content:center;position:relative}
+.core-ring{position:absolute;border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);border-radius:50%;width:210px;height:210px;box-shadow:0 0 45px color-mix(in srgb,var(--accent) 18%,transparent),inset 0 0 35px color-mix(in srgb,var(--accent) 10%,transparent);animation:spin 18s linear infinite}
+.core-ring.r2{width:160px;height:160px;animation-duration:12s;animation-direction:reverse}
+.core-ring.r3{width:250px;height:110px;transform:rotate(-22deg);animation:tilt 10s ease-in-out infinite}
+.core-orb{width:92px;height:92px;border-radius:50%;position:relative;z-index:2;background:radial-gradient(circle at 45% 42%,#fff 0 4%,var(--accent) 11%,#15586c 34%,#06131b 66%,transparent 72%);box-shadow:0 0 24px var(--accent),0 0 80px color-mix(in srgb,var(--accent) 50%,transparent);animation:corePulse 2.4s ease-in-out infinite}
+.core-orb:after{content:"J";position:absolute;inset:0;display:grid;place-items:center;font-weight:900;font-size:30px;color:#fff;text-shadow:0 0 15px var(--accent)}
+.core-scan{position:absolute;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);top:50%;animation:scan 3s ease-in-out infinite;opacity:.7}
+.core-label{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:4px;color:color-mix(in srgb,var(--accent) 75%,white);text-transform:uppercase}
+.core-alert{padding:15px;border-radius:21px;margin-top:10px;border:1px solid #ffffff12;background:#ffffff06}
+.core-alert strong{display:block;margin-bottom:5px}.core-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.voice-btn{border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);background:color-mix(in srgb,var(--accent) 8%,transparent);color:#fff;border-radius:16px;padding:11px 13px}
+.personality{display:grid;grid-template-columns:1fr 1fr;gap:8px}.personality button{text-align:left}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes tilt{50%{transform:rotate(22deg) scale(1.06)}}@keyframes corePulse{50%{transform:scale(1.09);filter:brightness(1.25)}}@keyframes scan{50%{transform:translateY(-105px);opacity:0}55%{transform:translateY(105px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.core-ring,.core-orb,.core-scan{animation:none}}
 </style>
 </head>
 <body>
@@ -67,6 +83,7 @@ if ("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.s
 const KEY="glass_notes_v03";
 let state=JSON.parse(localStorage.getItem(KEY)||'{"notes":[],"payments":[],"settings":{"fontName":"","fontData":"","accent":"#66e3ff","bgData":"","applyFontAll":true,"notifications":false}}');
 state.payments=(state.payments||[]).map(p=>({...p,reminder:p.reminder??2,repeat:p.repeat||"none",snoozedUntil:p.snoozedUntil||0}));
+state.settings={...{notifications:false,jarvisName:"JARVIS",personality:"classic",jarvisAccent:"#66e3ff",welcome:"Bienvenido de nuevo, señor.",voice:false},...state.settings};
 let tab="notes", editId=null, tempBg="";
 const $=s=>document.querySelector(s);
 const esc=s=>(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -112,13 +129,30 @@ return `<article class="payment glass"><div class="row between"><div><h3>${esc(p
 <div class="muted small" style="margin-top:7px">🔔 ${p.reminder===0?"Al vencer":p.reminder+" día"+(p.reminder===1?"":"s")+" antes"} · 🔁 ${repeat}</div>
 <div class="snooze"><button class="btn" data-snooze="${p.id}|1">⏰ +1h</button><button class="btn" data-snooze="${p.id}|24">⏰ Mañana</button><button class="btn" data-paid="${p.id}">${p.paid?"Desmarcar":"✓ Pagado"}</button><button class="btn danger" data-del="${p.id}">Eliminar</button></div></article>`}
 function jarvis(){
-let up=state.payments.filter(p=>!p.paid).sort((a,b)=>new Date(a.due)-new Date(b.due)).slice(0,6);
+let up=state.payments.filter(p=>!p.paid).sort((a,b)=>new Date(a.due)-new Date(b.due)).slice(0,7);
 let imminent=up.filter(p=>days(p.due)<=2);
-$("#screen").innerHTML='<div class="screen"><section class="jarvis glass"><div class="orb"></div><h2 style="text-align:center">JARVIS</h2><p style="text-align:center" class="muted">'+(imminent.length?`Señor, tengo ${imminent.length} aviso${imminent.length>1?"s":""} que requieren su atención.`:"Todo tranquilo por ahora, señor.")+'</p>'+
-`<div class="actions" style="justify-content:center"><button class="btn primary" id="notif">${state.settings.notifications?"🔔 Notificaciones activas":"🔕 Activar notificaciones"}</button></div></section>
-<section class="jarvis-banner glass"><div class="eyebrow">CENTRO DE AVISOS</div><h3 style="margin:5px 0">Agenda inteligente</h3><div class="muted small">JARVIS analiza tus fechas y prioriza lo que necesita atención.</div></section>`+
-(up.length?up.map(p=>{let [cls,label]=urgency(p);return `<div class="payment glass alert ${cls}"><div class="row between"><b>${esc(p.title)}</b><span class="chip">${label}</span></div><p class="muted">${esc(jarvisText(p))}</p><div class="muted small">📅 ${dateText(p.due)} · ${esc(p.amount||"")}</div><div class="snooze"><button class="btn" data-j-snooze="${p.id}|1">+1h</button><button class="btn" data-j-snooze="${p.id}|24">Mañana</button><button class="btn primary" data-j-paid="${p.id}">✓ Pagado</button></div></div>`}).join(""):'<div class="glass empty">No hay pagos próximos.</div>')+'</div></div>';
+let name=state.settings.jarvisName||"JARVIS";
+let welcome=state.settings.welcome||"Bienvenido de nuevo, señor.";
+let personality=state.settings.personality||"classic";
+const message=(p)=>{
+ let d=days(p.due);
+ if(personality==="cyber") return d<=0?`⚠ ALERTA: ${p.title} requiere atención inmediata.`:`⚠ OBLIGACIÓN DETECTADA: ${p.title} vence en ${d} días.`;
+ if(personality==="casual") return d<=0?`Jefe, toca pagar ${p.title}.`:`Jefe, ${p.title} toca en ${d} días.`;
+ if(personality==="iron") return d<=0?`Señor, he detectado una obligación que requiere su atención.`:`Señor, he programado una alerta para ${p.title} dentro de ${d} días.`;
+ return jarvisText(p);
+};
+$("#screen").innerHTML=`<div class="screen">
+<section class="jarvis-core glass">
+<div class="core-stage"><div class="core-ring"></div><div class="core-ring r2"></div><div class="core-ring r3"></div><div class="core-scan"></div><div class="core-orb"></div><div class="core-label">${esc(name)} · CORE ONLINE</div></div>
+<h2 style="text-align:center;margin-bottom:4px">${esc(name)}</h2>
+<p style="text-align:center" class="muted">${esc(welcome)}</p>
+<div class="actions" style="justify-content:center"><button class="voice-btn" id="notif">${state.settings.notifications?"🔔 Alertas activas":"🔕 Activar alertas"}</button><button class="voice-btn" id="speak">🔊 Hablar</button></div>
+</section>
+<section class="jarvis-banner glass"><div class="eyebrow">JARVIS CORE</div><h3 style="margin:5px 0">${imminent.length?`Tengo ${imminent.length} asunto${imminent.length>1?"s":""} prioritario${imminent.length>1?"s":""}.`:"Todos los sistemas están tranquilos."}</h3><div class="muted small">${up.length} pago${up.length===1?"":"s"} pendiente${up.length===1?"":"s"} en agenda.</div></section>
+${up.length?up.map(p=>{let [cls,label]=urgency(p);return `<div class="core-alert glass alert ${cls}"><div class="row between"><strong>${esc(p.title)}</strong><span class="chip">${label}</span></div><div class="muted small">${esc(message(p))}</div><div class="muted small" style="margin-top:7px">📅 ${dateText(p.due)} · ${esc(p.amount||"")}</div><div class="core-actions"><button class="btn primary" data-j-paid="${p.id}">✓ Resolver</button><button class="btn" data-j-snooze="${p.id}|1">⏰ +1h</button><button class="btn" data-j-snooze="${p.id}|24">⏰ Mañana</button></div></div>`}).join(""):'<div class="glass empty">No hay asuntos pendientes. Buen trabajo, señor.</div>'}
+</div>`;
 $("#notif").onclick=requestNotifications;
+$("#speak").onclick=()=>{if(!("speechSynthesis" in window))return alert("La voz no está disponible en este navegador.");let t=imminent.length?message(imminent[0]):welcome;let u=new SpeechSynthesisUtterance(t);u.lang="es-MX";u.rate=.95;speechSynthesis.cancel();speechSynthesis.speak(u)};
 document.querySelectorAll("[data-j-paid]").forEach(e=>e.onclick=()=>{let p=state.payments.find(x=>x.id===e.dataset.jPaid);if(p){p.paid=true;advanceRepeat(p);save();render()}});
 document.querySelectorAll("[data-j-snooze]").forEach(e=>e.onclick=()=>snooze(e.dataset.jSnooze));
 }
@@ -180,14 +214,19 @@ function settings(){
 openModal("Personalización",`
 <p class="muted small">Puedes usar una fuente descargada de Google Fonts como fuente global. La fuente de cada nota puede ser distinta.</p>
 <div class="label">Color principal</div><div class="row"><input type="color" class="field color" id="ga" value="${state.settings.accent||"#66e3ff"}"><span class="muted small">Se aplica a toda la interfaz.</span></div>
+<div class="label">Identidad de JARVIS</div><input class="field" id="jn" value="${esc(state.settings.jarvisName||"JARVIS")}" placeholder="Nombre del asistente">
+<div class="label">Personalidad</div><div class="personality"><button class="btn ${state.settings.personality==="classic"?"primary":""}" data-pers="classic">🕴️ Clásico</button><button class="btn ${state.settings.personality==="cyber"?"primary":""}" data-pers="cyber">⚡ Cyberpunk</button><button class="btn ${state.settings.personality==="casual"?"primary":""}" data-pers="casual">😎 Casual</button><button class="btn ${state.settings.personality==="iron"?"primary":""}" data-pers="iron">🤖 Iron Assistant</button></div>
+<div class="label">Mensaje de bienvenida</div><input class="field" id="jw" value="${esc(state.settings.welcome||"Bienvenido de nuevo, señor.")}">
 <div class="label">Notificaciones JARVIS</div><div class="row between glass" style="padding:12px"><span class="small">${state.settings.notifications?"🔔 Activas":"🔕 Desactivadas"}</span><button class="btn" id="gn">${state.settings.notifications?"Probar":"Activar"}</button></div>
 <div class="label">Fuente global</div><button class="btn" id="gf">🔤 ${state.settings.fontName||"Subir TTF / OTF / WOFF"}</button>
 <div class="actions"><button class="btn primary" id="saveS">Guardar configuración</button><button class="btn" id="closeS">Cerrar</button></div>
 <input hidden type="file" id="gff" accept=".ttf,.otf,.woff,.woff2">
 `);
-$("#gn").onclick=()=>{requestNotifications();}; $("#gf").onclick=()=>$("#gff").click();
+$("#gn").onclick=()=>{requestNotifications();};
+document.querySelectorAll("[data-pers]").forEach(b=>b.onclick=()=>{state.settings.personality=b.dataset.pers;document.querySelectorAll("[data-pers]").forEach(x=>x.classList.remove("primary"));b.classList.add("primary");});
+$("#gf").onclick=()=>$("#gff").click();
 $("#gff").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{state.settings.fontData=r.result;state.settings.fontName=f.name;$("#gf").textContent="🔤 "+f.name};r.readAsDataURL(f)};
-$("#saveS").onclick=()=>{state.settings.accent=$("#ga").value;state.settings.applyFontAll=true;save();closeModal();render()};
+$("#saveS").onclick=()=>{state.settings.accent=$("#ga").value;state.settings.jarvisName=$("#jn").value.trim()||"JARVIS";state.settings.welcome=$("#jw").value.trim()||"Bienvenido de nuevo, señor.";state.settings.applyFontAll=true;save();closeModal();render()};
 $("#closeS").onclick=closeModal;
 }
 $("#settings").onclick=settings;
