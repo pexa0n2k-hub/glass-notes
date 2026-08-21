@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
-<title>Glass Notes V0.9 — JARVIS NLP</title>
+<title>Glass Notes V1.0 — JARVIS AI</title>
 <style>
 :root{--accent:#66e3ff;--bg:#05070d;--text:#f5f8ff;--muted:#ffffff8c;--glass:rgba(255,255,255,.075)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -77,9 +77,16 @@ hr{border:0;border-top:1px solid #ffffff12}
 @keyframes voicePulse{50%{transform:scale(1.12);box-shadow:0 0 45px var(--accent),0 0 120px color-mix(in srgb,var(--accent) 55%,transparent)}}
 
 .nlp-panel{padding:20px;border-radius:30px}.nlp-chip{display:inline-block;padding:7px 10px;border-radius:999px;background:#ffffff08;border:1px solid #ffffff12;font-size:10px;margin:3px}.parsed{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.parsed div{padding:12px;border-radius:18px}.command-log{max-height:220px;overflow:auto}
+
+.global-bg{position:fixed;inset:0;z-index:-2;background-size:cover;background-position:center;background-repeat:no-repeat;transition:background .35s ease}
+.global-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#02060dcc,#02060d88 45%,#02060dbb)}
+.bg-thumb{width:100%;height:90px;border-radius:18px;background-size:cover;background-position:center;border:1px solid #ffffff14;display:grid;place-items:center;overflow:hidden}
+.bg-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}.bg-option{padding:10px;border-radius:18px}.bg-option input{width:100%}
+.ai-panel{padding:18px;border-radius:26px;margin:10px 0}.ai-recommend{padding:13px;border-radius:20px;margin-top:8px;border:1px solid color-mix(in srgb,var(--accent) 17%,transparent);background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.jarvis-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:10px;background:color-mix(in srgb,var(--accent) 9%,transparent);border:1px solid color-mix(in srgb,var(--accent) 20%,transparent)}
 </style>
 </head>
-<body>
+<body><div class="global-bg" id="globalBg"></div>
 <div class="app-bg"></div>
 <header class="topbar glass">
   <div><div class="eyebrow">GLASS NOTES</div><h1>Buenos días, señor.</h1><div class="muted small">Tu espacio personal</div></div>
@@ -140,6 +147,32 @@ function notifyDue(){if(!state.settings.notifications||!("Notification" in windo
 function fontStyle(){document.documentElement.style.setProperty("--accent",state.settings.accent||"#66e3ff");if(state.settings.fontData){let id="userFont";let old=$("#"+id);if(old)old.remove();let st=document.createElement("style");st.id=id;st.textContent="@font-face{font-family:'GlassUser';src:url("+state.settings.fontData+") format('truetype');font-display:swap}";document.head.appendChild(st);if(state.settings.applyFontAll)document.body.style.fontFamily="'GlassUser',system-ui,sans-serif";}}
 function render(){fontStyle();notifyDue();if(tab==="home")homeScreen(); else if(tab==="notes")notes();if(tab==="tasks")tasks();if(tab==="payments")payments();if(tab==="jarvis")jarvis();document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));}
 
+
+
+function applyGlobalBg(){
+ const el=$("#globalBg"); if(!el)return;
+ el.style.backgroundImage=state.settings.globalBg?`url("${state.settings.globalBg}")`:"";
+}
+function setGlobalBg(data){state.settings.globalBg=data||"";save();applyGlobalBg();render();}
+function bgPresets(){
+ return [
+  ["Cyber Grid","linear-gradient(135deg,#02060d,#091a25 48%,#150a26)"],
+  ["Neon Void","radial-gradient(circle at 70% 20%,#163b55,#05030b 48%,#010205)"],
+  ["Glass Aurora","linear-gradient(135deg,#07141b,#102a31 45%,#190c2a)"],
+  ["Midnight","linear-gradient(135deg,#010205,#0b0d14 55%,#020307)"]
+ ];
+}
+function backgroundSettings(){
+ let preview=state.settings.globalBg?`<div class="bg-thumb" style="background-image:url('${state.settings.globalBg}')">Imagen actual</div>`:`<div class="bg-thumb" style="background:linear-gradient(135deg,#02060d,#102532)">Sin imagen personalizada</div>`;
+ openModal("FONDO PRINCIPAL",`<section class="ai-panel glass"><div class="eyebrow">GLASS HOME</div><h3 style="margin:5px 0">Personaliza el fondo global</h3>${preview}
+ <div class="label">Subir imagen</div><input type="file" id="bgFile" accept="image/*" class="field">
+ <div class="label">Fondos rápidos</div><div class="bg-options">${bgPresets().map(([n,g])=>`<button class="btn bg-option" data-bg="${encodeURIComponent(g)}"><span style="display:block;height:45px;border-radius:12px;background:${g};margin-bottom:6px"></span>${n}</button>`).join("")}</div>
+ <div class="actions" style="margin-top:10px"><button class="btn" id="clearBg">Restaurar fondo</button><button class="btn primary" id="saveBg">Aplicar</button></div></section>`);
+ $("#bgFile").onchange=e=>{let f=e.target.files?.[0];if(!f)return;if(f.size>5*1024*1024){alert("Usa una imagen de máximo 5 MB.");return}let r=new FileReader();r.onload=()=>{state._pendingBg=r.result;$(".bg-thumb").style.backgroundImage=`url("${r.result}")`};r.readAsDataURL(f)};
+ document.querySelectorAll("[data-bg]").forEach(b=>b.onclick=()=>{state._pendingBg=decodeURIComponent(b.dataset.bg);$(".bg-thumb").style.background=b.dataset.bg});
+ $("#clearBg").onclick=()=>{state._pendingBg="";setGlobalBg("") ;closeModal()};
+ $("#saveBg").onclick=()=>{setGlobalBg(state._pendingBg!==undefined?state._pendingBg:state.settings.globalBg);delete state._pendingBg;closeModal()};
+}
 
 function voiceSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
 function normalizeText(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¿?¡!.,]/g,"").trim()}
@@ -295,6 +328,27 @@ openModal("JARVIS VOICE",`<section class="voice-center glass"><div class="voice-
 $("#startVoice").onclick=startVoice;
 }
 
+
+function jarvisAI(){
+ const now=Date.now(), payments=state.payments.filter(p=>!p.paid).sort((a,b)=>a.due-b.due);
+ const urgent=payments.filter(p=>days(p.due)<=2), tasks=state.notes.reduce((a,n)=>a+(n.checks||[]).filter(c=>!c.done).length,0);
+ let rec=[];
+ if(urgent.length)rec.push({icon:"🚨",title:"Atención inmediata",text:`Tiene ${urgent.length} obligación${urgent.length>1?"es":""} dentro de las próximas 48 horas.`,action:"Abrir JARVIS"});
+ if(tasks>=5)rec.push({icon:"🧹",title:"Hay muchas tareas abiertas",text:`Tiene ${tasks} pendientes. Le conviene resolver primero las de mayor prioridad.`,action:"Ver notas"});
+ let recurring=payments.filter(p=>p.repeat&&p.repeat!=="none").length;
+ if(recurring)rec.push({icon:"🔁",title:"Pagos recurrentes detectados",text:`JARVIS está siguiendo ${recurring} pago${recurring>1?"s":""} recurrente${recurring>1?"s":""}.`,action:"Ver pagos"});
+ if(!rec.length)rec.push({icon:"🟢",title:"Todo bajo control",text:"No detecto ninguna obligación crítica en este momento.",action:"Descansar"});
+ return rec;
+}
+function jarvisBrief(){
+ const rec=jarvisAI();
+ openModal("JARVIS AI",`<section class="ai-panel glass"><span class="jarvis-badge">● PROACTIVE CORE ONLINE</span><h3 style="margin:8px 0">Informe inteligente</h3><p class="muted small">No solo te muestro datos: priorizo lo que parece importante.</p>${rec.map(r=>`<div class="ai-recommend"><b>${r.icon} ${esc(r.title)}</b><div class="muted small">${esc(r.text)}</div></div>`).join("")}</section>
+ <section class="ai-panel glass"><div class="eyebrow">IDEAS JARVIS</div><div class="ai-recommend">🧠 <b>Memoria contextual</b><div class="muted small">Detectar hábitos de pagos y tareas sin invadir tus datos.</div></div><div class="ai-recommend">⏳ <b>Prioridad dinámica</b><div class="muted small">Subir automáticamente una tarea cuando se acerque su fecha.</div></div><div class="ai-recommend">💬 <b>Explicaciones naturales</b><div class="muted small">“Te recomiendo pagar primero el gas porque vence mañana.”</div></div><div class="ai-recommend">🔒 <b>Modo privado</b><div class="muted small">Mantener la memoria local y permitir borrarla desde ajustes.</div></div></section>
+ <div class="actions"><button class="btn primary" id="closeAI">Cerrar</button></div>`);
+ $("#closeAI").onclick=closeModal;
+}
+
+
 function homeScreen(){
 const today=new Date();
 const unpaid=state.payments.filter(p=>!p.paid);
@@ -329,6 +383,8 @@ $("#screen").innerHTML=`<div class="screen">
 <section class="home-section"><div class="section-title"><h2>Acciones rápidas</h2></div>
 <div class="action-strip"><button class="btn glass" id="qaNote">📝<br><small>Nueva nota</small></button><button class="btn glass" id="qaPay">💳<br><small>Nuevo pago</small></button><button class="btn glass" id="qaJarvis">🤖<br><small>JARVIS</small></button><button class="btn glass" id="qaVoice">🎙️<br><small>Hablar</small></button></div></section>
 
+<section class="home-section"><div class="section-title"><h2>JARVIS recomienda</h2><button class="btn" id="openAI">🧠 Ver análisis</button></div>
+${jarvisAI().slice(0,2).map(r=>`<div class="ai-recommend glass"><b>${r.icon} ${esc(r.title)}</b><div class="muted small">${esc(r.text)}</div></div>`).join("")}</section>
 <section class="home-section"><div class="section-title"><h2>Atención prioritaria</h2><span class="muted small">${urgent.length?"Requiere atención":"Todo tranquilo"}</span></div>
 ${urgent.length?urgent.map((p,i)=>`<div class="priority glass alert urgent"><div class="rank">Prioridad ${i+1}</div><strong>${esc(p.title)}</strong><div class="muted small">${esc(jarvisText(p))} · ${dateText(p.due)} · ${esc(p.amount||"")}</div><div class="core-actions"><button class="btn primary" data-home-paid="${p.id}">✓ Resolver</button><button class="btn" data-home-snooze="${p.id}|24">⏰ Mañana</button></div></div>`).join(""):'<div class="glass empty">No hay nada urgente. Buen trabajo, señor. 🧊</div>'}</section>
 
@@ -341,7 +397,7 @@ ${upcoming.length?upcoming.map(p=>`<div class="priority glass"><div class="rank"
 ${recent.length?recent.map(e=>`<div class="glass" style="padding:12px;margin:7px 0"><b>${esc(e.title)}</b><div class="muted small">${esc(e.detail)} · ${new Intl.DateTimeFormat("es-MX",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(e.at)}</div></div>`).join(""):'<div class="glass empty">JARVIS todavía no tiene actividad reciente.</div>'}</section>
 </div>`;
 
-$("#qaNote").onclick=()=>openNote();
+$("#openAI").onclick=jarvisBrief;$("#qaNote").onclick=()=>openNote();
 $("#qaPay").onclick=()=>openPayment();
 $("#qaJarvis").onclick=jarvis;$("#qaVoice").onclick=voiceCenter;
 $("#viewMemory").onclick=memoryDashboard;
@@ -487,11 +543,13 @@ function settings(){
 openModal("Personalización",`
 <p class="muted small">Puedes usar una fuente descargada de Google Fonts como fuente global. La fuente de cada nota puede ser distinta.</p>
 <div class="label">Color principal</div><div class="row"><input type="color" class="field color" id="ga" value="${state.settings.accent||"#66e3ff"}"><span class="muted small">Se aplica a toda la interfaz.</span></div>
+<div class="label">Fondo principal</div><div class="row between glass" style="padding:12px"><span class="small">🖼️ Fondo de toda la aplicación</span><button class="btn" id="gbg">Personalizar</button></div>
 <div class="label">GLASS HOME</div><input class="field" id="hn" value="${esc(state.settings.homeName||state.settings.jarvisName||"JARVIS")}" placeholder="Nombre del asistente">
 <div class="label">Mensaje inicial</div><input class="field" id="hg" value="${esc(state.settings.homeGreeting||"Buenos días, señor.")}" placeholder="Buenos días, señor.">
 <div class="label">Identidad de JARVIS</div><input class="field" id="jn" value="${esc(state.settings.jarvisName||"JARVIS")}" placeholder="Nombre del asistente">
 <div class="label">Personalidad</div><div class="personality"><button class="btn ${state.settings.personality==="classic"?"primary":""}" data-pers="classic">🕴️ Clásico</button><button class="btn ${state.settings.personality==="cyber"?"primary":""}" data-pers="cyber">⚡ Cyberpunk</button><button class="btn ${state.settings.personality==="casual"?"primary":""}" data-pers="casual">😎 Casual</button><button class="btn ${state.settings.personality==="iron"?"primary":""}" data-pers="iron">🤖 Iron Assistant</button></div>
 <div class="label">Mensaje de bienvenida</div><input class="field" id="jw" value="${esc(state.settings.welcome||"Bienvenido de nuevo, señor.")}">
+<div class="label">JARVIS AI</div><div class="row between glass" style="padding:12px"><span class="small">🧠 Análisis proactivo</span><button class="btn" id="gai">${state.settings.jarvisProactive?"Activo":"Desactivado"}</button></div><div class="row between glass" style="padding:12px;margin-top:7px"><span class="small">📋 Informe diario</span><button class="btn" id="gbrief">${state.settings.jarvisDailyBrief?"Activo":"Desactivado"}</button></div>
 <div class="label">JARVIS NLP</div><div class="row between glass" style="padding:12px"><span class="small">🧠 Comprensión de lenguaje natural</span><span class="chip">V0.9</span></div>
 <div class="label">Comandos de voz</div><div class="row between glass" style="padding:12px"><span class="small">${voiceSupported()?"🎙️ Reconocimiento disponible":"⚠️ Navegador sin reconocimiento"}</span><button class="btn" id="gv">${state.settings.voiceEnabled?"Activo":"Desactivado"}</button></div>
 <div class="label">Notificaciones JARVIS</div><div class="row between glass" style="padding:12px"><span class="small">${state.settings.notifications?"🔔 Activas":"🔕 Desactivadas"}</span><button class="btn" id="gn">${state.settings.notifications?"Probar":"Activar"}</button></div>
@@ -499,7 +557,7 @@ openModal("Personalización",`
 <div class="actions"><button class="btn primary" id="saveS">Guardar configuración</button><button class="btn" id="closeS">Cerrar</button></div>
 <input hidden type="file" id="gff" accept=".ttf,.otf,.woff,.woff2">
 `);
-$("#gv").onclick=()=>{state.settings.voiceEnabled=!state.settings.voiceEnabled;save();settings()};$("#gn").onclick=()=>{requestNotifications();};
+$("#gbg").onclick=backgroundSettings;$("#gai").onclick=()=>{state.settings.jarvisProactive=!state.settings.jarvisProactive;save();settings()};$("#gbrief").onclick=()=>{state.settings.jarvisDailyBrief=!state.settings.jarvisDailyBrief;save();settings()};$("#gv").onclick=()=>{state.settings.voiceEnabled=!state.settings.voiceEnabled;save();settings()};$("#gn").onclick=()=>{requestNotifications();};
 document.querySelectorAll("[data-pers]").forEach(b=>b.onclick=()=>{state.settings.personality=b.dataset.pers;document.querySelectorAll("[data-pers]").forEach(x=>x.classList.remove("primary"));b.classList.add("primary");});
 $("#gf").onclick=()=>$("#gff").click();
 $("#gff").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{state.settings.fontData=r.result;state.settings.fontName=f.name;$("#gf").textContent="🔤 "+f.name};r.readAsDataURL(f)};
@@ -512,6 +570,7 @@ $("#homeBtn").onclick=homeScreen; $("#memory").onclick=memoryDashboard;
 $("#fab").onclick=()=>{$("#fabMenu").classList.toggle("open");$("#fab").textContent=$("#fabMenu").classList.contains("open")?"×":"＋"};
 document.querySelectorAll("[data-create]").forEach(b=>b.onclick=()=>{ $("#fabMenu").classList.remove("open");$("#fab").textContent="＋";if(b.dataset.create==="payment")openPayment();else openNote()});
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
+applyGlobalBg();
 homeScreen();
 </script>
 </body>
