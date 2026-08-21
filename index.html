@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070910">
+
+<style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#070910;color:#f6fbff}body{overflow-x:hidden}.app-bg{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 15% 10%,#173b58 0,transparent 32%),radial-gradient(circle at 90% 30%,#24194b 0,transparent 30%),linear-gradient(145deg,#05060b,#090d18 55%,#05060b)}.app-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(102,227,255,.025),transparent);pointer-events:none}.glass{background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);box-shadow:0 20px 60px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.08);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}.topbar{position:sticky;top:12px;z-index:5;margin:12px;border-radius:26px;padding:18px 18px 16px;display:flex;align-items:center;justify-content:space-between}.eyebrow{font-size:10px;letter-spacing:3px;color:#66e3ff}.topbar h1{font-size:20px;margin:4px 0}.topbar p{margin:0;color:#ffffff8c;font-size:12px}.icon-btn{border:0;background:#ffffff0d;color:#fff;border-radius:14px;width:42px;height:42px;font-size:18px}.nav{position:fixed;left:10px;right:10px;bottom:10px;z-index:10;border-radius:25px;padding:7px;display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:max(7px,env(safe-area-inset-bottom))}.nav button{border:0;background:transparent;color:#ffffff88;padding:8px 3px;border-radius:18px;font-size:18px}.nav button span{display:block;font-size:10px;margin-top:3px}.nav button.active{background:#66e3ff1c;color:#66e3ff}.fab{position:fixed;right:20px;bottom:95px;z-index:11;width:58px;height:58px;border:0;border-radius:20px;background:#66e3ff;color:#061017;font-size:30px;box-shadow:0 0 30px #66e3ff55}.screen{padding:0 14px 180px}.hero{padding:20px;border-radius:28px;margin:12px 0}.hero h2{margin:0 0 5px}.muted{color:#ffffff8c}.grid{display:grid;gap:12px}.note{position:relative;overflow:hidden;border-radius:26px;padding:18px;min-height:125px;cursor:pointer}.note .bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.3}.note>*:not(.bg){position:relative}.note h3{margin:0 0 7px;color:var(--accent,#66e3ff)}.note p{margin:0;color:#ffffffb3;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.badge{display:inline-block;margin-top:10px;font-size:11px;color:#66e3ff}.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}.btn{border:1px solid #ffffff1a;border-radius:15px;padding:11px 14px;background:#ffffff0b;color:#fff;font-weight:600}.btn.primary{background:#66e3ff;color:#061017;border-color:transparent}.btn.danger{color:#ff8888}.field{width:100%;border:1px solid #ffffff18;border-radius:16px;background:#050810aa;color:#fff;padding:13px 14px;outline:none;font:inherit}.field:focus{border-color:#66e3ff88;box-shadow:0 0 0 3px #66e3ff12}.label{font-size:12px;color:#ffffff8a;margin:12px 0 6px}.check{display:flex;align-items:center;gap:10px;padding:9px 0}.check input{width:20px;height:20px;accent-color:#66e3ff}.payment{padding:17px;border-radius:24px}.payment h3{margin:0}.status{font-size:12px;color:#ffb15c}.status.ok{color:#66ffb0}.modal{position:fixed;inset:0;z-index:30;background:#0008;display:flex;align-items:flex-end}.modal.hidden{display:none}.sheet{width:100%;max-height:88vh;overflow:auto;border-radius:30px 30px 0 0;padding:20px 18px 28px}.sheet-head{display:flex;align-items:center;justify-content:space-between}.sheet-head h2{margin:0}.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.chips{display:flex;gap:8px;overflow:auto;padding-bottom:4px}.chip{white-space:nowrap;border:1px solid #ffffff18;background:#ffffff08;color:#fff;padding:9px 12px;border-radius:999px}.chip.active{background:#66e3ff22;border-color:#66e3ff66;color:#66e3ff}.empty{padding:24px;text-align:center;color:#ffffff80}.jarvis{padding:20px;border-radius:28px}.jarvis .orb{width:76px;height:76px;border-radius:50%;margin:auto;background:radial-gradient(circle,#fff,#66e3ff 12%,#17657a 38%,transparent 70%);box-shadow:0 0 35px #66e3ff66}.small{font-size:12px}
+</style>
+<title>Glass Notes</title>
+</head>
+<body>
+<div class="app-bg"></div>
+<header class="topbar glass">
+  <div>
+    <div class="eyebrow">GLASS NOTES</div>
+    <h1>Buenos días, señor.</h1>
+    <p>Tu espacio personal</p>
+  </div>
+  <button class="icon-btn" id="settingsBtn">⚙️</button>
+</header>
+
+<main id="screen"></main>
+
+<nav class="nav glass">
+  <button data-tab="notes" class="active">📝<span>Notas</span></button>
+  <button data-tab="tasks">✅<span>Pendientes</span></button>
+  <button data-tab="payments">💳<span>Pagos</span></button>
+  <button data-tab="jarvis">🤖<span>JARVIS</span></button>
+</nav>
+
+<button class="fab" id="fab">＋</button>
+
+<div class="modal hidden" id="modal">
+  <div class="sheet glass">
+    <div class="sheet-head"><h2 id="modalTitle">Nueva nota</h2><button class="icon-btn" id="closeModal">✕</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>const KEY="glass_notes_data_v01";
+let state=JSON.parse(localStorage.getItem(KEY)||'{"notes":[],"payments":[]}');
+let tab="notes";
+
+const $=s=>document.querySelector(s);
+const screen=$("#screen"), modal=$("#modal"), modalTitle=$("#modalTitle"), modalBody=$("#modalBody");
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function esc(s=""){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function fmt(ts){return new Intl.DateTimeFormat("es-MX",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(ts))}
+function daysUntil(ts){return Math.ceil((ts-Date.now())/86400000)}
+
+function render(){
+ if(tab==="notes") renderNotes();
+ if(tab==="tasks") renderTasks();
+ if(tab==="payments") renderPayments();
+ if(tab==="jarvis") renderJarvis();
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+}
+
+function renderNotes(){
+ const pending=state.notes.reduce((a,n)=>a+n.checks.filter(x=>!x.done).length,0);
+ screen.innerHTML=`<div class="screen">
+  <section class="hero glass"><h2>🤖 Resumen</h2><div class="muted">${state.notes.length} notas · ${pending} pendientes</div><div class="badge">Liquid Glass activo</div></section>
+  <h2>Mis notas</h2>
+  <div class="grid">${state.notes.length?state.notes.map(noteCard).join(""):`<div class="glass empty">Crea tu primera nota con ＋</div>`}</div>
+ </div>`;
+ document.querySelectorAll("[data-note]").forEach(x=>x.onclick=()=>openNote(x.dataset.note));
+}
+function noteCard(n){
+ const pending=n.checks.filter(x=>!x.done).length;
+ return `<article class="note glass" data-note="${n.id}" style="--accent:${n.accent||'#66e3ff'}">${n.bg?`<div class="bg" style="background-image:url('${esc(n.bg)}')"></div>`:""}<h3>${esc(n.title||"Sin título")}</h3><p>${esc(n.body||"Nota vacía")}</p>${n.checks.length?`<div class="badge">${n.checks.length-pending}/${n.checks.length} completados</div>`:""}</article>`
+}
+
+function renderTasks(){
+ const tasks=state.notes.flatMap(n=>n.checks.map(c=>({...c,nid:n.id,ntitle:n.title})));
+ screen.innerHTML=`<div class="screen"><h2>Pendientes</h2>${tasks.length?`<div class="grid">${tasks.map(t=>`<div class="glass payment"><label class="check"><input type="checkbox" ${t.done?"checked":""} data-task="${t.nid}|${t.id}"><span>${esc(t.text)}<small class="muted" style="display:block">${esc(t.ntitle||"Sin título")}</small></span></label></div>`).join("")}</div>`:`<div class="glass empty">No tienes pendientes todavía.</div>`}</div>`;
+ document.querySelectorAll("[data-task]").forEach(x=>x.onchange=()=>{const [nid,id]=x.dataset.task.split("|");const n=state.notes.find(n=>n.id===nid);const c=n?.checks.find(c=>c.id===id);if(c)c.done=x.checked;save();render()});
+}
+
+function renderPayments(){
+ screen.innerHTML=`<div class="screen"><div class="row between"><h2>Pagos</h2><button class="btn primary" id="newPayment">＋ Nuevo</button></div>
+ ${state.payments.length?`<div class="grid">${state.payments.map(paymentCard).join("")}</div>`:`<div class="glass empty">Tu agenda de pagos está vacía.<br><br>JARVIS puede avisarte antes del vencimiento.</div>`}</div>`;
+ $("#newPayment").onclick=()=>openPayment();
+ document.querySelectorAll("[data-paid]").forEach(x=>x.onclick=()=>{const p=state.payments.find(p=>p.id===x.dataset.paid);if(p){p.paid=!p.paid;save();scheduleNotification(p);render()}});
+ document.querySelectorAll("[data-del]").forEach(x=>x.onclick=()=>{state.payments=state.payments.filter(p=>p.id!==x.dataset.del);save();render()});
+}
+function paymentCard(p){
+ const d=daysUntil(p.dueAt);
+ const status=p.paid?"✓ Pagado":d<0?"⚠ Vencido":d===0?"🔥 Vence hoy":d===1?"⏳ Vence mañana":`⏳ Faltan ${d} días`;
+ return `<article class="payment glass"><div class="row between"><div><h3>${esc(p.title)}</h3><div class="badge">${esc(p.amount||"")}</div></div><button class="btn" data-paid="${p.id}">${p.paid?"Desmarcar":"Marcar pagado"}</button></div><p class="muted small">${fmt(p.dueAt)}</p><div class="status ${p.paid?"ok":""}">${status}</div><div class="muted small">Aviso: ${p.reminder===0?"al vencer":(p.reminder/86400000)+" días antes"}</div><div class="actions"><button class="btn danger" data-del="${p.id}">Eliminar</button></div></article>`
+}
+
+function renderJarvis(){
+ const upcoming=state.payments.filter(p=>!p.paid).sort((a,b)=>a.dueAt-b.dueAt).slice(0,3);
+ screen.innerHTML=`<div class="screen"><div class="jarvis glass"><div class="orb"></div><h2 style="text-align:center">JARVIS</h2><p class="muted" style="text-align:center">Asistente de Glass Notes</p><hr style="border-color:#ffffff14"><p>${upcoming.length?`Señor, tiene ${upcoming.length} pago${upcoming.length>1?"s":""} próximo${upcoming.length>1?"s":""}.`:"Señor, no detecto pagos pendientes."}</p>${upcoming.map(p=>`<div class="glass payment"><b>${esc(p.title)}</b><br><span class="muted">${fmt(p.dueAt)} · ${esc(p.amount)}</span><br><span class="status">${daysUntil(p.dueAt)<=2?"Atención próxima":"Programado"}</span></div>`).join("")}</div></div>`
+}
+
+function openNote(id){
+ const n=state.notes.find(x=>x.id===id)||{id:crypto.randomUUID(),title:"",body:"",checks:[],accent:"#66e3ff",bg:""};
+ modalTitle.textContent=id?"Editar nota":"Nueva nota";
+ modalBody.innerHTML=`<div class="label">Título</div><input id="nt" class="field" value="${esc(n.title)}" placeholder="Gas, supermercado, ideas..."><div class="label">Contenido</div><textarea id="nb" class="field" rows="7" placeholder="Escribe tu nota...">${esc(n.body)}</textarea><div class="label">Checklist</div><div id="checks">${n.checks.map((c,i)=>`<div class="check"><input type="checkbox" ${c.done?"checked":""} data-c="${i}"><input class="field" data-ct="${i}" value="${esc(c.text)}"><button class="icon-btn" data-rm="${i}">🗑️</button></div>`).join("")}</div><div class="row"><input id="newcheck" class="field" placeholder="Nuevo pendiente"><button class="btn" id="addcheck">＋</button></div><div class="label">Personalización</div><div class="actions"><button class="btn" id="bgBtn">🖼️ Fondo</button><button class="btn" id="fontInfo">🔤 Fuente</button><input id="color" type="color" value="${n.accent||"#66e3ff"}" class="field" style="width:58px;padding:4px"></div><div class="actions"><button class="btn primary" id="saveNote">Guardar</button>${id?`<button class="btn danger" id="delNote">Eliminar</button>`:""}<button class="btn" id="cancel">Cancelar</button></div><input id="fileBg" type="file" accept="image/*" hidden>`;
+ modal.classList.remove("hidden");
+ $("#addcheck").onclick=()=>{const v=$("#newcheck").value.trim();if(v){n.checks.push({id:crypto.randomUUID(),text:v,done:false});openNote(n.id)}}; // refresh editor
+ $("#saveNote").onclick=()=>saveNote(n);
+ $("#cancel").onclick=closeModal;
+ if(id)$("#delNote").onclick=()=>{state.notes=state.notes.filter(x=>x.id!==n.id);save();closeModal();render()};
+ $("#bgBtn").onclick=()=>$("#fileBg").click();
+ $("#fileBg").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{n.bg=r.result;openNote(n.id)};r.readAsDataURL(f)};
+ $("#fontInfo").onclick=()=>alert("V0.1 PWA: la arquitectura de fuentes está reservada. En la versión siguiente añadiremos importación TTF/OTF y selección global o por nota.");
+ $("#color").oninput=e=>n.accent=e.target.value;
+ document.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{n.checks.splice(+x.dataset.rm,1);openNote(n.id)});
+}
+function saveNote(n){
+ n.title=$("#nt").value.trim();n.body=$("#nb").value;
+ n.checks.forEach((c,i)=>{const input=document.querySelector(`[data-ct="${i}"]`);const cb=document.querySelector(`[data-c="${i}"]`);if(input)c.text=input.value;if(cb)c.done=cb.checked});
+ if(!state.notes.some(x=>x.id===n.id))state.notes.unshift(n);
+ save();closeModal();render();
+}
+
+function openPayment(){
+ modalTitle.textContent="Nuevo pago";
+ const c=new Date(Date.now()+2*86400000);c.setHours(9,0,0,0);
+ modalBody.innerHTML=`<div class="label">Concepto</div><input id="pt" class="field" placeholder="Gas"><div class="label">Importe</div><input id="pa" class="field" placeholder="$650"><div class="label">Vencimiento</div><input id="pd" class="field" type="datetime-local" value="${localDateValue(c)}"><div class="label">Avisarme</div><div class="chips">${[[86400000,"1 día"],[172800000,"2 días"],[604800000,"7 días"],[0,"Al vencer"]].map(([v,t],i)=>`<button class="chip ${i===1?"active":""}" data-rem="${v}">${t}</button>`).join("")}</div><div class="actions"><button class="btn primary" id="savePay">Guardar pago</button><button class="btn" id="cancel">Cancelar</button></div>`;
+ let reminder=172800000;
+ document.querySelectorAll("[data-rem]").forEach(b=>b.onclick=()=>{reminder=+b.dataset.rem;document.querySelectorAll("[data-rem]").forEach(x=>x.classList.remove("active"));b.classList.add("active")});
+ $("#savePay").onclick=()=>{const title=$("#pt").value.trim();if(!title)return alert("Escribe el concepto del pago.");const due=new Date($("#pd").value).getTime();const p={id:crypto.randomUUID(),title,amount:$("#pa").value.trim(),dueAt:due,reminder,paid:false};state.payments.push(p);save();scheduleNotification(p);closeModal();render()};
+ $("#cancel").onclick=closeModal;
+}
+function localDateValue(d){const pad=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
+function scheduleNotification(p){
+ if(!("Notification"in window)||Notification.permission!=="granted")return;
+ const when=p.dueAt-p.reminder-Date.now();
+ if(when<=0)return;
+ // Browser timers work while the PWA is active. For true closed-app Android notifications
+ // we will add Web Push/WorkManager bridge in the next iteration.
+ setTimeout(()=>{if(!p.paid)new Notification("🤖 JARVIS · Glass Notes",{body:`Señor, recuerde pagar ${p.title}${p.amount?" por "+p.amount:""}.`})},when);
+}
+function closeModal(){modal.classList.add("hidden")}
+$("#closeModal").onclick=closeModal;
+$("#fab").onclick=()=>openNote();
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
+$("#settingsBtn").onclick=()=>alert("Configuración visual avanzada: V0.2. Aquí añadiremos fuentes TTF/OTF, fuente global, fondo global y preferencias de JARVIS.");
+if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+if("Notification"in window&&Notification.permission==="default")Notification.requestPermission().catch(()=>{});
+render();
+</script>
+</body>
+</html>
