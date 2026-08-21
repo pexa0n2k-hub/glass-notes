@@ -1,148 +1,204 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
+<title>Glass Notes V0.4</title>
+<style>
+:root{--accent:#66e3ff;--bg:#05070d;--text:#f5f8ff;--muted:#ffffff8c;--glass:rgba(255,255,255,.075)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{overflow-x:hidden}.app-bg{position:fixed;inset:0;z-index:-3;background:radial-gradient(circle at 12% 8%,#173e59 0,transparent 30%),radial-gradient(circle at 90% 20%,#29174d 0,transparent 30%),linear-gradient(145deg,#03050a,#090d17 55%,#04060b)}
+.app-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 20%,rgba(102,227,255,.035),transparent 75%);pointer-events:none}
+.glass{background:var(--glass);border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 55px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.08);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.topbar{position:sticky;top:10px;z-index:8;margin:10px;border-radius:28px;padding:16px;display:flex;justify-content:space-between;align-items:center}
+.eyebrow{font-size:10px;letter-spacing:3px;color:var(--accent)}h1{font-size:20px;margin:4px 0}h2{margin:12px 0}p{line-height:1.45}.muted{color:var(--muted)}.small{font-size:12px}
+.icon{border:0;color:#fff;background:#ffffff0b;width:43px;height:43px;border-radius:15px;font-size:19px}
+.screen{padding:0 14px 190px}.hero{padding:20px;border-radius:28px;margin:12px 0}.hero .big{font-size:28px;font-weight:800}
+.grid{display:grid;gap:12px}.note{position:relative;overflow:hidden;border-radius:27px;padding:19px;min-height:150px;cursor:pointer;transition:.2s transform}.note:active{transform:scale(.985)}.note .bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.35}.note>*:not(.bg){position:relative}.note h3{margin:0 0 7px;color:var(--accent)}.note p{margin:0;color:#ffffffb5;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.badge{display:inline-flex;margin-top:12px;font-size:11px;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);background:color-mix(in srgb,var(--accent) 8%,transparent);padding:6px 9px;border-radius:999px}
+.nav{position:fixed;left:10px;right:10px;bottom:10px;z-index:20;border-radius:27px;padding:7px;display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:max(7px,env(safe-area-inset-bottom))}.nav button{border:0;background:transparent;color:#ffffff88;padding:8px 2px;border-radius:19px;font-size:18px}.nav span{display:block;font-size:10px;margin-top:3px}.nav .active{background:#66e3ff1c;color:var(--accent)}
+.fab{position:fixed;right:20px;bottom:98px;z-index:21;width:60px;height:60px;border:0;border-radius:21px;background:var(--accent);color:#041017;font-size:31px;box-shadow:0 0 34px color-mix(in srgb,var(--accent) 45%,transparent)}
+.fab-menu{position:fixed;right:20px;bottom:166px;z-index:21;display:grid;gap:8px;transform:scale(.9);opacity:0;pointer-events:none;transform-origin:bottom right;transition:.2s}.fab-menu.open{transform:scale(1);opacity:1;pointer-events:auto}.quick{border:1px solid #ffffff18;background:#101522ee;color:#fff;padding:11px 14px;border-radius:17px;text-align:left;min-width:190px;box-shadow:0 10px 35px #0007}
+.modal{position:fixed;inset:0;z-index:50;background:#0009;display:flex;align-items:flex-end}.hidden{display:none!important}.sheet{width:100%;max-height:90vh;overflow:auto;border-radius:30px 30px 0 0;padding:20px 18px 30px}.sheethead{display:flex;justify-content:space-between;align-items:center}.field{width:100%;border:1px solid #ffffff18;border-radius:16px;background:#050810b8;color:#fff;padding:13px 14px;outline:0;font:inherit}.field:focus{border-color:color-mix(in srgb,var(--accent) 60%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 10%,transparent)}textarea.field{resize:vertical}.label{font-size:12px;color:#ffffff8a;margin:13px 0 6px}.row{display:flex;gap:9px;align-items:center}.between{justify-content:space-between}.btn{border:1px solid #ffffff18;border-radius:15px;padding:11px 14px;background:#ffffff09;color:#fff;font-weight:700}.primary{background:var(--accent);color:#041017;border-color:transparent}.danger{color:#ff8d8d}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.checkrow{display:grid;grid-template-columns:24px 1fr 42px;gap:8px;align-items:center;margin:8px 0}.checkrow input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent)}
+.color{width:58px!important;padding:4px!important;height:45px}.empty{text-align:center;padding:28px;color:#ffffff80;border-radius:24px}.payment{padding:18px;border-radius:25px}.status{font-size:12px;color:#ffb45d}.ok{color:#6dffb2}
+.jarvis{padding:22px;border-radius:29px}.orb{width:82px;height:82px;border-radius:50%;margin:4px auto 16px;background:radial-gradient(circle,#fff 0 5%,var(--accent) 12%,#14677b 35%,transparent 70%);box-shadow:0 0 40px color-mix(in srgb,var(--accent) 45%,transparent);animation:pulse 2.8s ease-in-out infinite}@keyframes pulse{50%{transform:scale(1.06);filter:brightness(1.2)}}
+.preview{border-radius:23px;min-height:130px;padding:18px;background-size:cover;background-position:center;border:1px solid #ffffff15}.font-pill{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;background:#ffffff09;border:1px solid #ffffff15;font-size:11px}
+@media(min-width:700px){.screen{max-width:720px;margin:auto}.nav{max-width:680px;margin:auto}.fab{right:max(20px,calc((100vw - 720px)/2 + 20px))}}
 
-<style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#070910;color:#f6fbff}body{overflow-x:hidden}.app-bg{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 15% 10%,#173b58 0,transparent 32%),radial-gradient(circle at 90% 30%,#24194b 0,transparent 30%),linear-gradient(145deg,#05060b,#090d18 55%,#05060b)}.app-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(102,227,255,.025),transparent);pointer-events:none}.glass{background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);box-shadow:0 20px 60px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.08);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}.topbar{position:sticky;top:12px;z-index:5;margin:12px;border-radius:26px;padding:18px 18px 16px;display:flex;align-items:center;justify-content:space-between}.eyebrow{font-size:10px;letter-spacing:3px;color:#66e3ff}.topbar h1{font-size:20px;margin:4px 0}.topbar p{margin:0;color:#ffffff8c;font-size:12px}.icon-btn{border:0;background:#ffffff0d;color:#fff;border-radius:14px;width:42px;height:42px;font-size:18px}.nav{position:fixed;left:10px;right:10px;bottom:10px;z-index:10;border-radius:25px;padding:7px;display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:max(7px,env(safe-area-inset-bottom))}.nav button{border:0;background:transparent;color:#ffffff88;padding:8px 3px;border-radius:18px;font-size:18px}.nav button span{display:block;font-size:10px;margin-top:3px}.nav button.active{background:#66e3ff1c;color:#66e3ff}.fab{position:fixed;right:20px;bottom:95px;z-index:11;width:58px;height:58px;border:0;border-radius:20px;background:#66e3ff;color:#061017;font-size:30px;box-shadow:0 0 30px #66e3ff55}.screen{padding:0 14px 180px}.hero{padding:20px;border-radius:28px;margin:12px 0}.hero h2{margin:0 0 5px}.muted{color:#ffffff8c}.grid{display:grid;gap:12px}.note{position:relative;overflow:hidden;border-radius:26px;padding:18px;min-height:125px;cursor:pointer}.note .bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.3}.note>*:not(.bg){position:relative}.note h3{margin:0 0 7px;color:var(--accent,#66e3ff)}.note p{margin:0;color:#ffffffb3;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.badge{display:inline-block;margin-top:10px;font-size:11px;color:#66e3ff}.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}.btn{border:1px solid #ffffff1a;border-radius:15px;padding:11px 14px;background:#ffffff0b;color:#fff;font-weight:600}.btn.primary{background:#66e3ff;color:#061017;border-color:transparent}.btn.danger{color:#ff8888}.field{width:100%;border:1px solid #ffffff18;border-radius:16px;background:#050810aa;color:#fff;padding:13px 14px;outline:none;font:inherit}.field:focus{border-color:#66e3ff88;box-shadow:0 0 0 3px #66e3ff12}.label{font-size:12px;color:#ffffff8a;margin:12px 0 6px}.check{display:flex;align-items:center;gap:10px;padding:9px 0}.check input{width:20px;height:20px;accent-color:#66e3ff}.payment{padding:17px;border-radius:24px}.payment h3{margin:0}.status{font-size:12px;color:#ffb15c}.status.ok{color:#66ffb0}.modal{position:fixed;inset:0;z-index:30;background:#0008;display:flex;align-items:flex-end}.modal.hidden{display:none}.sheet{width:100%;max-height:88vh;overflow:auto;border-radius:30px 30px 0 0;padding:20px 18px 28px}.sheet-head{display:flex;align-items:center;justify-content:space-between}.sheet-head h2{margin:0}.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.chips{display:flex;gap:8px;overflow:auto;padding-bottom:4px}.chip{white-space:nowrap;border:1px solid #ffffff18;background:#ffffff08;color:#fff;padding:9px 12px;border-radius:999px}.chip.active{background:#66e3ff22;border-color:#66e3ff66;color:#66e3ff}.empty{padding:24px;text-align:center;color:#ffffff80}.jarvis{padding:20px;border-radius:28px}.jarvis .orb{width:76px;height:76px;border-radius:50%;margin:auto;background:radial-gradient(circle,#fff,#66e3ff 12%,#17657a 38%,transparent 70%);box-shadow:0 0 35px #66e3ff66}.small{font-size:12px}
+.jarvis-banner{padding:18px 19px;border-radius:25px;margin:12px 0;position:relative;overflow:hidden}
+.jarvis-banner:before{content:"";position:absolute;inset:-80px;background:radial-gradient(circle at 85% 40%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 48%);pointer-events:none}
+.alert{border-left:3px solid var(--accent);padding-left:13px;margin:12px 0}
+.alert.urgent{border-left-color:#ff6666}.alert.warn{border-left-color:#ffb45d}.alert.info{border-left-color:#66e3ff}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid #ffffff15;background:#ffffff09;padding:7px 10px;border-radius:999px;font-size:11px}
+.snooze{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.snooze button{font-size:11px;padding:8px 10px}
+.toggle{position:relative;width:46px;height:26px;display:inline-block}.toggle input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;border-radius:30px;background:#ffffff1c;transition:.2s}.slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.toggle input:checked+.slider{background:var(--accent)}.toggle input:checked+.slider:before{transform:translateX(20px);background:#041017}
+.recur-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+hr{border:0;border-top:1px solid #ffffff12}
 </style>
-<title>Glass Notes</title>
 </head>
 <body>
 <div class="app-bg"></div>
 <header class="topbar glass">
-  <div>
-    <div class="eyebrow">GLASS NOTES</div>
-    <h1>Buenos días, señor.</h1>
-    <p>Tu espacio personal</p>
-  </div>
-  <button class="icon-btn" id="settingsBtn">⚙️</button>
+  <div><div class="eyebrow">GLASS NOTES</div><h1>Buenos días, señor.</h1><div class="muted small">Tu espacio personal</div></div>
+  <button class="icon" id="settings">⚙️</button>
 </header>
-
 <main id="screen"></main>
 
+<div class="fab-menu" id="fabMenu">
+  <button class="quick" data-create="note">📝 <b>Nota</b><br><span class="muted small">Texto + personalización</span></button>
+  <button class="quick" data-create="task">✅ <b>Lista</b><br><span class="muted small">Pendientes con checklist</span></button>
+  <button class="quick" data-create="payment">💳 <b>Pago</b><br><span class="muted small">Fecha + recordatorio</span></button>
+</div>
+<button class="fab" id="fab">＋</button>
+
 <nav class="nav glass">
-  <button data-tab="notes" class="active">📝<span>Notas</span></button>
+  <button class="active" data-tab="notes">📝<span>Notas</span></button>
   <button data-tab="tasks">✅<span>Pendientes</span></button>
   <button data-tab="payments">💳<span>Pagos</span></button>
   <button data-tab="jarvis">🤖<span>JARVIS</span></button>
 </nav>
 
-<button class="fab" id="fab">＋</button>
+<div class="modal hidden" id="modal"><div class="sheet glass"><div class="sheethead"><h2 id="mtitle">Nueva nota</h2><button class="icon" id="close">✕</button></div><div id="mbody"></div></div></div>
 
-<div class="modal hidden" id="modal">
-  <div class="sheet glass">
-    <div class="sheet-head"><h2 id="modalTitle">Nueva nota</h2><button class="icon-btn" id="closeModal">✕</button></div>
-    <div id="modalBody"></div>
-  </div>
-</div>
-
-<script>const KEY="glass_notes_data_v01";
-let state=JSON.parse(localStorage.getItem(KEY)||'{"notes":[],"payments":[]}');
-let tab="notes";
-
+<script>
+if ("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+const KEY="glass_notes_v03";
+let state=JSON.parse(localStorage.getItem(KEY)||'{"notes":[],"payments":[],"settings":{"fontName":"","fontData":"","accent":"#66e3ff","bgData":"","applyFontAll":true,"notifications":false}}');
+state.payments=(state.payments||[]).map(p=>({...p,reminder:p.reminder??2,repeat:p.repeat||"none",snoozedUntil:p.snoozedUntil||0}));
+let tab="notes", editId=null, tempBg="";
 const $=s=>document.querySelector(s);
-const screen=$("#screen"), modal=$("#modal"), modalTitle=$("#modalTitle"), modalBody=$("#modalBody");
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function esc(s=""){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function fmt(ts){return new Intl.DateTimeFormat("es-MX",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(ts))}
-function daysUntil(ts){return Math.ceil((ts-Date.now())/86400000)}
-
-function render(){
- if(tab==="notes") renderNotes();
- if(tab==="tasks") renderTasks();
- if(tab==="payments") renderPayments();
- if(tab==="jarvis") renderJarvis();
- document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
-}
-
-function renderNotes(){
- const pending=state.notes.reduce((a,n)=>a+n.checks.filter(x=>!x.done).length,0);
- screen.innerHTML=`<div class="screen">
-  <section class="hero glass"><h2>🤖 Resumen</h2><div class="muted">${state.notes.length} notas · ${pending} pendientes</div><div class="badge">Liquid Glass activo</div></section>
-  <h2>Mis notas</h2>
-  <div class="grid">${state.notes.length?state.notes.map(noteCard).join(""):`<div class="glass empty">Crea tu primera nota con ＋</div>`}</div>
- </div>`;
- document.querySelectorAll("[data-note]").forEach(x=>x.onclick=()=>openNote(x.dataset.note));
+const esc=s=>(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const save=()=>localStorage.setItem(KEY,JSON.stringify(state));
+const days=ts=>Math.ceil((new Date(ts)-Date.now())/86400000);
+const hours=ts=>Math.ceil((new Date(ts)-Date.now())/3600000);
+const dateText=ts=>new Intl.DateTimeFormat("es-MX",{day:"2-digit",month:"long",year:"numeric"}).format(new Date(ts));
+const urgency=p=>{if(p.paid)return ["ok","✓ Pagado"];let d=days(p.due);if(d<0)return ["urgent","Vencido"];if(d===0)return ["urgent","Vence hoy"];if(d===1)return ["warn","Vence mañana"];if(d<=2)return ["warn","Próximo"];return ["info","Programado"]};
+const jarvisText=p=>{let d=days(p.due);if(d<0)return `Señor, el pago de ${p.title} está vencido.`;if(d===0)return `Señor, hoy vence el pago de ${p.title}.`;if(d===1)return `Señor, mañana deberá pagar ${p.title}.`;return `Señor, faltan ${d} días para el pago de ${p.title}.`};
+function requestNotifications(){if(!("Notification" in window))return alert("Este navegador no admite notificaciones.");Notification.requestPermission().then(x=>{state.settings.notifications=x==="granted";save();render();});}
+function shouldAlert(p){if(p.paid)return false;let now=Date.now();if(p.snoozedUntil&&p.snoozedUntil>now)return false;return now>=p.due-p.reminder*86400000;}
+function notifyDue(){if(!state.settings.notifications||!("Notification" in window)||Notification.permission!=="granted")return;state.payments.filter(shouldAlert).slice(0,3).forEach(p=>{try{new Notification("JARVIS · Glass Notes",{body:jarvisText(p),icon:"./icon-192.png",tag:"payment-"+p.id});p.lastNotified=Date.now();}catch(e){}});save();}
+function fontStyle(){document.documentElement.style.setProperty("--accent",state.settings.accent||"#66e3ff");if(state.settings.fontData){let id="userFont";let old=$("#"+id);if(old)old.remove();let st=document.createElement("style");st.id=id;st.textContent="@font-face{font-family:'GlassUser';src:url("+state.settings.fontData+") format('truetype');font-display:swap}";document.head.appendChild(st);if(state.settings.applyFontAll)document.body.style.fontFamily="'GlassUser',system-ui,sans-serif";}}
+function render(){fontStyle();notifyDue();if(tab==="notes")notes();if(tab==="tasks")tasks();if(tab==="payments")payments();if(tab==="jarvis")jarvis();document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));}
+function notes(){
+let pending=state.notes.reduce((a,n)=>a+n.checks.filter(c=>!c.done).length,0);
+$("#screen").innerHTML='<div class="screen"><section class="hero glass"><div class="big">🤖 '+(pending?pending+" pendientes":"Todo bajo control")+'</div><p class="muted">'+state.notes.length+" notas · "+state.payments.filter(p=>!p.paid).length+' pagos pendientes</p><span class="badge">Liquid Glass · V0.3</span></section><h2>Mis notas</h2><div class="grid">'+(state.notes.length?state.notes.map(noteCard).join(""):'<div class="glass empty">Crea tu primera nota con ＋</div>')+'</div></div>';
+document.querySelectorAll("[data-note]").forEach(e=>e.onclick=()=>openNote(e.dataset.note));
 }
 function noteCard(n){
- const pending=n.checks.filter(x=>!x.done).length;
- return `<article class="note glass" data-note="${n.id}" style="--accent:${n.accent||'#66e3ff'}">${n.bg?`<div class="bg" style="background-image:url('${esc(n.bg)}')"></div>`:""}<h3>${esc(n.title||"Sin título")}</h3><p>${esc(n.body||"Nota vacía")}</p>${n.checks.length?`<div class="badge">${n.checks.length-pending}/${n.checks.length} completados</div>`:""}</article>`
+let p=n.checks.filter(c=>!c.done).length;
+let bg=n.bg?`<div class="bg" style="background-image:url('${n.bg}')"></div>`:"";
+return `<article class="note glass" data-note="${n.id}" style="--accent:${n.accent||state.settings.accent||"#66e3ff"}">${bg}<h3>${esc(n.title||"Sin título")}</h3><p>${esc(n.body||"Nota vacía")}</p>${n.checks.length?`<span class="badge">${n.checks.length-p}/${n.checks.length} completados</span>`:""}${n.fontName?`<div class="font-pill" style="margin-top:8px">🔤 ${esc(n.fontName)}</div>`:""}</article>`;
 }
-
-function renderTasks(){
- const tasks=state.notes.flatMap(n=>n.checks.map(c=>({...c,nid:n.id,ntitle:n.title})));
- screen.innerHTML=`<div class="screen"><h2>Pendientes</h2>${tasks.length?`<div class="grid">${tasks.map(t=>`<div class="glass payment"><label class="check"><input type="checkbox" ${t.done?"checked":""} data-task="${t.nid}|${t.id}"><span>${esc(t.text)}<small class="muted" style="display:block">${esc(t.ntitle||"Sin título")}</small></span></label></div>`).join("")}</div>`:`<div class="glass empty">No tienes pendientes todavía.</div>`}</div>`;
- document.querySelectorAll("[data-task]").forEach(x=>x.onchange=()=>{const [nid,id]=x.dataset.task.split("|");const n=state.notes.find(n=>n.id===nid);const c=n?.checks.find(c=>c.id===id);if(c)c.done=x.checked;save();render()});
+function tasks(){
+let arr=[];state.notes.forEach(n=>n.checks.forEach(c=>arr.push({...c,nid:n.id,ntitle:n.title})));
+$("#screen").innerHTML='<div class="screen"><h2>Pendientes</h2>'+(arr.length?'<div class="grid">'+arr.map(t=>`<div class="payment glass"><label class="checkrow"><input type="checkbox" ${t.done?"checked":""} data-task="${t.nid}|${t.id}"><span>${esc(t.text)}<small class="muted" style="display:block">${esc(t.ntitle||"Sin título")}</small></span><span></span></label></div>`).join("")+'</div>':'<div class="glass empty">No tienes pendientes todavía.</div>')+'</div>';
+document.querySelectorAll("[data-task]").forEach(e=>e.onchange=()=>{let [nid,id]=e.dataset.task.split("|"),n=state.notes.find(x=>x.id===nid),c=n?.checks.find(x=>x.id===id);if(c)c.done=e.checked;save();render()});
 }
-
-function renderPayments(){
- screen.innerHTML=`<div class="screen"><div class="row between"><h2>Pagos</h2><button class="btn primary" id="newPayment">＋ Nuevo</button></div>
- ${state.payments.length?`<div class="grid">${state.payments.map(paymentCard).join("")}</div>`:`<div class="glass empty">Tu agenda de pagos está vacía.<br><br>JARVIS puede avisarte antes del vencimiento.</div>`}</div>`;
- $("#newPayment").onclick=()=>openPayment();
- document.querySelectorAll("[data-paid]").forEach(x=>x.onclick=()=>{const p=state.payments.find(p=>p.id===x.dataset.paid);if(p){p.paid=!p.paid;save();scheduleNotification(p);render()}});
- document.querySelectorAll("[data-del]").forEach(x=>x.onclick=()=>{state.payments=state.payments.filter(p=>p.id!==x.dataset.del);save();render()});
+function payments(){
+$("#screen").innerHTML='<div class="screen"><div class="row between"><h2>Pagos</h2><button class="btn primary" id="np">＋ Nuevo</button></div>'+(state.payments.length?'<div class="grid">'+state.payments.map(paymentCard).join("")+'</div>':'<div class="glass empty">Tu agenda de pagos está vacía.<br><br>JARVIS podrá avisarte antes del vencimiento.</div>')+'</div>';
+$("#np").onclick=()=>openPayment();
+document.querySelectorAll("[data-paid]").forEach(e=>e.onclick=()=>{let p=state.payments.find(x=>x.id===e.dataset.paid);if(p){let was=p.paid;p.paid=!p.paid;if(!was&&p.paid)advanceRepeat(p);save();render()}});
+document.querySelectorAll("[data-del]").forEach(e=>e.onclick=()=>{state.payments=state.payments.filter(p=>p.id!==e.dataset.del);save();render()});
+document.querySelectorAll("[data-snooze]").forEach(e=>e.onclick=()=>snooze(e.dataset.snooze));
 }
 function paymentCard(p){
- const d=daysUntil(p.dueAt);
- const status=p.paid?"✓ Pagado":d<0?"⚠ Vencido":d===0?"🔥 Vence hoy":d===1?"⏳ Vence mañana":`⏳ Faltan ${d} días`;
- return `<article class="payment glass"><div class="row between"><div><h3>${esc(p.title)}</h3><div class="badge">${esc(p.amount||"")}</div></div><button class="btn" data-paid="${p.id}">${p.paid?"Desmarcar":"Marcar pagado"}</button></div><p class="muted small">${fmt(p.dueAt)}</p><div class="status ${p.paid?"ok":""}">${status}</div><div class="muted small">Aviso: ${p.reminder===0?"al vencer":(p.reminder/86400000)+" días antes"}</div><div class="actions"><button class="btn danger" data-del="${p.id}">Eliminar</button></div></article>`
+let [cls,label]=urgency(p),d=days(p.due);
+let repeat=p.repeat==="monthly"?"Mensual":p.repeat==="yearly"?"Anual":p.repeat==="weekly"?"Semanal":"Sin repetición";
+return `<article class="payment glass"><div class="row between"><div><h3>${esc(p.title)}</h3><div class="muted small">${esc(p.amount||"")}</div></div><span class="chip ${cls}">${label}</span></div>
+<p class="muted small">📅 ${dateText(p.due)}</p>
+<div class="status ${cls}">${p.paid?"✓ Marcado como pagado":jarvisText(p)}</div>
+<div class="muted small" style="margin-top:7px">🔔 ${p.reminder===0?"Al vencer":p.reminder+" día"+(p.reminder===1?"":"s")+" antes"} · 🔁 ${repeat}</div>
+<div class="snooze"><button class="btn" data-snooze="${p.id}|1">⏰ +1h</button><button class="btn" data-snooze="${p.id}|24">⏰ Mañana</button><button class="btn" data-paid="${p.id}">${p.paid?"Desmarcar":"✓ Pagado"}</button><button class="btn danger" data-del="${p.id}">Eliminar</button></div></article>`}
+function jarvis(){
+let up=state.payments.filter(p=>!p.paid).sort((a,b)=>new Date(a.due)-new Date(b.due)).slice(0,6);
+let imminent=up.filter(p=>days(p.due)<=2);
+$("#screen").innerHTML='<div class="screen"><section class="jarvis glass"><div class="orb"></div><h2 style="text-align:center">JARVIS</h2><p style="text-align:center" class="muted">'+(imminent.length?`Señor, tengo ${imminent.length} aviso${imminent.length>1?"s":""} que requieren su atención.`:"Todo tranquilo por ahora, señor.")+'</p>'+
+`<div class="actions" style="justify-content:center"><button class="btn primary" id="notif">${state.settings.notifications?"🔔 Notificaciones activas":"🔕 Activar notificaciones"}</button></div></section>
+<section class="jarvis-banner glass"><div class="eyebrow">CENTRO DE AVISOS</div><h3 style="margin:5px 0">Agenda inteligente</h3><div class="muted small">JARVIS analiza tus fechas y prioriza lo que necesita atención.</div></section>`+
+(up.length?up.map(p=>{let [cls,label]=urgency(p);return `<div class="payment glass alert ${cls}"><div class="row between"><b>${esc(p.title)}</b><span class="chip">${label}</span></div><p class="muted">${esc(jarvisText(p))}</p><div class="muted small">📅 ${dateText(p.due)} · ${esc(p.amount||"")}</div><div class="snooze"><button class="btn" data-j-snooze="${p.id}|1">+1h</button><button class="btn" data-j-snooze="${p.id}|24">Mañana</button><button class="btn primary" data-j-paid="${p.id}">✓ Pagado</button></div></div>`}).join(""):'<div class="glass empty">No hay pagos próximos.</div>')+'</div></div>';
+$("#notif").onclick=requestNotifications;
+document.querySelectorAll("[data-j-paid]").forEach(e=>e.onclick=()=>{let p=state.payments.find(x=>x.id===e.dataset.jPaid);if(p){p.paid=true;advanceRepeat(p);save();render()}});
+document.querySelectorAll("[data-j-snooze]").forEach(e=>e.onclick=()=>snooze(e.dataset.jSnooze));
 }
-
-function renderJarvis(){
- const upcoming=state.payments.filter(p=>!p.paid).sort((a,b)=>a.dueAt-b.dueAt).slice(0,3);
- screen.innerHTML=`<div class="screen"><div class="jarvis glass"><div class="orb"></div><h2 style="text-align:center">JARVIS</h2><p class="muted" style="text-align:center">Asistente de Glass Notes</p><hr style="border-color:#ffffff14"><p>${upcoming.length?`Señor, tiene ${upcoming.length} pago${upcoming.length>1?"s":""} próximo${upcoming.length>1?"s":""}.`:"Señor, no detecto pagos pendientes."}</p>${upcoming.map(p=>`<div class="glass payment"><b>${esc(p.title)}</b><br><span class="muted">${fmt(p.dueAt)} · ${esc(p.amount)}</span><br><span class="status">${daysUntil(p.dueAt)<=2?"Atención próxima":"Programado"}</span></div>`).join("")}</div></div>`
+function snooze(spec){let [id,h]=spec.split("|"),p=state.payments.find(x=>x.id===id);if(!p)return;p.snoozedUntil=Date.now()+Number(h)*3600000;save();render()}
+function advanceRepeat(p){
+if(p.repeat==="none")return;
+let d=new Date(p.due);
+if(p.repeat==="monthly")d.setMonth(d.getMonth()+1);
+if(p.repeat==="yearly")d.setFullYear(d.getFullYear()+1);
+if(p.repeat==="weekly")d.setDate(d.getDate()+7);
+p.id=crypto.randomUUID();p.due=d.getTime();p.paid=false;p.snoozedUntil=0;p.lastNotified=0;
+state.payments.push({...p});
 }
+function openModal(title,body){$("#mtitle").textContent=title;$("#mbody").innerHTML=body;$("#modal").classList.remove("hidden");}
+function closeModal(){$("#modal").classList.add("hidden");editId=null;tempBg=""}
+$("#close").onclick=closeModal;
 
 function openNote(id){
- const n=state.notes.find(x=>x.id===id)||{id:crypto.randomUUID(),title:"",body:"",checks:[],accent:"#66e3ff",bg:""};
- modalTitle.textContent=id?"Editar nota":"Nueva nota";
- modalBody.innerHTML=`<div class="label">Título</div><input id="nt" class="field" value="${esc(n.title)}" placeholder="Gas, supermercado, ideas..."><div class="label">Contenido</div><textarea id="nb" class="field" rows="7" placeholder="Escribe tu nota...">${esc(n.body)}</textarea><div class="label">Checklist</div><div id="checks">${n.checks.map((c,i)=>`<div class="check"><input type="checkbox" ${c.done?"checked":""} data-c="${i}"><input class="field" data-ct="${i}" value="${esc(c.text)}"><button class="icon-btn" data-rm="${i}">🗑️</button></div>`).join("")}</div><div class="row"><input id="newcheck" class="field" placeholder="Nuevo pendiente"><button class="btn" id="addcheck">＋</button></div><div class="label">Personalización</div><div class="actions"><button class="btn" id="bgBtn">🖼️ Fondo</button><button class="btn" id="fontInfo">🔤 Fuente</button><input id="color" type="color" value="${n.accent||"#66e3ff"}" class="field" style="width:58px;padding:4px"></div><div class="actions"><button class="btn primary" id="saveNote">Guardar</button>${id?`<button class="btn danger" id="delNote">Eliminar</button>`:""}<button class="btn" id="cancel">Cancelar</button></div><input id="fileBg" type="file" accept="image/*" hidden>`;
- modal.classList.remove("hidden");
- $("#addcheck").onclick=()=>{const v=$("#newcheck").value.trim();if(v){n.checks.push({id:crypto.randomUUID(),text:v,done:false});openNote(n.id)}}; // refresh editor
- $("#saveNote").onclick=()=>saveNote(n);
- $("#cancel").onclick=closeModal;
- if(id)$("#delNote").onclick=()=>{state.notes=state.notes.filter(x=>x.id!==n.id);save();closeModal();render()};
- $("#bgBtn").onclick=()=>$("#fileBg").click();
- $("#fileBg").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{n.bg=r.result;openNote(n.id)};r.readAsDataURL(f)};
- $("#fontInfo").onclick=()=>alert("V0.1 PWA: la arquitectura de fuentes está reservada. En la versión siguiente añadiremos importación TTF/OTF y selección global o por nota.");
- $("#color").oninput=e=>n.accent=e.target.value;
- document.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{n.checks.splice(+x.dataset.rm,1);openNote(n.id)});
-}
-function saveNote(n){
- n.title=$("#nt").value.trim();n.body=$("#nb").value;
- n.checks.forEach((c,i)=>{const input=document.querySelector(`[data-ct="${i}"]`);const cb=document.querySelector(`[data-c="${i}"]`);if(input)c.text=input.value;if(cb)c.done=cb.checked});
- if(!state.notes.some(x=>x.id===n.id))state.notes.unshift(n);
- save();closeModal();render();
+editId=id||null;let n=state.notes.find(x=>x.id===id)||{id:crypto.randomUUID(),title:"",body:"",checks:[],accent:state.settings.accent||"#66e3ff",bg:"",fontData:"",fontName:""};
+tempBg=n.bg;
+openModal(id?"Editar nota":"Nueva nota",`
+<div class="label">Título</div><input class="field" id="nt" value="${esc(n.title)}" placeholder="Gas, supermercado, ideas...">
+<div class="label">Contenido</div><textarea class="field" id="nb" rows="6" placeholder="Escribe aquí...">${esc(n.body)}</textarea>
+<div class="label">Checklist</div><div id="cl">${n.checks.map((c,i)=>`<div class="checkrow"><input type="checkbox" data-ci="${i}" ${c.done?"checked":""}><input class="field" data-ct="${i}" value="${esc(c.text)}"><button class="icon" data-rm="${i}">🗑️</button></div>`).join("")}</div>
+<div class="row"><input class="field" id="newc" placeholder="Nuevo pendiente"><button class="btn" id="addc">＋</button></div>
+<div class="label">Personalización de esta nota</div>
+<div class="row"><input type="color" class="field color" id="nc" value="${n.accent||"#66e3ff"}"><button class="btn" id="nbg">🖼️ Fondo</button><button class="btn" id="nfont">🔤 Fuente</button></div>
+<div class="preview" id="preview" style="${tempBg?`background-image:url('${tempBg}')`:''};margin-top:12px"><b>Vista previa</b><p class="muted">Así se verá tu nota.</p></div>
+<div class="actions"><button class="btn primary" id="saveN">Guardar</button>${id?'<button class="btn danger" id="delN">Eliminar</button>':""}<button class="btn" id="cancel">Cancelar</button></div>
+<input hidden type="file" id="bgfile" accept="image/*"><input hidden type="file" id="fontfile" accept=".ttf,.otf,.woff,.woff2">
+`);
+$("#addc").onclick=()=>{let v=$("#newc").value.trim();if(!v)return;n.checks.push({id:crypto.randomUUID(),text:v,done:false});openNote(n.id)};
+$("#nbg").onclick=()=>$("#bgfile").click();
+$("#nfont").onclick=()=>$("#fontfile").click();
+$("#bgfile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{$("#preview").style.backgroundImage=`url('${r.result}')`;tempBg=r.result};r.readAsDataURL(f)};
+$("#fontfile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{n.fontData=r.result;n.fontName=f.name;$("#nfont").textContent="🔤 "+f.name};r.readAsDataURL(f)};
+$("#addc").onclick=()=>{};
+$("#saveN").onclick=()=>{n.title=$("#nt").value.trim()||"Sin título";n.body=$("#nb").value;n.accent=$("#nc").value;n.bg=tempBg;n.fontData=n.fontData||"";n.fontName=n.fontName||"";n.checks.forEach((c,i)=>{let cb=document.querySelector(`[data-ci="${i}"]`),tx=document.querySelector(`[data-ct="${i}"]`);if(cb)c.done=cb.checked;if(tx)c.text=tx.value});if(!id)state.notes.unshift(n);save();closeModal();render()};
+if(id)$("#delN").onclick=()=>{state.notes=state.notes.filter(x=>x.id!==id);save();closeModal();render()};
+$("#cancel").onclick=closeModal;
+document.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{n.checks.splice(+b.dataset.rm,1);openNote(n.id)});
 }
 
 function openPayment(){
- modalTitle.textContent="Nuevo pago";
- const c=new Date(Date.now()+2*86400000);c.setHours(9,0,0,0);
- modalBody.innerHTML=`<div class="label">Concepto</div><input id="pt" class="field" placeholder="Gas"><div class="label">Importe</div><input id="pa" class="field" placeholder="$650"><div class="label">Vencimiento</div><input id="pd" class="field" type="datetime-local" value="${localDateValue(c)}"><div class="label">Avisarme</div><div class="chips">${[[86400000,"1 día"],[172800000,"2 días"],[604800000,"7 días"],[0,"Al vencer"]].map(([v,t],i)=>`<button class="chip ${i===1?"active":""}" data-rem="${v}">${t}</button>`).join("")}</div><div class="actions"><button class="btn primary" id="savePay">Guardar pago</button><button class="btn" id="cancel">Cancelar</button></div>`;
- let reminder=172800000;
- document.querySelectorAll("[data-rem]").forEach(b=>b.onclick=()=>{reminder=+b.dataset.rem;document.querySelectorAll("[data-rem]").forEach(x=>x.classList.remove("active"));b.classList.add("active")});
- $("#savePay").onclick=()=>{const title=$("#pt").value.trim();if(!title)return alert("Escribe el concepto del pago.");const due=new Date($("#pd").value).getTime();const p={id:crypto.randomUUID(),title,amount:$("#pa").value.trim(),dueAt:due,reminder,paid:false};state.payments.push(p);save();scheduleNotification(p);closeModal();render()};
- $("#cancel").onclick=closeModal;
+let n=new Date();n.setMinutes(n.getMinutes()-n.getTimezoneOffset());let iso=n.toISOString().slice(0,16);
+openModal("Nuevo pago",`
+<div class="label">Concepto</div><input class="field" id="pt" placeholder="Pago del gas">
+<div class="label">Monto (opcional)</div><input class="field" id="pa" placeholder="$350">
+<div class="label">Fecha y hora de vencimiento</div><input class="field" id="pd" type="datetime-local" value="${iso}">
+<div class="label">Avisarme</div><select class="field" id="pr"><option value="0">Al vencer</option><option value="1">1 día antes</option><option value="2" selected>2 días antes</option><option value="3">3 días antes</option><option value="7">7 días antes</option></select>
+<div class="label">Repetición automática</div><select class="field" id="pre"><option value="none">No repetir</option><option value="weekly">Cada semana</option><option value="monthly" selected>Cada mes</option><option value="yearly">Cada año</option></select>
+<div class="glass" style="padding:12px;margin-top:10px"><span class="muted small">🤖 JARVIS: te avisará cuando llegue la ventana de recordatorio. En Android, permite las notificaciones cuando el navegador lo solicite.</span></div>
+<div class="actions"><button class="btn primary" id="saveP">Guardar pago</button><button class="btn" id="cancelP">Cancelar</button></div>`);
+$("#saveP").onclick=()=>{let title=$("#pt").value.trim();if(!title)return alert("Escribe el concepto del pago.");let due=new Date($("#pd").value).getTime();if(!due)return alert("Selecciona una fecha.");state.payments.push({id:crypto.randomUUID(),title,amount:$("#pa").value.trim(),due,reminder:+$("#pr").value,repeat:$("#pre").value,paid:false,snoozedUntil:0,lastNotified:0});save();closeModal();render();};
+$("#cancelP").onclick=closeModal;
 }
-function localDateValue(d){const pad=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
-function scheduleNotification(p){
- if(!("Notification"in window)||Notification.permission!=="granted")return;
- const when=p.dueAt-p.reminder-Date.now();
- if(when<=0)return;
- // Browser timers work while the PWA is active. For true closed-app Android notifications
- // we will add Web Push/WorkManager bridge in the next iteration.
- setTimeout(()=>{if(!p.paid)new Notification("🤖 JARVIS · Glass Notes",{body:`Señor, recuerde pagar ${p.title}${p.amount?" por "+p.amount:""}.`})},when);
+
+function settings(){
+openModal("Personalización",`
+<p class="muted small">Puedes usar una fuente descargada de Google Fonts como fuente global. La fuente de cada nota puede ser distinta.</p>
+<div class="label">Color principal</div><div class="row"><input type="color" class="field color" id="ga" value="${state.settings.accent||"#66e3ff"}"><span class="muted small">Se aplica a toda la interfaz.</span></div>
+<div class="label">Notificaciones JARVIS</div><div class="row between glass" style="padding:12px"><span class="small">${state.settings.notifications?"🔔 Activas":"🔕 Desactivadas"}</span><button class="btn" id="gn">${state.settings.notifications?"Probar":"Activar"}</button></div>
+<div class="label">Fuente global</div><button class="btn" id="gf">🔤 ${state.settings.fontName||"Subir TTF / OTF / WOFF"}</button>
+<div class="actions"><button class="btn primary" id="saveS">Guardar configuración</button><button class="btn" id="closeS">Cerrar</button></div>
+<input hidden type="file" id="gff" accept=".ttf,.otf,.woff,.woff2">
+`);
+$("#gn").onclick=()=>{requestNotifications();}; $("#gf").onclick=()=>$("#gff").click();
+$("#gff").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{state.settings.fontData=r.result;state.settings.fontName=f.name;$("#gf").textContent="🔤 "+f.name};r.readAsDataURL(f)};
+$("#saveS").onclick=()=>{state.settings.accent=$("#ga").value;state.settings.applyFontAll=true;save();closeModal();render()};
+$("#closeS").onclick=closeModal;
 }
-function closeModal(){modal.classList.add("hidden")}
-$("#closeModal").onclick=closeModal;
-$("#fab").onclick=()=>openNote();
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
-$("#settingsBtn").onclick=()=>alert("Configuración visual avanzada: V0.2. Aquí añadiremos fuentes TTF/OTF, fuente global, fondo global y preferencias de JARVIS.");
-if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
-if("Notification"in window&&Notification.permission==="default")Notification.requestPermission().catch(()=>{});
+$("#settings").onclick=settings;
+
+$("#fab").onclick=()=>{$("#fabMenu").classList.toggle("open");$("#fab").textContent=$("#fabMenu").classList.contains("open")?"×":"＋"};
+document.querySelectorAll("[data-create]").forEach(b=>b.onclick=()=>{ $("#fabMenu").classList.remove("open");$("#fab").textContent="＋";if(b.dataset.create==="payment")openPayment();else openNote()});
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
 render();
 </script>
 </body>
 </html>
+<script>
+setInterval(()=>{notifyDue();},60000);
+</script>
