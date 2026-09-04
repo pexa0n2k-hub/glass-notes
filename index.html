@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
-<title>Glass Notes V1.0 — JARVIS AI</title>
+<title>Glass Notes V1.1 — JARVIS ALERTS</title>
 <style>
 :root{--accent:#66e3ff;--bg:#05070d;--text:#f5f8ff;--muted:#ffffff8c;--glass:rgba(255,255,255,.075)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -85,12 +85,14 @@ hr{border:0;border-top:1px solid #ffffff12}
 .ai-panel{padding:18px;border-radius:26px;margin:10px 0}.ai-recommend{padding:13px;border-radius:20px;margin-top:8px;border:1px solid color-mix(in srgb,var(--accent) 17%,transparent);background:color-mix(in srgb,var(--accent) 5%,transparent)}
 .jarvis-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:10px;background:color-mix(in srgb,var(--accent) 9%,transparent);border:1px solid color-mix(in srgb,var(--accent) 20%,transparent)}
 </style>
-</head>
+<style>
+.notif-card{padding:18px;border-radius:26px}.notif-demo{padding:14px;border-radius:20px;margin:9px 0}.notify-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+</style></head>
 <body><div class="global-bg" id="globalBg"></div>
 <div class="app-bg"></div>
 <header class="topbar glass">
   <div><div class="eyebrow">GLASS NOTES</div><h1>Buenos días, señor.</h1><div class="muted small">Tu espacio personal</div></div>
-  <div class="row"><button class="icon" id="homeBtn">⌂</button><button class="icon" id="memory">🧠</button><button class="icon" id="settings">⚙️</button></div>
+  <div class="row"><button class="icon" id="homeBtn">⌂</button><button class="icon" id="memory">🧠</button><button class="icon" id="settings">⚙️</button><button class="icon" id="alerts">🔔</button></div>
 </header>
 <main id="screen"></main>
 
@@ -564,7 +566,7 @@ $("#gff").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader
 $("#saveS").onclick=()=>{state.settings.accent=$("#ga").value;state.settings.jarvisName=$("#jn").value.trim()||"JARVIS";state.settings.welcome=$("#jw").value.trim()||"Bienvenido de nuevo, señor.";state.settings.homeName=$("#hn").value.trim()||state.settings.jarvisName;state.settings.homeGreeting=$("#hg").value.trim()||"Buenos días, señor.";state.settings.applyFontAll=true;save();closeModal();render()};
 $("#closeS").onclick=closeModal;
 }
-$("#settings").onclick=settings;
+$("#settings").onclick=settings;$("#alerts").onclick=notificationCenter;
 $("#homeBtn").onclick=homeScreen; $("#memory").onclick=memoryDashboard;
 
 $("#fab").onclick=()=>{$("#fabMenu").classList.toggle("open");$("#fab").textContent=$("#fabMenu").classList.contains("open")?"×":"＋"};
@@ -572,6 +574,49 @@ document.querySelectorAll("[data-create]").forEach(b=>b.onclick=()=>{ $("#fabMen
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
 applyGlobalBg();
 homeScreen();
+</script>
+
+<script>
+function notifSupported(){return "Notification" in window}
+async function enableJarvisAlerts(){
+ if(!notifSupported()){alert("Este navegador no admite notificaciones.");return false}
+ const p=await Notification.requestPermission();
+ state.settings.notifications=p==="granted";save();render();
+ if(p==="granted") new Notification("🤖 JARVIS",{body:"Alertas activadas. Estoy listo para avisarle, señor.",tag:"glass-notes"});
+ return p==="granted";
+}
+function jarvisAlert(title,body){
+ if(notifSupported()&&Notification.permission==="granted"){
+   const n=new Notification(title,{body,tag:"glass-notes-"+title});
+   n.onclick=()=>{window.focus();homeScreen();n.close()};
+ }
+}
+function checkJarvisAlerts(){
+ const now=Date.now();
+ (state.payments||[]).forEach(p=>{
+   if(p.paid)return;
+   const target=+p.due-(+p.reminder||0)*86400000;
+   if(now>=target && now<+p.due+86400000 && (!p.lastNotified||now-p.lastNotified>20*3600000) && !p.snoozedUntil){
+     const d=days(p.due);
+     jarvisAlert("🤖 JARVIS",d<=0?"Señor, hoy vence "+p.title+".":"Señor, "+p.title+" vence en "+d+" día"+(d==1?"":"s")+".");
+     p.lastNotified=now;save();
+   }
+ });
+}
+function notificationCenter(){
+ const ok=notifSupported()&&Notification.permission==="granted";
+ openModal("JARVIS ALERTS",`<section class="notif-card glass">
+ <span class="jarvis-badge">● ${ok?"ALERTAS ONLINE":"ALERTAS OFFLINE"}</span>
+ <h3 style="margin:8px 0">Notificaciones de JARVIS</h3>
+ <p class="muted small">Recibe avisos cuando se acerquen tus pagos y recordatorios.</p>
+ <div class="notif-demo glass"><b>🤖 JARVIS</b><div class="muted small">Señor, mañana vence el pago del gas. $350.</div></div>
+ <div class="notify-grid"><button class="btn primary" id="enableJA">${ok?"🔔 Activadas":"🔔 Activar"}</button><button class="btn" id="testJA">🧪 Probar</button></div>
+ <p class="muted small" style="margin-top:12px">Esta versión usa las notificaciones del navegador. Para avisos garantizados con la PWA completamente cerrada necesitaremos Push Notifications + backend en una siguiente etapa.</p>
+ </section>`);
+ $("#enableJA").onclick=enableJarvisAlerts;
+ $("#testJA").onclick=async()=>{if(await enableJarvisAlerts())jarvisAlert("🤖 JARVIS","Prueba completada, señor.")};
+}
+setInterval(checkJarvisAlerts,60000);setTimeout(checkJarvisAlerts,3000);
 </script>
 </body>
 </html>
