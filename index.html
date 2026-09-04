@@ -89,12 +89,15 @@ hr{border:0;border-top:1px solid #ffffff12}
 .notif-card{padding:18px;border-radius:26px}.notif-demo{padding:14px;border-radius:20px;margin:9px 0}.notify-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 </style><style>
 .jarvis-chat{padding:16px;border-radius:26px}.chat-log{max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:8px}.chat-bubble{padding:11px 13px;border-radius:18px;max-width:88%;font-size:12px}.chat-user{align-self:flex-end}.chat-ai{align-self:flex-start}.thinking{opacity:.65}.jarvis-query{display:flex;gap:7px;margin-top:10px}.jarvis-query input{flex:1}
-</style><style>
-.check-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:17px;margin:6px 0;transition:.2s}
+</style>
+<style>
+.check-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:17px;margin:6px 0;transition:.2s ease}
 .check-box{width:24px;height:24px;min-width:24px;border-radius:7px;border:1.5px solid #ffffff55;background:rgba(255,255,255,.04);display:grid;place-items:center;cursor:pointer;font-weight:900}
 .check-item.done .check-box{background:var(--accent);border-color:var(--accent);color:#071016;box-shadow:0 0 14px color-mix(in srgb,var(--accent) 55%,transparent)}
-.check-text{flex:1}.check-item.done .check-text{text-decoration:line-through;opacity:.48}.check-count{font-size:10px;opacity:.55}
-</style></head>
+.check-text{flex:1;transition:.2s}.check-item.done .check-text{text-decoration:line-through;opacity:.48}
+.check-count{font-size:10px;opacity:.55}
+</style>
+</head>
 <body><div class="global-bg" id="globalBg"></div>
 <div class="app-bg"></div>
 <header class="topbar glass">
@@ -497,7 +500,7 @@ tempBg=n.bg;
 openModal(id?"Editar nota":"Nueva nota",`
 <div class="label">Título</div><input class="field" id="nt" value="${esc(n.title)}" placeholder="Gas, supermercado, ideas...">
 <div class="label">Contenido</div><textarea class="field" id="nb" rows="6" placeholder="Escribe aquí...">${esc(n.body)}</textarea>
-<div class="label">Checklist <span class="check-count">☐ completar · ✓ tachar</span></div><div id="cl">${n.checks.map((c,i)=>`<div class="checkrow"><input type="checkbox" data-ci="${i}" ${c.done?"checked":""}><input class="field" data-ct="${i}" value="${esc(c.text)}"><button class="icon" data-rm="${i}">🗑️</button></div>`).join("")}</div>
+<div class="label">Checklist</div><div id="cl">${n.checks.map((c,i)=>`<div class="checkrow"><input type="checkbox" data-ci="${i}" ${c.done?"checked":""}><input class="field" data-ct="${i}" value="${esc(c.text)}"><button class="icon" data-rm="${i}">🗑️</button></div>`).join("")}</div>
 <div class="row"><input class="field" id="newc" placeholder="Nuevo pendiente"><button class="btn" id="addc">＋</button></div>
 <div class="label">Etiquetas</div><input class="field" id="tags" value="${esc((n.tags||[]).join(", "))}" placeholder="pagos, casa, trabajo">
 <div class="row between" style="margin-top:10px"><span class="muted small">Archivar nota</span><label class="toggle"><input type="checkbox" id="arch" ${n.archived?"checked":""}><span class="slider"></span></label></div>
@@ -703,9 +706,11 @@ function startVoiceForInput(input){
  rec.start();
 }
 </script>
+
 <script>
 function renderChecklist(n){
- const checks=n.checks||[],done=checks.filter(c=>c.done).length;
+ const checks=n.checks||[];
+ const done=checks.filter(c=>c.done).length;
  return `<div class="check-count" style="margin:8px 0">${done}/${checks.length} completadas</div>`+
  checks.map((c,i)=>`<div class="check-item glass ${c.done?'done':''}" data-note="${n.id}" data-check="${c.id||i}">
  <button class="check-box" aria-label="${c.done?'Desmarcar':'Completar'}">${c.done?'✓':''}</button>
@@ -722,7 +727,8 @@ document.addEventListener("click",e=>{
  const item=b.closest(".check-item");if(!item)return;
  e.preventDefault();toggleChecklistItem(item.dataset.note,item.dataset.check);
 });
-</script></body>
+</script>
+</body>
 </html>
 <script>
 setInterval(()=>{notifyDue();},60000);
