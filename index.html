@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
-<title>Glass Notes V1.1 — JARVIS ALERTS</title>
+<title>Glass Notes V1.2 — JARVIS MEMORY</title>
 <style>
 :root{--accent:#66e3ff;--bg:#05070d;--text:#f5f8ff;--muted:#ffffff8c;--glass:rgba(255,255,255,.075)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -87,6 +87,8 @@ hr{border:0;border-top:1px solid #ffffff12}
 </style>
 <style>
 .notif-card{padding:18px;border-radius:26px}.notif-demo{padding:14px;border-radius:20px;margin:9px 0}.notify-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+</style><style>
+.jarvis-chat{padding:16px;border-radius:26px}.chat-log{max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:8px}.chat-bubble{padding:11px 13px;border-radius:18px;max-width:88%;font-size:12px}.chat-user{align-self:flex-end}.chat-ai{align-self:flex-start}.thinking{opacity:.65}.jarvis-query{display:flex;gap:7px;margin-top:10px}.jarvis-query input{flex:1}
 </style></head>
 <body><div class="global-bg" id="globalBg"></div>
 <div class="app-bg"></div>
@@ -269,6 +271,7 @@ function cleanCommandTitle(text){
 function smartVoiceCommand(raw){
  const t=normalizeText(raw);
  if(!t)return voiceReply(raw,false);
+ const memory=jarvisConversation(raw); if(memory){speakJarvis(memory); return "JARVIS: "+memory;}
  let due=parseRelativeDate(raw), time=extractTime(raw), amount=extractAmount(raw);
 
  // Natural reminder/payment.
@@ -383,7 +386,7 @@ $("#screen").innerHTML=`<div class="screen">
 </div></section>
 
 <section class="home-section"><div class="section-title"><h2>Acciones rápidas</h2></div>
-<div class="action-strip"><button class="btn glass" id="qaNote">📝<br><small>Nueva nota</small></button><button class="btn glass" id="qaPay">💳<br><small>Nuevo pago</small></button><button class="btn glass" id="qaJarvis">🤖<br><small>JARVIS</small></button><button class="btn glass" id="qaVoice">🎙️<br><small>Hablar</small></button></div></section>
+<div class="action-strip"><button class="btn glass" id="qaNote">📝<br><small>Nueva nota</small></button><button class="btn glass" id="qaPay">💳<br><small>Nuevo pago</small></button><button class="btn glass" id="qaJarvis">🤖<br><small>JARVIS</small></button><button class="btn glass" id="qaMemory" onclick="openJarvisChat()">🎙️<br><small>Hablar</small></button></div></section>
 
 <section class="home-section"><div class="section-title"><h2>JARVIS recomienda</h2><button class="btn" id="openAI">🧠 Ver análisis</button></div>
 ${jarvisAI().slice(0,2).map(r=>`<div class="ai-recommend glass"><b>${r.icon} ${esc(r.title)}</b><div class="muted small">${esc(r.text)}</div></div>`).join("")}</section>
@@ -617,6 +620,83 @@ function notificationCenter(){
  $("#testJA").onclick=async()=>{if(await enableJarvisAlerts())jarvisAlert("🤖 JARVIS","Prueba completada, señor.")};
 }
 setInterval(checkJarvisAlerts,60000);setTimeout(checkJarvisAlerts,3000);
+</script>
+
+<script>
+function allOpenTasks(){
+ let out=[];
+ (state.notes||[]).forEach(n=>(n.checks||[]).forEach(c=>{if(!c.done)out.push({text:c.text,note:n.title,updated:n.updatedAt||0})}));
+ return out;
+}
+function duePayments(){
+ return (state.payments||[]).filter(p=>!p.paid).sort((a,b)=>+a.due-+b.due);
+}
+function jarvisDatePhrase(due){
+ let d=days(due);
+ if(d<=0)return "hoy";
+ if(d===1)return "mañana";
+ return "en "+d+" días";
+}
+function jarvisMemoryAnswer(raw){
+ const t=normalizeText(raw), tasks=allOpenTasks(), pays=duePayments();
+ if(/que.*(pendiente|tarea)|pendientes|tareas/.test(t)){
+   if(!tasks.length)return "Señor, no tienes pendientes abiertos. Todo está limpio. 🟢";
+   let list=tasks.slice(0,7).map(x=>"• "+x.text+" — "+x.note).join("\n");
+   return "Tienes "+tasks.length+" pendiente"+(tasks.length===1?"":"s")+" abiertos:\n"+list;
+ }
+ if(/(pago|pagos|debo|vencimiento|vence|vencen)/.test(t)){
+   if(!pays.length)return "No tienes pagos pendientes registrados. 🟢";
+   let list=pays.slice(0,5).map(p=>"• "+p.title+" — "+jarvisDatePhrase(+p.due)+(p.amount?" · "+p.amount:"")).join("\n");
+   return "Estos son tus próximos pagos:\n"+list;
+ }
+ if(/(hoy|dia de hoy|ahora)/.test(t)){
+   let urgent=pays.filter(p=>days(+p.due)<=0), todo=tasks.length;
+   return urgent.length
+    ? "Para hoy, señor: "+urgent.map(p=>p.title+(p.amount?" "+p.amount:"")).join(", ")+". También tienes "+todo+" pendiente"+(todo===1?"":"s")+" abierto"+(todo===1?"":"s")+"."
+    : "Hoy no detecto pagos vencidos. Tienes "+todo+" pendiente"+(todo===1?"":"s")+" abierto"+(todo===1?"":"s")+".";
+ }
+ if(/(mañana|manana|proximo|próximo|semana)/.test(t)){
+   let soon=pays.filter(p=>days(+p.due)<=7);
+   if(!soon.length)return "No detecto pagos próximos durante los siguientes días.";
+   return "En los próximos días debes considerar: "+soon.slice(0,5).map(p=>p.title+" "+jarvisDatePhrase(+p.due)).join("; ")+".";
+ }
+ if(/(primero|prioridad|priorizar|que.*hacer)/.test(t)){
+   let soon=pays[0], task=tasks[0];
+   if(soon && days(+soon.due)<=3)return "Yo empezaría por "+soon.title+" porque vence "+jarvisDatePhrase(+soon.due)+(soon.amount?" y es por "+soon.amount:"")+". Después atacaría "+(task?task.text:"tus pendientes")+"."; 
+   if(task)return "Te recomiendo comenzar por “"+task.text+"” de "+task.note+". Después podemos seguir con los demás pendientes.";
+   return "No veo una prioridad crítica. Vas bastante bien, señor. 🟢";
+ }
+ if(/(cuantas|cuántas).*(nota|notas)/.test(t))return "Tienes "+(state.notes||[]).filter(n=>!n.archived).length+" notas activas.";
+ if(/(resumen|informe|como voy|cómo voy)/.test(t)){
+   return "Resumen: "+(state.notes||[]).filter(n=>!n.archived).length+" notas activas, "+tasks.length+" pendientes abiertos y "+pays.length+" pagos sin resolver.";
+ }
+ return null;
+}
+function jarvisConversation(raw){
+ let answer=jarvisMemoryAnswer(raw);
+ if(answer){
+   logEvent("jarvis","Consulta sobre memoria",raw);
+   save(); return answer;
+ }
+ return null;
+}
+function openJarvisChat(){
+ openModal("JARVIS MEMORY",`<section class="jarvis-chat glass">
+ <span class="jarvis-badge">● MEMORY ONLINE</span>
+ <h3 style="margin:8px 0">Habla con tus notas</h3>
+ <div id="jchat" class="chat-log"><div class="chat-bubble chat-ai glass">Buenas, señor. Puedo consultar sus notas, pendientes y pagos.</div></div>
+ <div class="jarvis-query"><input id="jask" class="field" placeholder="Ej. ¿Qué tengo pendiente mañana?"><button class="btn primary" id="jmic">🎙️</button><button class="btn" id="jsend">➤</button></div>
+ </section>`);
+ const ask=()=>{let q=$("#jask").value.trim();if(!q)return;$("#jchat").insertAdjacentHTML("beforeend",`<div class="chat-bubble chat-user glass">${esc(q)}</div>`);$("#jask").value="";let a=jarvisConversation(q)||"Puedo crear recordatorios, revisar pagos, consultar pendientes y darte un resumen. Prueba: “¿Qué tengo pendiente?”";$("#jchat").insertAdjacentHTML("beforeend",`<div class="chat-bubble chat-ai glass">${esc(a).replace(/\n/g,"<br>")}</div>`);$("#jchat").scrollTop=99999;speakJarvis(a)};
+ $("#jsend").onclick=ask;$("#jask").onkeydown=e=>{if(e.key==="Enter")ask()};$("#jmic").onclick=()=>startVoiceForInput($("#jask"));
+}
+function startVoiceForInput(input){
+ if(!voiceSupported()){alert("Tu navegador no permite reconocimiento de voz. Prueba Chrome en Android.");return}
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition,rec=new SR();
+ rec.lang="es-MX";rec.interimResults=false;rec.maxAlternatives=1;
+ rec.onresult=e=>{input.value=e.results[0][0].transcript; input.focus();};
+ rec.start();
+}
 </script>
 </body>
 </html>
