@@ -144,6 +144,7 @@ state.settings=(state.settings&&typeof state.settings==="object"&&!Array.isArray
 state.settings={...DEFAULT_STATE.settings,...state.settings};
 state.settings.homeName=String(state.settings.homeName||state.settings.jarvisName||"JARVIS");
 state.settings.homeGreeting=String(state.settings.homeGreeting||"Buenos días, señor.");
+state.voiceHistory=Array.isArray(state.voiceHistory)?state.voiceHistory.filter(x=>x&&typeof x==="object"):[];
 state.lastOpened=state.lastOpened||Date.now();
 
 state.notes=state.notes.map(n=>{
@@ -162,7 +163,30 @@ state.notes=state.notes.map(n=>{
     checks
   };
 });
-state.payments=state.payments.map(p=>({...p,id:p.id||uid(),title:String(p.title??"Pago"),reminder:Number.isFinite(Number(p.reminder))?Number(p.reminder):2,repeat:p.repeat||"none",snoozedUntil:p.snoozedUntil||0}));
+state.payments=state.payments.map(p=>{
+  const due=Number(p.due);
+  return {
+    ...p,
+    id:p.id||uid(),
+    title:String(p.title??"Pago"),
+    amount:String(p.amount??""),
+    due:Number.isFinite(due)?due:Date.now()+86400000,
+    reminder:Number.isFinite(Number(p.reminder))?Number(p.reminder):2,
+    repeat:["none","daily","weekly","monthly","yearly"].includes(p.repeat)?p.repeat:"none",
+    snoozedUntil:Number(p.snoozedUntil)||0,
+    lastNotified:Number(p.lastNotified)||0,
+    paid:!!p.paid
+  };
+}).filter(p=>Number.isFinite(p.due));
+
+state.activity=state.activity.map(a=>({
+  ...a,
+  id:a.id||uid(),
+  type:String(a.type??"system"),
+  title:String(a.title??"Actividad"),
+  detail:String(a.detail??""),
+  at:Number.isFinite(Number(a.at))?Number(a.at):Date.now()
+}));
 function logEvent(type,title,detail=""){state.activity.unshift({id:uid(),type,title,detail,at:Date.now()});state.activity=state.activity.slice(0,80);}
 function recordPattern(){let recurring=state.payments.filter(p=>p.repeat&&p.repeat!=="none");let monthly=recurring.filter(p=>p.repeat==="monthly").length;return {recurring:recurring.length,monthly};}
 function memoryInsights(){
@@ -178,9 +202,9 @@ let tab="notes", editId=null, tempBg="";
 const $=s=>document.querySelector(s);
 const esc=s=>(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const save=()=>localStorage.setItem(KEY,JSON.stringify(state));
-const days=ts=>Math.ceil((new Date(ts)-Date.now())/86400000);
+const days=ts=>{let d=new Date(Number(ts)).getTime();return Number.isFinite(d)?Math.ceil((d-Date.now())/86400000):999999};
 const hours=ts=>Math.ceil((new Date(ts)-Date.now())/3600000);
-const dateText=ts=>new Intl.DateTimeFormat("es-MX",{day:"2-digit",month:"long",year:"numeric"}).format(new Date(ts));
+const dateText=ts=>{let d=new Date(Number(ts));return Number.isNaN(d.getTime())?"Fecha pendiente":new Intl.DateTimeFormat("es-MX",{day:"2-digit",month:"long",year:"numeric"}).format(d)};
 const urgency=p=>{if(p.paid)return ["ok","✓ Pagado"];let d=days(p.due);if(d<0)return ["urgent","Vencido"];if(d===0)return ["urgent","Vence hoy"];if(d===1)return ["warn","Vence mañana"];if(d<=2)return ["warn","Próximo"];return ["info","Programado"]};
 const jarvisText=p=>{let d=days(p.due);if(d<0)return `Señor, el pago de ${p.title} está vencido.`;if(d===0)return `Señor, hoy vence el pago de ${p.title}.`;if(d===1)return `Señor, mañana deberá pagar ${p.title}.`;return `Señor, faltan ${d} días para el pago de ${p.title}.`};
 function requestNotifications(){if(!("Notification" in window))return alert("Este navegador no admite notificaciones.");Notification.requestPermission().then(x=>{state.settings.notifications=x==="granted";save();render();});}
@@ -199,7 +223,7 @@ function render(){
  }catch(err){
   console.error("Glass Notes render error:",err);
   const s=$("#screen");
-  if(s)s.innerHTML=`<div class="screen"><section class="glass empty"><h2>Glass Notes se está recuperando</h2><p class="muted">Se detectó un dato incompatible. La aplicación no se cerrará.</p><button class="btn primary" onclick="localStorage.removeItem(KEY);location.reload()">↻ Recuperar aplicación</button></section></div>`;
+  if(s)s.innerHTML=`<div class="screen"><section class="glass empty"><h2>Glass Notes se está recuperando</h2><p class="muted">Se detectó un dato incompatible. La aplicación no se cerrará.</p><button class="btn primary" onclick="try{localStorage.setItem(KEY,JSON.stringify(DEFAULT_STATE))}catch(e){};location.reload()">↻ Recuperar aplicación</button></section></div>`;
  }
 }
 
