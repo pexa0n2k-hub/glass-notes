@@ -1,10 +1,1 @@
-{
-  "name":"Glass Notes",
-  "short_name":"Glass Notes",
-  "start_url":"./",
-  "display":"standalone",
-  "background_color":"#05070d",
-  "theme_color":"#66e3ff",
-  "lang":"es",
-  "description":"Notas, pendientes, pagos y JARVIS"
-}
+{"name":"Glass Notes","short_name":"Glass Notes","start_url":"./","display":"standalone","background_color":"#05070d","theme_color":"#66e3ff","lang":"es"}
