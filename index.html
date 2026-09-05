@@ -1,124 +1,150 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#070910"><link rel="manifest" href="manifest.json">
-<title>Glass Notes V2.1</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070910">
+<link rel="manifest" href="manifest.json">
+<title>Glass Notes V2.0 — Stable</title>
 <style>
 :root{--a:#66e3ff;--bg:#05070d;--t:#f5f8ff;--m:#ffffff8c;--g:rgba(255,255,255,.075)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
 body:before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 10% 10%,#173e59,transparent 32%),radial-gradient(circle at 90% 20%,#29174d,transparent 32%),linear-gradient(145deg,#03050a,#090d17 55%,#04060b)}
 button,input,textarea{font:inherit}.glass{background:var(--g);border:1px solid #ffffff22;box-shadow:0 18px 55px #0005,inset 0 1px #fff1;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
-.top{margin:10px;padding:17px;border-radius:28px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:10px;z-index:5}.ey{font-size:10px;letter-spacing:4px;color:var(--a)}h1{font-size:22px;margin:4px 0}.muted{color:var(--m)}.icons{display:flex;gap:7px}.ico,.btn{border:1px solid #ffffff18;background:#ffffff09;color:#fff;border-radius:15px;padding:11px 13px}.ico{width:43px;height:43px;padding:0;font-size:19px}.primary{background:var(--a);color:#041017;border:0;font-weight:800}.screen{max-width:760px;margin:auto;padding:0 14px 180px}.hero,.card{border-radius:28px;padding:20px;margin:12px 0}.big{font-size:28px;font-weight:800}.grid{display:grid;gap:10px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{padding:14px;border-radius:20px}.stat b{font-size:22px;display:block}.note{padding:18px;border-radius:25px;min-height:140px;cursor:pointer}.note h3{color:var(--a);margin:0 0 7px}.note p{margin:0;color:#fff9;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}.task{display:grid;grid-template-columns:28px 1fr auto;gap:9px;align-items:start;padding:16px;border-radius:22px}.task.done{opacity:.5}.task.done .title{text-decoration:line-through}.check{width:22px;height:22px;accent-color:var(--a)}.payment{padding:17px;border-radius:23px}.amount{font-size:22px;font-weight:800}.nav{position:fixed;left:10px;right:10px;bottom:10px;z-index:10;max-width:700px;margin:auto;padding:7px;border-radius:27px;display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:transparent;color:#fff8;padding:9px 2px;border-radius:19px;font-size:18px}.nav span{display:block;font-size:10px;margin-top:3px}.nav .active{background:#66e3ff1c;color:var(--a)}.fab{position:fixed;right:20px;bottom:96px;z-index:11;width:62px;height:62px;border:0;border-radius:22px;background:var(--a);font-size:32px}.modal{position:fixed;inset:0;background:#000b;z-index:50;display:flex;align-items:flex-end}.hidden{display:none}.sheet{width:100%;max-height:92vh;overflow:auto;border-radius:30px 30px 0 0;padding:20px 18px 34px}.head{display:flex;justify-content:space-between;align-items:center}.label{font-size:12px;color:#fff9;margin:13px 0 6px}.field{width:100%;padding:13px;border-radius:16px;border:1px solid #ffffff18;background:#050810;color:#fff;outline:0}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.empty{text-align:center;padding:28px;border-radius:24px;color:#fff8}.alert{padding:13px;border-radius:18px;margin:10px 0;border-left:3px solid var(--a)}
-</style></head>
+.top{margin:10px;padding:17px;border-radius:28px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:10px;z-index:5}.ey{font-size:10px;letter-spacing:4px;color:var(--a)}h1{font-size:22px;margin:4px 0}h2{margin:10px 0}.muted{color:var(--m)}.icons{display:flex;gap:7px}.ico,.btn{border:1px solid #ffffff18;background:#ffffff09;color:#fff;border-radius:15px;padding:11px 13px}.ico{width:43px;height:43px;padding:0;font-size:19px}.primary{background:var(--a);color:#041017;border:0;font-weight:800}.screen{max-width:760px;margin:auto;padding:0 14px 180px}.hero,.card{border-radius:28px;padding:20px;margin:12px 0}.big{font-size:28px;font-weight:800}.grid{display:grid;gap:10px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{padding:14px;border-radius:20px}.stat b{font-size:22px;display:block}.note{padding:18px;border-radius:25px;min-height:140px;cursor:pointer;position:relative;overflow:hidden}.note h3{color:var(--a);margin:0 0 7px}.note p{margin:0;color:#fff9;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}.tag{display:inline-block;margin-top:10px;padding:6px 9px;border-radius:999px;background:#ffffff0b;color:var(--a);font-size:11px}.task{display:grid;grid-template-columns:28px 1fr auto;gap:9px;align-items:start;padding:16px;border-radius:22px}.task.done{opacity:.5}.task.done .title{text-decoration:line-through}.check{width:22px;height:22px;accent-color:var(--a)}.payment{padding:17px;border-radius:23px}.amount{font-size:22px;font-weight:800}.nav{position:fixed;left:10px;right:10px;bottom:10px;z-index:10;max-width:700px;margin:auto;padding:7px;border-radius:27px;display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:transparent;color:#fff8;padding:9px 2px;border-radius:19px;font-size:18px}.nav span{display:block;font-size:10px;margin-top:3px}.nav .active{background:#66e3ff1c;color:var(--a)}.fab{position:fixed;right:20px;bottom:96px;z-index:11;width:62px;height:62px;border:0;border-radius:22px;background:var(--a);font-size:32px}.modal{position:fixed;inset:0;background:#000b;z-index:50;display:flex;align-items:flex-end}.hidden{display:none}.sheet{width:100%;max-height:92vh;overflow:auto;border-radius:30px 30px 0 0;padding:20px 18px 34px}.head{display:flex;justify-content:space-between;align-items:center}.label{font-size:12px;color:#fff9;margin:13px 0 6px}.field{width:100%;padding:13px;border-radius:16px;border:1px solid #ffffff18;background:#050810;color:#fff;outline:0}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.empty{text-align:center;padding:28px;border-radius:24px;color:#fff8}.orb{width:100px;height:100px;border-radius:50%;margin:18px auto;background:radial-gradient(circle,#fff 0 4%,var(--a) 12%,#15586c 35%,#06131b 66%,transparent 72%);box-shadow:0 0 30px var(--a),0 0 90px #66e3ff66;display:grid;place-items:center;font-size:32px;animation:p 2.4s ease-in-out infinite}@keyframes p{50%{transform:scale(1.08)}}.alert{padding:13px;border-radius:18px;margin:10px 0;border-left:3px solid var(--a)}
+@media(min-width:700px){.fab{right:max(20px,calc((100vw - 720px)/2 + 20px))}}
+</style>
+</head>
 <body>
-<header class="top glass"><div><div class="ey">GLASS NOTES · V2.1</div><h1 id="greet">Buenos días, señor.</h1><div class="muted">Arquitectura segura</div></div><div class="icons"><button class="ico" onclick="go('notes')">⌂</button><button class="ico" onclick="go('jarvis')">🧠</button><button class="ico" onclick="settings()">⚙️</button></div></header>
+<header class="top glass">
+  <div><div class="ey">GLASS NOTES</div><h1 id="greet">Buenos días, señor.</h1><div class="muted">Tu espacio personal</div></div>
+  <div class="icons"><button class="ico" onclick="go('home')">⌂</button><button class="ico" onclick="go('jarvis')">🧠</button><button class="ico" onclick="settings()">⚙️</button></div>
+</header>
 <main id="app" class="screen"></main>
-<nav class="nav glass"><button id="n-notes" onclick="go('notes')">📝<span>Notas</span></button><button id="n-tasks" onclick="go('tasks')">✅<span>Pendientes</span></button><button id="n-payments" onclick="go('payments')">💳<span>Pagos</span></button><button id="n-jarvis" onclick="go('jarvis')">🤖<span>JARVIS</span></button></nav>
+<nav class="nav glass">
+ <button id="n-notes" onclick="go('notes')">📝<span>Notas</span></button>
+ <button id="n-tasks" onclick="go('tasks')">✅<span>Pendientes</span></button>
+ <button id="n-payments" onclick="go('payments')">💳<span>Pagos</span></button>
+ <button id="n-jarvis" onclick="go('jarvis')">🤖<span>JARVIS</span></button>
+</nav>
 <button class="fab" onclick="quick()">+</button>
 <div id="modal" class="modal hidden"><div id="sheet" class="sheet glass"></div></div>
 <script>
 'use strict';
-const APP_VERSION=3,KEY='glass_notes_v2',BACKUP_KEY='glass_notes_v2_backup',OLD_KEYS=['glass_notes_v03'];
-const DEFAULT={schema:3,notes:[],tasks:[],payments:[],settings:{accent:'#66e3ff',bg:'',name:'señor',voice:true},messages:[]};
-function clone(x){return JSON.parse(JSON.stringify(x))}
-function validObj(x){return !!x&&typeof x==='object'&&!Array.isArray(x)}
-function normalize(x){
- if(!validObj(x))return clone(DEFAULT);
- const n=clone(DEFAULT);
- if(Array.isArray(x.notes))n.notes=x.notes.filter(validObj).map(v=>({...v,id:String(v.id||uid()),title:String(v.title||'Sin título'),body:String(v.body||''),created:Number(v.created)||Date.now(),updated:Number(v.updated)||Number(v.created)||Date.now()}));
- if(Array.isArray(x.tasks))n.tasks=x.tasks.filter(validObj).map(v=>({...v,id:String(v.id||uid()),title:String(v.title||'Pendiente'),detail:String(v.detail||''),done:!!v.done,created:Number(v.created)||Date.now()}));
-  if(Array.isArray(x.payments))n.payments=x.payments.filter(validObj).map(v=>({
- id:String(v.id||uid()),title:String(v.title||'Pago'),
- amount:Number.isFinite(Number(v.amount))?Number(v.amount):0,
- note:String(v.note||''),date:String(v.date||''),time:String(v.time||''),
- due:String(v.due||''),status:v.status==='paid'?'paid':'pending'
-}));
- n.settings={...DEFAULT.settings,...(validObj(x.settings)?x.settings:{})};
- n.settings.accent=/^#[0-9a-f]{6}$/i.test(n.settings.accent)?n.settings.accent:DEFAULT.settings.accent;
- n.settings.name=String(n.settings.name||'señor');
- n.settings.bg=typeof n.settings.bg==='string'?n.settings.bg:'';
- n.messages=Array.isArray(x.messages)?x.messages.filter(validObj).slice(-30):[];
- n.schema=APP_VERSION;return n
+const KEY='glass_notes_v2';
+const DEF={notes:[],tasks:[],payments:[],settings:{accent:'#66e3ff',bg:'',name:'señor',voice:true},messages:[]};
+function safe(v){try{return JSON.parse(v)}catch(e){return null}}
+function norm(x){x=x&&typeof x==='object'?x:{};return{notes:Array.isArray(x.notes)?x.notes.filter(v=>v&&typeof v==='object'):[],tasks:Array.isArray(x.tasks)?x.tasks.filter(v=>v&&typeof v==='object'):[],payments:Array.isArray(x.payments)?x.payments.filter(v=>v&&typeof v==='object'):[],settings:{...DEF.settings,...(x.settings||{})},messages:Array.isArray(x.messages)?x.messages.filter(v=>v&&typeof v==='object'):[]}}
+let S=norm(safe(localStorage.getItem(KEY)));
+function migratePayments(){
+ if(!Array.isArray(S.payments))S.payments=[];
+ S.payments=S.payments.filter(x=>x&&typeof x==='object').map(x=>({
+  ...x,
+  id:String(x.id||id()),
+  title:String(x.title||'Pago'),
+  amount:Number.isFinite(Number(x.amount))?Number(x.amount):0,
+  note:String(x.note||''),
+  date:String(x.date||''),
+  time:String(x.time||''),
+  due:String(x.due||''),
+  status:x.status==='paid'?'paid':'pending'
+ }));
 }
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
-function readRaw(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
-function load(){
- let raw=readRaw(KEY);
- if(!validObj(raw)&&OLD_KEYS.map(readRaw).find(Boolean))raw=OLD_KEYS.map(readRaw).find(Boolean);
- const data=normalize(raw);
- if(raw)try{localStorage.setItem(BACKUP_KEY,JSON.stringify(raw))}catch(e){}
- try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}
- return data
-}
-let S=load();
-function save(){
- const before=clone(S);
- try{localStorage.setItem(BACKUP_KEY,JSON.stringify(before));localStorage.setItem(KEY,JSON.stringify(normalize(S)));S=normalize(S);return true}
- catch(e){try{localStorage.setItem(KEY,JSON.stringify(normalize(S)))}catch(_){}alert('No se pudo guardar. Tus datos actuales siguen en memoria.');return false}
-}
-function restoreBackup(){const b=readRaw(BACKUP_KEY);if(!b)return alert('No hay respaldo local disponible.');S=normalize(b);save();render()}
+migratePayments();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert('No se pudo guardar. Libera espacio del navegador e inténtalo de nuevo.')}}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function go(p){location.hash=p;render()}function page(){return location.hash.slice(1)||'notes'}
+function go(p){location.hash=p;render()}
+function pg(){return location.hash.slice(1)||'home'}
 function render(){
- document.documentElement.style.setProperty('--a',S.settings.accent);if(S.settings.bg)document.body.style.backgroundImage=`url("${S.settings.bg}")`;
+ document.documentElement.style.setProperty('--a',S.settings.accent||'#66e3ff');
+ if(S.settings.bg)document.body.style.backgroundImage=`url("${S.settings.bg}")`;
  const h=new Date().getHours();document.getElementById('greet').textContent=(h<12?'Buenos días, ':h<19?'Buenas tardes, ':'Buenas noches, ')+(S.settings.name||'señor')+'.';
- try{const p=page();p==='tasks'?tasks():p==='payments'?payments():p==='jarvis'?jarvis():notes();document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));const b=document.getElementById('n-'+(p==='notes'?'notes':p));if(b)b.classList.add('active')}
- catch(e){console.error(e);document.getElementById('app').innerHTML='<section class="card glass"><h2>Modo seguro</h2><p class="muted">La interfaz encontró un dato inesperado, pero tus datos siguen protegidos.</p><button class="btn primary" onclick="restoreBackup()">↻ Recuperar respaldo</button></section>'}
+ const p=pg();if(p==='tasks')tasks();else if(p==='payments')payments();else if(p==='jarvis')jarvis();else notes(p==='home');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));const b=document.getElementById('n-'+(p==='home'?'notes':p));if(b)b.classList.add('active')
 }
-function notes(){let p=S.tasks.filter(x=>!x.done).length;document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">CENTRO DE MANDO</div><div class="big">Todo bajo control.</div><p class="muted">${S.notes.length} notas · ${p} pendientes · ${S.payments.length} pagos</p><div class="stats"><div class="stat glass"><b>${S.notes.length}</b><span class="muted">Notas</span></div><div class="stat glass"><b>${p}</b><span class="muted">Pendientes</span></div></div></section><div class="head"><h2>Mis notas</h2><button class="btn" onclick="note()">+ Nueva</button></div>${S.notes.length?`<div class="grid">${S.notes.map(n=>`<article class="note glass" onclick="note('${esc(n.id)}')"><h3>${esc(n.title)}</h3><p>${esc(n.body)}</p></article>`).join('')}</div>`:'<div class="empty glass">📝<br><br>Crea tu primera nota con +</div>'}`}
-function tasks(){let a=S.tasks.filter(x=>!x.done),d=S.tasks.filter(x=>x.done);document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">LISTA</div><div class="big">Pendientes</div><p class="muted">${a.length} por hacer · ${d.length} completados</p></section><div class="head"><h2>Por hacer</h2><button class="btn" onclick="task()">+ Pendiente</button></div>${a.length?`<div class="grid">${a.map(taskCard).join('')}</div>`:'<div class="empty glass">✨ Todo listo.</div>'}<h2>Completados</h2>${d.length?`<div class="grid">${d.map(taskCard).join('')}</div>`:''}`}
-function taskCard(t){return `<article class="task glass ${t.done?'done':''}"><input class="check" type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${esc(t.id)}')"><div><div class="title"><b>${esc(t.title)}</b></div><div class="muted">${esc(t.detail)}</div></div><button class="btn" onclick="delTask('${esc(t.id)}')">×</button></article>`}
+function notes(home){
+ const pending=S.tasks.filter(x=>!x.done).length;
+ let h=home?`<section class="hero glass"><div class="ey">CENTRO DE MANDO</div><div class="big">Todo bajo control.</div><p class="muted">${S.notes.length} notas · ${pending} pendientes · ${S.payments.length} pagos</p><div class="stats"><div class="stat glass"><b>${S.notes.length}</b><span class="muted">Notas</span></div><div class="stat glass"><b>${pending}</b><span class="muted">Pendientes</span></div></div></section>`:'';
+ h+=`<section><div class="head"><h2>Mis notas</h2><button class="btn" onclick="note()">+ Nueva</button></div>`;
+ h+=S.notes.length?`<div class="grid">${S.notes.map(n=>`<article class="note glass" onclick="note('${esc(n.id)}')"><h3>${esc(n.title||'Sin título')}</h3><p>${esc(n.body||'')}</p><span class="tag">${new Date(n.updated||n.created||Date.now()).toLocaleDateString('es-MX')}</span></article>`).join('')}</div>`:`<div class="empty glass">📝<br><br>Crea tu primera nota con +</div>`;
+ h+='</section>';document.getElementById('app').innerHTML=h
+}
+function tasks(){
+ const p=S.tasks.filter(x=>!x.done),d=S.tasks.filter(x=>x.done);
+ document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">LISTA</div><div class="big">Pendientes</div><p class="muted">${p.length} por hacer · ${d.length} completados</p></section><div class="head"><h2>Por hacer</h2><button class="btn" onclick="task()">+ Pendiente</button></div>${p.length?`<div class="grid">${p.map(tc).join('')}</div>`:`<div class="empty glass">✨ Todo listo.</div>`}<div class="head"><h2>Completados</h2><button class="btn" onclick="clearDone()">Limpiar</button></div>${d.length?`<div class="grid">${d.map(tc).join('')}</div>`:''}`
+}
+function tc(t){return `<article class="task glass ${t.done?'done':''}"><input class="check" type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${esc(t.id)}')"><div><div class="title"><b>${esc(t.title)}</b></div><div class="muted">${esc(t.detail||'')}</div></div><button class="btn" onclick="delTask('${esc(t.id)}')">×</button></article>`}
 function payments(){
- const now=new Date();
  const pending=S.payments.filter(x=>x.status!=='paid');
  const paid=S.payments.filter(x=>x.status==='paid');
  const tp=pending.reduce((a,x)=>a+(Number(x.amount)||0),0);
  const tg=paid.reduce((a,x)=>a+(Number(x.amount)||0),0);
- document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">CONTROL FINANCIERO</div><div class="big">Pagos</div><p class="muted">Pendiente: <b>$${tp.toFixed(2)}</b> · Pagado: <b>$${tg.toFixed(2)}</b></p><div class="stats"><div class="stat glass"><b>${pending.length}</b><span class="muted">Pendientes</span></div><div class="stat glass"><b>${paid.length}</b><span class="muted">Pagados</span></div></div></section>
- <div class="head"><h2>Mis pagos</h2><button class="btn primary" onclick="payment()">+ Nuevo pago</button></div>
- ${S.payments.length?`<div class="grid">${S.payments.slice().sort((a,b)=>(b.due||b.date||'').localeCompare(a.due||a.date||'')).map(x=>`<article class="payment glass">
- <div class="head"><div><b>${esc(x.title)}</b><div class="muted">${x.status==='paid'?'🟢 Pagado':'🔴 Pendiente'}</div></div><span class="amount">$${(Number(x.amount)||0).toFixed(2)}</span></div>
- <div class="muted">📅 Pago: ${esc(x.date||'Sin fecha')} · ⏰ ${esc(x.time||'Sin hora')}</div>
- <div class="muted">📆 Vence: ${esc(x.due||'Sin vencimiento')}</div>
- ${x.note?`<p class="muted">${esc(x.note)}</p>`:''}
- <div class="actions"><button class="btn" onclick="payment('${esc(x.id)}')">✏️ Editar</button>${x.status!=='paid'?`<button class="btn" onclick="markPaid('${esc(x.id)}')">✓ Marcar pagado</button>`:''}<button class="btn" onclick="delPayment('${esc(x.id)}')">Eliminar</button></div>
- </article>`).join('')}</div>`:'<div class="empty glass">💳 No hay pagos registrados.</div>'}` }`}
-function jarvis(){let last=S.messages.at(-1);document.getElementById('app').innerHTML=`<section class="card glass" style="text-align:center"><div class="ey">JARVIS CORE</div><div style="font-size:70px;margin:20px">🤖</div><h2>¿En qué puedo ayudarte?</h2><p class="muted">Esta versión prioriza estabilidad. El motor de recordatorios llegará después.</p><button class="btn primary" onclick="voice()">🎙️ Hablar con JARVIS</button>${last?`<div class="alert">${esc(last.reply)}</div>`:''}</section><section class="card glass"><h2>Comandos</h2><div class="grid"><button class="btn" onclick="command('crea una nota llamada Compras con leche y pan')">Crea una nota…</button><button class="btn" onclick="command('agrega pendiente pagar la luz')">Agrega pendiente…</button><button class="btn" onclick="command('muéstrame mis pendientes')">Mis pendientes</button></div></section>`}
-function open(x){document.getElementById('modal').classList.remove('hidden');document.getElementById('sheet').innerHTML=x}function close(){document.getElementById('modal').classList.add('hidden')}document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')close()}
-function note(i=''){let n=S.notes.find(x=>x.id===i)||{};open(`<div class="head"><h2>${i?'Editar nota':'Nueva nota'}</h2><button class="ico" onclick="close()">×</button></div><div class="label">Título</div><input id="nt" class="field" value="${esc(n.title)}"><div class="label">Contenido</div><textarea id="nb" class="field" style="min-height:150px">${esc(n.body)}</textarea><div class="actions"><button class="btn primary" onclick="saveNote('${esc(i)}')">Guardar</button>${i?`<button class="btn" onclick="delNote('${esc(i)}')">Eliminar</button>`:''}</div>`)}
-function saveNote(i){let a={title:document.getElementById('nt').value.trim()||'Sin título',body:document.getElementById('nb').value.trim(),updated:Date.now()};if(i)Object.assign(S.notes.find(x=>x.id===i),a);else S.notes.push({id:uid(),created:Date.now(),...a});save();close();render()}function delNote(i){S.notes=S.notes.filter(x=>x.id!==i);save();close();render()}
-function task(){open(`<div class="head"><h2>Nuevo pendiente</h2><button class="ico" onclick="close()">×</button></div><div class="label">Tarea</div><input id="tt" class="field"><div class="label">Detalle</div><input id="td" class="field"><div class="actions"><button class="btn primary" onclick="saveTask()">Agregar</button></div>`)}function saveTask(){let title=document.getElementById('tt').value.trim();if(!title)return;S.tasks.push({id:uid(),title,detail:document.getElementById('td').value.trim(),done:false,created:Date.now()});save();close();render()}function toggleTask(i){let t=S.tasks.find(x=>x.id===i);if(t){t.done=!t.done;save();render()}}function delTask(i){S.tasks=S.tasks.filter(x=>x.id!==i);save();render()}
+ document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">CONTROL</div><div class="big">Pagos</div><p class="muted">Pendiente: <b>$${tp.toFixed(2)}</b> · Pagado: <b>$${tg.toFixed(2)}</b></p></section><div class="head"><h2>Movimientos</h2><button class="btn" onclick="payment()">+ Pago</button></div>${S.payments.length?`<div class="grid">${S.payments.slice().reverse().map(x=>`<article class="payment glass"><div class="head"><div><b>${esc(x.title||'Pago')}</b><div class="muted">${x.status==='paid'?'🟢 Pagado':'🔴 Pendiente'}</div></div><div class="amount">$${(Number(x.amount)||0).toFixed(2)}</div></div><div class="muted">📅 ${esc(x.date||'Sin fecha')} · ⏰ ${esc(x.time||'Sin hora')}</div><div class="muted">📆 Vence: ${esc(x.due||'Sin vencimiento')}</div>${x.note?`<p class="muted">${esc(x.note)}</p>`:''}<div class="actions"><button class="btn" onclick="payment('${esc(x.id)}')">✏️ Editar</button>${x.status!=='paid'?`<button class="btn" onclick="markPaid('${esc(x.id)}')">✓ Pagado</button>`:''}<button class="btn" onclick="delPayment('${esc(x.id)}')">Eliminar</button></div></article>`).join('')}</div>`:`<div class="empty glass">💳 No hay pagos registrados.</div>`}`
+}
+function jarvis(){
+ const last=S.messages.at(-1);
+ document.getElementById('app').innerHTML=`<section class="card glass" style="text-align:center"><div class="ey">JARVIS CORE</div><div class="orb">J</div><h2>¿En qué puedo ayudarte?</h2><p class="muted">Puedo crear notas, pendientes y consultar tus datos.</p><button class="btn primary" onclick="voice()">🎙️ Hablar con JARVIS</button>${last?`<div class="alert">${esc(last.reply)}</div>`:''}</section><section class="card glass"><h2>Comandos rápidos</h2><div class="grid"><button class="btn" onclick="command('crea una nota llamada Compras con leche y pan')">“Crea una nota…”</button><button class="btn" onclick="command('agrega pendiente pagar la luz')">“Agrega pendiente…”</button><button class="btn" onclick="command('muéstrame mis pendientes')">“Mis pendientes”</button><button class="btn" onclick="command('cuántas notas tengo')">“Cuántas notas tengo”</button></div></section>`
+}
+function open(x){document.getElementById('modal').classList.remove('hidden');document.getElementById('sheet').innerHTML=x}
+function close(){document.getElementById('modal').classList.add('hidden')}
+document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')close()}
+function note(i=''){const n=S.notes.find(x=>x.id===i)||{};open(`<div class="head"><h2>${i?'Editar nota':'Nueva nota'}</h2><button class="ico" onclick="close()">×</button></div><div class="label">Título</div><input id="nt" class="field" value="${esc(n.title)}" placeholder="Ej. Compras"><div class="label">Contenido</div><textarea id="nb" class="field" style="min-height:150px" placeholder="Escribe aquí">${esc(n.body)}</textarea><div class="actions"><button class="btn primary" onclick="saveNote('${esc(i)}')">Guardar</button>${i?`<button class="btn" onclick="delNote('${esc(i)}')">Eliminar</button>`:''}</div>`)}
+function saveNote(i){const a={title:document.getElementById('nt').value.trim()||'Sin título',body:document.getElementById('nb').value.trim(),updated:Date.now()};if(i){Object.assign(S.notes.find(x=>x.id===i),a)}else S.notes.push({id:id(),created:Date.now(),...a});save();close();render()}
+function delNote(i){S.notes=S.notes.filter(x=>x.id!==i);save();close();render()}
+function task(){open(`<div class="head"><h2>Nuevo pendiente</h2><button class="ico" onclick="close()">×</button></div><div class="label">Tarea</div><input id="tt" class="field" placeholder="Ej. Pagar internet"><div class="label">Detalle</div><input id="td" class="field"><div class="actions"><button class="btn primary" onclick="saveTask()">Agregar</button></div>`)}
+function saveTask(){const title=document.getElementById('tt').value.trim();if(!title)return;S.tasks.push({id:id(),title,detail:document.getElementById('td').value.trim(),done:false});save();close();render()}
+function toggleTask(i){const t=S.tasks.find(x=>x.id===i);if(t)t.done=!t.done;save();render()}
+function delTask(i){S.tasks=S.tasks.filter(x=>x.id!==i);save();render()}
+function clearDone(){S.tasks=S.tasks.filter(x=>!x.done);save();render()}
 function payment(i=''){
- let x=S.payments.find(v=>v.id===i)||{};
- const today=new Date(), d=x.date||today.toISOString().slice(0,10), tm=x.time||today.toTimeString().slice(0,5);
+ const x=S.payments.find(v=>v.id===i)||{};
+ const today=new Date();
+ const date=x.date||today.toISOString().slice(0,10);
+ const time=x.time||today.toTimeString().slice(0,5);
  open(`<div class="head"><h2>${i?'Editar pago':'Nuevo pago'}</h2><button class="ico" onclick="close()">×</button></div>
  <div class="label">Concepto</div><input id="pt" class="field" value="${esc(x.title||'')}">
- <div class="label">Monto</div><input id="pa" class="field" type="number" step=".01" min="0" value="${Number(x.amount)||''}">
- <div class="label">Fecha del pago</div><input id="pd" class="field" type="date" value="${esc(d)}">
- <div class="label">Hora</div><input id="ph" class="field" type="time" value="${esc(tm)}">
+ <div class="label">Monto</div><input id="pa" class="field" type="number" min="0" step=".01" value="${Number(x.amount)||''}">
+ <div class="label">Fecha del pago</div><input id="pd" class="field" type="date" value="${esc(date)}">
+ <div class="label">Hora</div><input id="ph" class="field" type="time" value="${esc(time)}">
  <div class="label">Fecha de vencimiento</div><input id="px" class="field" type="date" value="${esc(x.due||'')}">
  <div class="label">Estado</div><select id="ps" class="field"><option value="pending" ${x.status!=='paid'?'selected':''}>🔴 Pendiente</option><option value="paid" ${x.status==='paid'?'selected':''}>🟢 Pagado</option></select>
  <div class="label">Nota</div><textarea id="pn" class="field" style="min-height:90px">${esc(x.note||'')}</textarea>
  <div class="actions"><button class="btn primary" onclick="savePayment('${esc(i)}')">Guardar</button>${i?`<button class="btn" onclick="delPayment('${esc(i)}')">Eliminar</button>`:''}</div>`);
 }
 function savePayment(i=''){
- let amount=Number(document.getElementById('pa').value);
+ const amount=Number(document.getElementById('pa').value);
  if(!Number.isFinite(amount)||amount<0)return alert('Escribe un monto válido.');
- const a={title:document.getElementById('pt').value.trim()||'Pago',amount,
- date:document.getElementById('pd').value||new Date().toISOString().slice(0,10),
- time:document.getElementById('ph').value||'',due:document.getElementById('px').value||'',
- status:document.getElementById('ps').value==='paid'?'paid':'pending',
- note:document.getElementById('pn').value.trim()};
- if(i){const p=S.payments.find(x=>x.id===i);if(p)Object.assign(p,a)}
- else S.payments.push({id:uid(),...a});
+ const a={
+  title:document.getElementById('pt').value.trim()||'Pago',
+  amount,
+  date:document.getElementById('pd').value||new Date().toISOString().slice(0,10),
+  time:document.getElementById('ph').value||'',
+  due:document.getElementById('px').value||'',
+  status:document.getElementById('ps').value==='paid'?'paid':'pending',
+  note:document.getElementById('pn').value.trim()
+ };
+ if(i){
+  const p=S.payments.find(x=>x.id===i);
+  if(p)Object.assign(p,a);
+ }else{
+  S.payments.push({id:id(),...a});
+ }
  save();close();render();
 }
-function markPaid(i){const p=S.payments.find(x=>x.id===i);if(p){p.status='paid';save();render()}}
-function delPayment(i){S.payments=S.payments.filter(x=>x.id!==i);save();render()}
-
+function markPaid(i){
+ const p=S.payments.find(x=>x.id===i);
+ if(p){p.status='paid';save();render();}
+}
+function delPayment(i){S.payments=S.payments.filter(x=>x.id!==i);save();render();}
+function settings(){open(`<div class="head"><h2>Ajustes</h2><button class="ico" onclick="close()">×</button></div><div class="label">Nombre</div><input id="sn" class="field" value="${esc(S.settings.name)}"><div class="label">Color</div><input id="sa" class="field" type="color" value="${esc(S.settings.accent)}"><div class="label">Fondo de pantalla: URL</div><input id="sb" class="field" value="${esc(S.settings.bg)}" placeholder="https://..."><div class="label">Fondo desde galería</div><input id="sf" class="field" type="file" accept="image/*"><div class="actions"><button class="btn primary" onclick="saveSettings()">Guardar</button><button class="btn" onclick="backup()">💾 Respaldo</button><button class="btn" onclick="restore()">📥 Restaurar</button></div><div class="alert">V2 ya no intenta interpretar datos desconocidos como funciones. Si el almacenamiento está dañado, la interfaz sigue cargando.</div>`);document.getElementById('sf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>document.getElementById('sb').value=r.result;r.readAsDataURL(f)}}
+function saveSettings(){S.settings.name=document.getElementById('sn').value.trim()||'señor';S.settings.accent=document.getElementById('sa').value;S.settings.bg=document.getElementById('sb').value.trim();save();close();render()}
+function backup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));a.download='glass-notes-backup.json';a.click()}
+function restore(){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>{const r=new FileReader();r.onload=()=>{const x=safe(r.result);if(!x||typeof x!=='object')return alert('Respaldo inválido');S=norm(x);save();close();render()};r.readAsText(i.files[0])};i.click()}
 function quick(){open(`<div class="head"><h2>Crear</h2><button class="ico" onclick="close()">×</button></div><div class="grid"><button class="btn" onclick="close();note()">📝 Nueva nota</button><button class="btn" onclick="close();task()">☑️ Nuevo pendiente</button><button class="btn" onclick="close();payment()">💳 Nuevo pago</button><button class="btn" onclick="close();go('jarvis')">🤖 JARVIS</button></div>`)}
-function command(text){let reply='No entendí el comando.';let m=text.match(/crea(?:r)?\s+(?:una\s+)?nota\s+llamada\s+(.+?)\s+(?:con|que diga)\s+(.+)/i);if(m){S.notes.push({id:uid(),title:m[1].trim(),body:m[2].trim(),created:Date.now(),updated:Date.now()});reply='Listo, nota creada.'}else if(/(?:agrega|añade).*(?:pendiente|tarea)/i.test(text)){let t=text.replace(/.*?(?:pendiente|tarea)\s*/i,'').trim()||'Nuevo pendiente';S.tasks.push({id:uid(),title:t,done:false,created:Date.now()});reply='Pendiente agregado.'}else if(/mis.*pendiente/i.test(text)){let p=S.tasks.filter(x=>!x.done);reply=p.length?'Tienes '+p.length+' pendientes.':'No tienes pendientes.'}S.messages.push({text,reply,time:Date.now()});save();render()}
-function voice(){let R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return alert('Este navegador no ofrece reconocimiento de voz. Usa los comandos rápidos.');let r=new R();r.lang='es-MX';r.interimResults=false;r.onresult=e=>command(e.results[0][0].transcript);r.onerror=()=>alert('No pude escuchar el comando. Revisa el permiso del micrófono.');try{r.start()}catch(e){}}
+function command(text){let reply='No entendí. Prueba “crea una nota llamada Compras con leche y pan”.',m=text.match(/crea(?:r)?\s+(?:una\s+)?nota\s+llamada\s+(.+?)\s+(?:con|que diga)\s+(.+)/i);if(m){S.notes.push({id:id(),title:m[1].trim(),body:m[2].trim(),created:Date.now(),updated:Date.now()});reply='Listo, nota creada.'}else if(/(?:agrega|añade).*(?:pendiente|tarea)/i.test(text)){let t=text.replace(/.*?(?:pendiente|tarea)\s*/i,'').trim()||'Nuevo pendiente';S.tasks.push({id:id(),title:t,done:false,created:Date.now()});reply='Pendiente agregado.'}else if(/mis.*pendiente|mostrar.*pendiente/i.test(text)){const p=S.tasks.filter(x=>!x.done);reply=p.length?'Tienes '+p.length+': '+p.slice(0,4).map(x=>x.title).join(', ')+'.':'No tienes pendientes.'}else if(/cu[aá]ntas?.*notas/i.test(text))reply='Tienes '+S.notes.length+' notas.';S.messages.push({text,reply,time:Date.now()});save();render()}
+function voice(){const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return alert('Este navegador no ofrece reconocimiento de voz. Puedes usar los comandos rápidos.');const r=new R();r.lang='es-MX';r.interimResults=false;r.onresult=e=>command(e.results[0][0].transcript);r.onerror=()=>alert('No pude escuchar el comando. Revisa el permiso del micrófono.');try{r.start()}catch(e){}}
 window.addEventListener('hashchange',render);window.addEventListener('load',()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});render()});
-</script></body></html>
+</script>
+</body>
+</html>

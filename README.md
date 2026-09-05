@@ -1,22 +1,28 @@
-# Glass Notes V2.1 — Arquitectura Segura
+# Glass Notes V2.0 — Stable
 
-V2.1 mantiene el estilo Liquid Glass de V2.0 y se enfoca en proteger los datos y facilitar futuras actualizaciones.
+Esta versión reemplaza el núcleo que estaba provocando el mensaje **“dato o función incompatible”**.
 
-## Seguridad de datos
-- Esquema de datos versionado (`schema: 3`).
-- Normalización y validación al cargar.
-- Migración básica desde `glass_notes_v03`.
-- Respaldo local anterior a cada guardado.
-- Recuperación desde respaldo local.
-- Exportación/importación JSON.
-- Fallos de render no bloquean toda la aplicación.
+## Cambios principales
+- Almacenamiento local protegido con validación.
+- Si un dato guardado está corrupto, la interfaz no se cae.
+- Notas, pendientes y pagos.
+- Casillas para tachar pendientes y sección de completados.
+- JARVIS con comandos de texto y reconocimiento de voz cuando el navegador lo permite.
+- Fondo de pantalla desde URL o galería.
+- Color de acento personalizable.
+- Respaldo y restauración JSON.
+- Service Worker nuevo con caché independiente.
 
-## Funciones conservadas
-Notas, pendientes con checkbox, pagos, JARVIS por texto/voz cuando el navegador lo soporta y fondo personalizable.
+## Archivos
+- `index.html`
+- `manifest.json`
+- `sw.js`
 
-## Publicación
-Sube `index.html`, `manifest.json`, `sw.js` y `README.md` a la raíz de `main` en GitHub Pages.
+## Instalación en GitHub Pages
+Sube los tres archivos a la raíz de la rama `main`. GitHub Pages debe publicar `/ (root)` desde `main`.
+
+Después de publicar, abre la página y haz una recarga completa. Si el navegador conserva el Service Worker anterior, borra los datos/caché del sitio una vez y vuelve a abrirlo.
 
 
-## V2.1.1 — Pagos corregidos
-El módulo de pagos ahora incluye fecha, hora, vencimiento, estado, edición, marcado como pagado y totales separados. Los registros existentes se migran sin eliminar los campos que ya tengan.
+## V2.0.1 — Pagos
+Corrección aislada del módulo de pagos: fecha, hora, vencimiento, estado, edición y totales. Notas y listas parten directamente de V2.0 Stable.
