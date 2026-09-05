@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
-<title>Glass Notes V1.3.2 — STABLE CHECKLIST</title>
+<title>Glass Notes V1.3.5 — STABLE CHECKLIST</title>
 <style>
 :root{--accent:#66e3ff;--bg:#05070d;--text:#f5f8ff;--muted:#ffffff8c;--glass:rgba(255,255,255,.075)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -222,8 +222,14 @@ function render(){
   document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
  }catch(err){
   console.error("Glass Notes render error:",err);
+  try{
+    state=JSON.parse(JSON.stringify(DEFAULT_STATE));
+    state.lastOpened=Date.now();
+    localStorage.setItem(KEY,JSON.stringify(state));
+    if(tab!=="notes"){tab="notes";notes();return;}
+  }catch(resetError){console.error("Glass Notes render recovery:",resetError);}
   const s=$("#screen");
-  if(s)s.innerHTML=`<div class="screen"><section class="glass empty"><h2>Glass Notes se está recuperando</h2><p class="muted">Se detectó un dato incompatible. La aplicación no se cerrará.</p><button class="btn primary" onclick="try{localStorage.setItem(KEY,JSON.stringify(DEFAULT_STATE))}catch(e){};location.reload()">↻ Recuperar aplicación</button></section></div>`;
+  if(s)s.innerHTML=`<div class="screen"><section class="glass empty"><h2>Glass Notes</h2><p class="muted">La aplicación inició en modo seguro. Tus datos anteriores no se han vuelto a cargar.</p><button class="btn primary" onclick="location.reload()">↻ Reiniciar</button></section></div>`;
  }
 }
 
@@ -489,7 +495,7 @@ state.lastOpened=Date.now();save();
 
 function notes(){
 let pending=state.notes.reduce((a,n)=>a+(n.checks||[]).filter(c=>!c.done).length,0);
-$("#screen").innerHTML='<div class="screen"><section class="hero glass"><div class="big">🤖 '+(pending?pending+" pendientes":"Todo bajo control")+'</div><p class="muted">'+state.notes.filter(n=>!n.archived).length+" notas · "+state.payments.filter(p=>!p.paid).length+' pagos pendientes</p><span class="badge">JARVIS MEMORY · V1.3.2</span></section><div class="searchbox"><input class="field" id="search" placeholder="Buscar notas, etiquetas o texto..."></div><div class="filterrow"><button class="btn primary" data-filter="all">Todas</button><button class="btn" data-filter="active">Activas</button><button class="btn" data-filter="archived">Archivadas</button></div><div id="notelist"></div></div>';
+$("#screen").innerHTML='<div class="screen"><section class="hero glass"><div class="big">🤖 '+(pending?pending+" pendientes":"Todo bajo control")+'</div><p class="muted">'+state.notes.filter(n=>!n.archived).length+" notas · "+state.payments.filter(p=>!p.paid).length+' pagos pendientes</p><span class="badge">JARVIS MEMORY · V1.3.5</span></section><div class="searchbox"><input class="field" id="search" placeholder="Buscar notas, etiquetas o texto..."></div><div class="filterrow"><button class="btn primary" data-filter="all">Todas</button><button class="btn" data-filter="active">Activas</button><button class="btn" data-filter="archived">Archivadas</button></div><div id="notelist"></div></div>';
 const paint=(filter="all",q="")=>{let list=state.notes.filter(n=>filter==="archived"?n.archived:filter==="active"?!n.archived:true).filter(n=>(n.title+" "+n.body+" "+(n.tags||[]).join(" ")).toLowerCase().includes(q.toLowerCase()));$("#notelist").innerHTML=list.length?'<div class="grid">'+list.map(noteCard).join("")+'</div>':'<div class="glass empty">No encontré notas con esos criterios.</div>';document.querySelectorAll("[data-note]").forEach(e=>e.onclick=()=>openNote(e.dataset.note));};
 paint();$("#search").oninput=e=>paint("all",e.target.value);document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("primary"));b.classList.add("primary");paint(b.dataset.filter,$("#search").value)});
 }
@@ -652,7 +658,21 @@ $("#fab").onclick=()=>{$("#fabMenu").classList.toggle("open");$("#fab").textCont
 document.querySelectorAll("[data-create]").forEach(b=>b.onclick=()=>{ $("#fabMenu").classList.remove("open");$("#fab").textContent="＋";if(b.dataset.create==="payment")openPayment();else openNote()});
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
 applyGlobalBg();
-homeScreen();
+try{
+  homeScreen();
+}catch(bootError){
+  console.error("Glass Notes boot recovery:",bootError);
+  try{
+    state=JSON.parse(JSON.stringify(DEFAULT_STATE));
+    state.lastOpened=Date.now();
+    localStorage.setItem(KEY,JSON.stringify(state));
+  }catch(resetError){ console.error("Glass Notes reset error:",resetError); }
+  try{ tab="notes"; notes(); }catch(notesError){
+    console.error("Glass Notes notes fallback:",notesError);
+    const screen=document.getElementById("screen");
+    if(screen)screen.innerHTML='<div class="screen"><section class="glass empty"><h2>Glass Notes</h2><p class="muted">La aplicación inició en modo seguro.</p><button class="btn primary" onclick="location.reload()">↻ Reiniciar</button></section></div>';
+  }
+}
 </script>
 
 <script>

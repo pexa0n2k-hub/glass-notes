@@ -2,7 +2,7 @@
 
 > Your personal notes. Reimagined.
 
-**V1.3.4 — Legacy Data Recovery**
+**V1.3.5 — Safe Boot**
 
 ## Features
 - 📝 Notes
