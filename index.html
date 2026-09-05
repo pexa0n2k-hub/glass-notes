@@ -91,11 +91,11 @@ hr{border:0;border-top:1px solid #ffffff12}
 .jarvis-chat{padding:16px;border-radius:26px}.chat-log{max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:8px}.chat-bubble{padding:11px 13px;border-radius:18px;max-width:88%;font-size:12px}.chat-user{align-self:flex-end}.chat-ai{align-self:flex-start}.thinking{opacity:.65}.jarvis-query{display:flex;gap:7px;margin-top:10px}.jarvis-query input{flex:1}
 </style>
 <style>
-.check-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:17px;margin:6px 0;transition:.2s ease}
-.check-box{width:24px;height:24px;min-width:24px;border-radius:7px;border:1.5px solid #ffffff55;background:rgba(255,255,255,.04);display:grid;place-items:center;cursor:pointer;font-weight:900}
-.check-item.done .check-box{background:var(--accent);border-color:var(--accent);color:#071016;box-shadow:0 0 14px color-mix(in srgb,var(--accent) 55%,transparent)}
-.check-text{flex:1;transition:.2s}.check-item.done .check-text{text-decoration:line-through;opacity:.48}
-.check-count{font-size:10px;opacity:.55}
+.checkrow{display:flex;align-items:center;gap:12px;cursor:pointer}
+.checkrow input{appearance:none;-webkit-appearance:none;width:25px;height:25px;min-width:25px;margin:0;border-radius:8px;border:1.5px solid #ffffff55;background:#ffffff08;display:grid;place-items:center;transition:.18s ease}
+.checkrow input:checked{background:var(--accent);border-color:var(--accent);box-shadow:0 0 14px var(--accent)}
+.checkrow input:checked::after{content:"✓";font-weight:900;color:#061016;font-size:16px}
+.checkrow input:checked + span{text-decoration:line-through;opacity:.5}
 </style>
 </head>
 <body><div class="global-bg" id="globalBg"></div>
@@ -126,13 +126,13 @@ hr{border:0;border-top:1px solid #ffffff12}
 if ("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 const KEY="glass_notes_v03";
 let state=JSON.parse(localStorage.getItem(KEY)||'{"notes":[],"payments":[],"settings":{"fontName":"","fontData":"","accent":"#66e3ff","bgData":"","applyFontAll":true,"notifications":false}}');
-state.payments=(state.payments||[]).map(p=>({...p,reminder:p.reminder??2,repeat:p.repeat||"none",snoozedUntil:p.snoozedUntil||0}));
+state.payments=(Array.isArray(state.payments)?state.payments:[]).map(p=>({...p,reminder:p.reminder??2,repeat:p.repeat||"none",snoozedUntil:p.snoozedUntil||0}));
 state.settings={...{notifications:false,jarvisName:"JARVIS",personality:"classic",jarvisAccent:"#66e3ff",welcome:"Bienvenido de nuevo, señor.",voice:false},...state.settings};
 state.activity=state.activity||[];
 state.settings.homeName=state.settings.homeName||state.settings.jarvisName||"JARVIS";
 state.settings.homeGreeting=state.settings.homeGreeting||"Buenos días, señor.";
 state.lastOpened=state.lastOpened||Date.now();
-state.notes=(state.notes||[]).map(n=>({...n,createdAt:n.createdAt||Date.now(),updatedAt:n.updatedAt||Date.now(),archived:!!n.archived,tags:n.tags||[]}));
+state.notes=(state.notes||[]).map(n=>({...n,createdAt:n.createdAt||Date.now(),updatedAt:n.updatedAt||Date.now(),archived:!!n.archived,tags:n.tags||[],checks:Array.isArray(n.checks)?n.checks.map(c=>({...c,id:c.id||crypto.randomUUID(),text:c.text||"",done:!!c.done})):[]}));
 function logEvent(type,title,detail=""){state.activity.unshift({id:crypto.randomUUID(),type,title,detail,at:Date.now()});state.activity=state.activity.slice(0,80);}
 function recordPattern(){let recurring=state.payments.filter(p=>p.repeat&&p.repeat!=="none");let monthly=recurring.filter(p=>p.repeat==="monthly").length;return {recurring:recurring.length,monthly};}
 function memoryInsights(){
@@ -708,24 +708,9 @@ function startVoiceForInput(input){
 </script>
 
 <script>
-function renderChecklist(n){
- const checks=n.checks||[];
- const done=checks.filter(c=>c.done).length;
- return `<div class="check-count" style="margin:8px 0">${done}/${checks.length} completadas</div>`+
- checks.map((c,i)=>`<div class="check-item glass ${c.done?'done':''}" data-note="${n.id}" data-check="${c.id||i}">
- <button class="check-box" aria-label="${c.done?'Desmarcar':'Completar'}">${c.done?'✓':''}</button>
- <span class="check-text">${esc(c.text||'')}</span></div>`).join('');
-}
-function toggleChecklistItem(noteId,checkId){
- const n=(state.notes||[]).find(x=>x.id===noteId);if(!n)return;
- const c=(n.checks||[]).find((x,i)=>String(x.id||i)===String(checkId));if(!c)return;
- c.done=!c.done;n.updatedAt=Date.now();save();render();
- if(c.done&&typeof speakJarvis==="function")speakJarvis("Listo, señor. Pendiente completado.");
-}
-document.addEventListener("click",e=>{
- const b=e.target.closest(".check-box");if(!b)return;
- const item=b.closest(".check-item");if(!item)return;
- e.preventDefault();toggleChecklistItem(item.dataset.note,item.dataset.check);
+window.addEventListener("error",function(e){
+ const s=document.getElementById("screen");
+ if(s && !s.innerHTML.trim()) s.innerHTML='<div class="screen"><section class="glass empty"><h2>Glass Notes necesita recuperarse</h2><p class="muted">Se detectó un dato antiguo incompatible. Tus datos se conservarán.</p><button class="btn primary" onclick="location.reload()">↻ Recargar</button></section></div>';
 });
 </script>
 </body>
