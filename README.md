@@ -34,3 +34,7 @@ Corrección puntual del botón X: se renombró la función de cierre para evitar
 
 ## V2.0.3 — Fondo personalizado
 Corrección del fondo desde galería y caché actualizado.
+
+
+## V2.0.4 — Gestos
+En notas, listas y pagos: deslizar de izquierda a derecha abre modificación; deslizar de derecha a izquierda solicita confirmación y elimina. Los botones existentes permanecen disponibles.
