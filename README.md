@@ -26,3 +26,7 @@ Después de publicar, abre la página y haz una recarga completa. Si el navegado
 
 ## V2.0.1 — Pagos
 Corrección aislada del módulo de pagos: fecha, hora, vencimiento, estado, edición y totales. Notas y listas parten directamente de V2.0 Stable.
+
+
+## V2.0.2 — Cierre de ventanas
+Corrección puntual del botón X: se renombró la función de cierre para evitar conflicto con la API `window.close()` del navegador. También se actualizó el caché del Service Worker.
