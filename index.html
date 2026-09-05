@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
-<title>Glass Notes V1.2 — JARVIS MEMORY</title>
+<title>Glass Notes V1.3.2 — STABLE CHECKLIST</title>
 <style>
 :root{--accent:#66e3ff;--bg:#05070d;--text:#f5f8ff;--muted:#ffffff8c;--glass:rgba(255,255,255,.075)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -120,20 +120,39 @@ hr{border:0;border-top:1px solid #ffffff12}
   <button data-tab="jarvis">🤖<span>JARVIS</span></button>
 </nav>
 
-<div class="modal hidden" id="modal"><div class="sheet glass"><div class="sheethead"><h2 id="mtitle">Nueva nota</h2><button class="icon" id="close">✕</button></div><div id="mbody"></div></div></div>
+<div class="modal hidden" id="modal"><div class="sheet glass"><div class="sheethead"><h2 id="mtitle">Nueva nota</h2><button class="icon" id="close">✕</button></div><div id="mbody"></div></div></div><script>
+window.addEventListener("error",function(e){
+  const s=document.getElementById("screen");
+  if(s && (!s.innerHTML.trim() || s.innerHTML.trim().length<40)){
+    s.innerHTML='<div class="screen"><section class="glass empty"><h2>Glass Notes se está recuperando</h2><p class="muted">La interfaz detectó un dato incompatible. Tus notas y pagos se conservarán.</p><button class="btn primary" onclick="location.reload()">↻ Recargar</button></section></div>';
+  }
+});
+</script>
 
 <script>
 if ("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 const KEY="glass_notes_v03";
-let state=JSON.parse(localStorage.getItem(KEY)||'{"notes":[],"payments":[],"settings":{"fontName":"","fontData":"","accent":"#66e3ff","bgData":"","applyFontAll":true,"notifications":false}}');
-state.payments=(Array.isArray(state.payments)?state.payments:[]).map(p=>({...p,reminder:p.reminder??2,repeat:p.repeat||"none",snoozedUntil:p.snoozedUntil||0}));
-state.settings={...{notifications:false,jarvisName:"JARVIS",personality:"classic",jarvisAccent:"#66e3ff",welcome:"Bienvenido de nuevo, señor.",voice:false},...state.settings};
-state.activity=state.activity||[];
+const DEFAULT_STATE={notes:[],payments:[],activity:[],settings:{fontName:"",fontData:"",accent:"#66e3ff",bgData:"",applyFontAll:true,notifications:false,jarvisName:"JARVIS",personality:"classic",jarvisAccent:"#66e3ff",welcome:"Bienvenido de nuevo, señor.",voice:false,voiceEnabled:false}};
+let state;
+try{
+  const raw=localStorage.getItem(KEY);
+  state=raw?JSON.parse(raw):structuredClone(DEFAULT_STATE);
+}catch(e){
+  state=structuredClone(DEFAULT_STATE);
+}
+if(!state||typeof state!=="object") state=structuredClone(DEFAULT_STATE);
+state.notes=Array.isArray(state.notes)?state.notes:[];
+state.payments=Array.isArray(state.payments)?state.payments:[];
+state.activity=Array.isArray(state.activity)?state.activity:[];
+state.settings=(state.settings&&typeof state.settings==="object")?state.settings:{};
+state.payments=state.payments.map(p=>({...p,reminder:p.reminder??2,repeat:p.repeat||"none",snoozedUntil:p.snoozedUntil||0}));
+state.settings={...DEFAULT_STATE.settings,...state.settings};
 state.settings.homeName=state.settings.homeName||state.settings.jarvisName||"JARVIS";
 state.settings.homeGreeting=state.settings.homeGreeting||"Buenos días, señor.";
 state.lastOpened=state.lastOpened||Date.now();
-state.notes=(state.notes||[]).map(n=>({...n,createdAt:n.createdAt||Date.now(),updatedAt:n.updatedAt||Date.now(),archived:!!n.archived,tags:n.tags||[],checks:Array.isArray(n.checks)?n.checks.map(c=>({...c,id:c.id||crypto.randomUUID(),text:c.text||"",done:!!c.done})):[]}));
-function logEvent(type,title,detail=""){state.activity.unshift({id:crypto.randomUUID(),type,title,detail,at:Date.now()});state.activity=state.activity.slice(0,80);}
+const uid=()=> (globalThis.crypto&&typeof crypto.randomUUID==="function")?crypto.randomUUID():"id-"+Date.now()+"-"+Math.random().toString(36).slice(2);
+state.notes=state.notes.map(n=>({...n,createdAt:n.createdAt||Date.now(),updatedAt:n.updatedAt||Date.now(),archived:!!n.archived,tags:Array.isArray(n.tags)?n.tags:[],checks:Array.isArray(n.checks)?n.checks.map(c=>({...c,id:c.id||uid(),text:c.text||"",done:!!c.done})):[]}));
+function logEvent(type,title,detail=""){state.activity.unshift({id:uid(),type,title,detail,at:Date.now()});state.activity=state.activity.slice(0,80);}
 function recordPattern(){let recurring=state.payments.filter(p=>p.repeat&&p.repeat!=="none");let monthly=recurring.filter(p=>p.repeat==="monthly").length;return {recurring:recurring.length,monthly};}
 function memoryInsights(){
 let r=recordPattern(), notes=state.notes.filter(n=>!n.archived).length, pending=state.notes.reduce((a,n)=>a+n.checks.filter(c=>!c.done).length,0);
@@ -210,7 +229,7 @@ function executeVoiceCommand(raw){
    let title=m[1].trim().replace(/\s+(?:por|de)\s+\$?\d[\d.,]*/i,"").trim();
    let due=parseSpanishDate(m[2]); if(due){
      let amountMatch=m[1].match(/\$?\s*([\d,]+(?:\.\d{1,2})?)/); let amount=amountMatch?amountMatch[0]:"";
-     state.payments.push({id:crypto.randomUUID(),title: title.replace(/\s*\$?[\d,]+(?:\.\d{1,2})?\s*$/,"").trim(),amount,due,reminder:2,repeat:"none",paid:false,snoozedUntil:0,lastNotified:0});
+     state.payments.push({id:uid(),title: title.replace(/\s*\$?[\d,]+(?:\.\d{1,2})?\s*$/,"").trim(),amount,due,reminder:2,repeat:"none",paid:false,snoozedUntil:0,lastNotified:0});
      logEvent("voice","Pago creado por voz",title);save();render();return voiceReply(raw);
    }
  }
@@ -218,21 +237,21 @@ function executeVoiceCommand(raw){
  if((m=t.match(/(?:recuerdame|recordarme|anota|apunta)\s+(.+?)\s+(?:el|para el)\s+(\d{1,2}\s+de\s+[a-záéíóú]+(?:\s+de\s+\d{4})?)/i))){
    let due=parseSpanishDate(m[2]); if(due){
      let title=m[1].trim();
-     state.notes.unshift({id:crypto.randomUUID(),title,body:"📅 Recordatorio: "+new Date(due).toLocaleDateString("es-MX"),checks:[],accent:state.settings.accent||"#66e3ff",bg:"",fontData:"",fontName:"",tags:["recordatorio"],archived:false,createdAt:Date.now(),updatedAt:Date.now()});
+     state.notes.unshift({id:uid(),title,body:"📅 Recordatorio: "+new Date(due).toLocaleDateString("es-MX"),checks:[],accent:state.settings.accent||"#66e3ff",bg:"",fontData:"",fontName:"",tags:["recordatorio"],archived:false,createdAt:Date.now(),updatedAt:Date.now()});
      logEvent("voice","Recordatorio creado por voz",title);save();render();return voiceReply(raw);
    }
  }
  // Create list: "crea una lista llamada supermercado"
  if((m=t.match(/(?:crea|crear|haz|hacer)\s+(?:una\s+)?lista\s+(?:llamada|de)\s+(.+)/i))){
    let title=m[1].trim();
-   state.notes.unshift({id:crypto.randomUUID(),title,body:"",checks:[],accent:state.settings.accent||"#66e3ff",bg:"",fontData:"",fontName:"",tags:["lista"],archived:false,createdAt:Date.now(),updatedAt:Date.now()});
+   state.notes.unshift({id:uid(),title,body:"",checks:[],accent:state.settings.accent||"#66e3ff",bg:"",fontData:"",fontName:"",tags:["lista"],archived:false,createdAt:Date.now(),updatedAt:Date.now()});
    logEvent("voice","Lista creada por voz",title);save();render();return voiceReply(raw);
  }
  // Add task to an existing note: "agrega leche a supermercado"
  if((m=t.match(/(?:agrega|anade|añade)\s+(.+?)\s+(?:a|en)\s+(?:la\s+)?(?:lista|nota)\s+(.+)/i))){
    let item=m[1].trim(), title=m[2].trim();
    let n=state.notes.find(x=>normalizeText(x.title).includes(normalizeText(title)));
-   if(n){n.checks.push({id:crypto.randomUUID(),text:item,done:false});n.updatedAt=Date.now();logEvent("voice","Pendiente añadido por voz",item+" → "+n.title);save();render();return voiceReply(raw);}
+   if(n){n.checks.push({id:uid(),text:item,done:false});n.updatedAt=Date.now();logEvent("voice","Pendiente añadido por voz",item+" → "+n.title);save();render();return voiceReply(raw);}
  }
  // Open sections
  if(t.includes("abre mis notas")||t==="notas"||t.includes("mostrar notas")){tab="notes";render();return voiceReply(raw)}
@@ -290,7 +309,7 @@ function smartVoiceCommand(raw){
     .replace(/^pagar\s+/i,"").trim();
    if(!title)title="Recordatorio";
    let d=new Date(due); if(time)d.setHours(time.h,time.min,0,0);
-   state.payments.push({id:crypto.randomUUID(),title,amount:amount?`$${amount}`:"",due:d.getTime(),reminder:2,repeat:"none",paid:false,snoozedUntil:0,lastNotified:0});
+   state.payments.push({id:uid(),title,amount:amount?`$${amount}`:"",due:d.getTime(),reminder:2,repeat:"none",paid:false,snoozedUntil:0,lastNotified:0});
    logEvent("voice","JARVIS creó un evento",title);save();render();
    speakJarvis("Listo, señor. He programado "+title+" para "+d.toLocaleDateString("es-MX")+(time?" a las "+d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}):"")+".");
    return "Evento creado correctamente.";
@@ -299,7 +318,7 @@ function smartVoiceCommand(raw){
  let lm=t.match(/(?:crea|haz|necesito)\s+(?:una\s+)?lista(?:\s+(?:de|llamada))?\s+(.+)/i);
  if(lm){
    let title=cleanCommandTitle(lm[1]); if(!title)title="Nueva lista";
-   state.notes.unshift({id:crypto.randomUUID(),title,body:"",checks:[],accent:state.settings.accent||"#66e3ff",bg:"",fontData:"",fontName:"",tags:["lista"],archived:false,createdAt:Date.now(),updatedAt:Date.now()});
+   state.notes.unshift({id:uid(),title,body:"",checks:[],accent:state.settings.accent||"#66e3ff",bg:"",fontData:"",fontName:"",tags:["lista"],archived:false,createdAt:Date.now(),updatedAt:Date.now()});
    logEvent("voice","JARVIS creó una lista",title);save();render();speakJarvis("Lista "+title+" creada, señor.");return "Lista creada.";
  }
  // Add several tasks: "agrega leche, huevos y pan a supermercado"
@@ -307,7 +326,7 @@ function smartVoiceCommand(raw){
  if(am){
    let items=am[1].split(/\s*,\s*|\s+y\s+/i).map(x=>x.trim()).filter(Boolean), title=am[2].trim();
    let n=state.notes.find(x=>normalizeText(x.title).includes(normalizeText(title)));
-   if(n){items.forEach(item=>n.checks.push({id:crypto.randomUUID(),text:item,done:false}));n.updatedAt=Date.now();logEvent("voice","JARVIS añadió pendientes",items.join(", "));save();render();speakJarvis("He añadido "+items.length+" pendiente"+(items.length>1?"s":"")+" a "+n.title+".");return "Pendientes añadidos.";}
+   if(n){items.forEach(item=>n.checks.push({id:uid(),text:item,done:false}));n.updatedAt=Date.now();logEvent("voice","JARVIS añadió pendientes",items.join(", "));save();render();speakJarvis("He añadido "+items.length+" pendiente"+(items.length>1?"s":"")+" a "+n.title+".");return "Pendientes añadidos.";}
  }
  // Completion: "marca leche como hecha en supermercado"
  let cm=raw.match(/(?:marca|marcar)\s+(.+?)\s+(?:como|de)\s+(?:hecho|hecha|listo|lista|completado|completada)\s+(?:en|a)\s+(.+)/i);
@@ -412,7 +431,7 @@ ${recent.length?recent.map(e=>`<div class="glass" style="padding:12px;margin:7px
 
 $("#openAI").onclick=jarvisBrief;$("#qaNote").onclick=()=>openNote();
 $("#qaPay").onclick=()=>openPayment();
-$("#qaJarvis").onclick=jarvis;$("#qaVoice").onclick=voiceCenter;
+$("#qaJarvis").onclick=jarvis;
 $("#viewMemory").onclick=memoryDashboard;
 document.querySelectorAll("[data-home-paid]").forEach(e=>e.onclick=()=>{let p=state.payments.find(x=>x.id===e.dataset.homePaid);if(p){p.paid=true;logEvent("payment","Pago resuelto",p.title);advanceRepeat(p);save();render()}});
 document.querySelectorAll("[data-home-snooze]").forEach(e=>e.onclick=()=>snooze(e.dataset.homeSnooze));
@@ -421,7 +440,7 @@ state.lastOpened=Date.now();save();
 
 function notes(){
 let pending=state.notes.reduce((a,n)=>a+n.checks.filter(c=>!c.done).length,0);
-$("#screen").innerHTML='<div class="screen"><section class="hero glass"><div class="big">🤖 '+(pending?pending+" pendientes":"Todo bajo control")+'</div><p class="muted">'+state.notes.filter(n=>!n.archived).length+" notas · "+state.payments.filter(p=>!p.paid).length+' pagos pendientes</p><span class="badge">JARVIS MEMORY · V0.6</span></section><div class="searchbox"><input class="field" id="search" placeholder="Buscar notas, etiquetas o texto..."></div><div class="filterrow"><button class="btn primary" data-filter="all">Todas</button><button class="btn" data-filter="active">Activas</button><button class="btn" data-filter="archived">Archivadas</button></div><div id="notelist"></div></div>';
+$("#screen").innerHTML='<div class="screen"><section class="hero glass"><div class="big">🤖 '+(pending?pending+" pendientes":"Todo bajo control")+'</div><p class="muted">'+state.notes.filter(n=>!n.archived).length+" notas · "+state.payments.filter(p=>!p.paid).length+' pagos pendientes</p><span class="badge">JARVIS MEMORY · V1.3.2</span></section><div class="searchbox"><input class="field" id="search" placeholder="Buscar notas, etiquetas o texto..."></div><div class="filterrow"><button class="btn primary" data-filter="all">Todas</button><button class="btn" data-filter="active">Activas</button><button class="btn" data-filter="archived">Archivadas</button></div><div id="notelist"></div></div>';
 const paint=(filter="all",q="")=>{let list=state.notes.filter(n=>filter==="archived"?n.archived:filter==="active"?!n.archived:true).filter(n=>(n.title+" "+n.body+" "+(n.tags||[]).join(" ")).toLowerCase().includes(q.toLowerCase()));$("#notelist").innerHTML=list.length?'<div class="grid">'+list.map(noteCard).join("")+'</div>':'<div class="glass empty">No encontré notas con esos criterios.</div>';document.querySelectorAll("[data-note]").forEach(e=>e.onclick=()=>openNote(e.dataset.note));};
 paint();$("#search").oninput=e=>paint("all",e.target.value);document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("primary"));b.classList.add("primary");paint(b.dataset.filter,$("#search").value)});
 }
@@ -487,7 +506,7 @@ let d=new Date(p.due);
 if(p.repeat==="monthly")d.setMonth(d.getMonth()+1);
 if(p.repeat==="yearly")d.setFullYear(d.getFullYear()+1);
 if(p.repeat==="weekly")d.setDate(d.getDate()+7);
-p.id=crypto.randomUUID();p.due=d.getTime();p.paid=false;p.snoozedUntil=0;p.lastNotified=0;
+p.id=uid();p.due=d.getTime();p.paid=false;p.snoozedUntil=0;p.lastNotified=0;
 state.payments.push({...p});
 }
 function openModal(title,body){$("#mtitle").textContent=title;$("#mbody").innerHTML=body;$("#modal").classList.remove("hidden");}
@@ -495,7 +514,7 @@ function closeModal(){$("#modal").classList.add("hidden");editId=null;tempBg=""}
 $("#close").onclick=closeModal;
 
 function openNote(id){
-editId=id||null;let n=state.notes.find(x=>x.id===id)||{id:crypto.randomUUID(),title:"",body:"",checks:[],accent:state.settings.accent||"#66e3ff",bg:"",fontData:"",fontName:""};
+editId=id||null;let n=state.notes.find(x=>x.id===id)||{id:uid(),title:"",body:"",checks:[],accent:state.settings.accent||"#66e3ff",bg:"",fontData:"",fontName:""};
 tempBg=n.bg;
 openModal(id?"Editar nota":"Nueva nota",`
 <div class="label">Título</div><input class="field" id="nt" value="${esc(n.title)}" placeholder="Gas, supermercado, ideas...">
@@ -510,7 +529,7 @@ openModal(id?"Editar nota":"Nueva nota",`
 <div class="actions"><button class="btn primary" id="saveN">Guardar</button>${id?'<button class="btn danger" id="delN">Eliminar</button>':""}<button class="btn" id="cancel">Cancelar</button></div>
 <input hidden type="file" id="bgfile" accept="image/*"><input hidden type="file" id="fontfile" accept=".ttf,.otf,.woff,.woff2">
 `);
-$("#addc").onclick=()=>{let v=$("#newc").value.trim();if(!v)return;n.checks.push({id:crypto.randomUUID(),text:v,done:false});openNote(n.id)};
+$("#addc").onclick=()=>{let v=$("#newc").value.trim();if(!v)return;n.checks.push({id:uid(),text:v,done:false});openNote(n.id)};
 $("#nbg").onclick=()=>$("#bgfile").click();
 $("#nfont").onclick=()=>$("#fontfile").click();
 $("#bgfile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{$("#preview").style.backgroundImage=`url('${r.result}')`;tempBg=r.result};r.readAsDataURL(f)};
@@ -532,7 +551,7 @@ openModal("Nuevo pago",`
 <div class="label">Repetición automática</div><select class="field" id="pre"><option value="none">No repetir</option><option value="weekly">Cada semana</option><option value="monthly" selected>Cada mes</option><option value="yearly">Cada año</option></select>
 <div class="glass" style="padding:12px;margin-top:10px"><span class="muted small">🤖 JARVIS: te avisará cuando llegue la ventana de recordatorio. En Android, permite las notificaciones cuando el navegador lo solicite.</span></div>
 <div class="actions"><button class="btn primary" id="saveP">Guardar pago</button><button class="btn" id="cancelP">Cancelar</button></div>`);
-$("#saveP").onclick=()=>{let title=$("#pt").value.trim();if(!title)return alert("Escribe el concepto del pago.");let due=new Date($("#pd").value).getTime();if(!due)return alert("Selecciona una fecha.");state.payments.push({id:crypto.randomUUID(),title,amount:$("#pa").value.trim(),due,reminder:+$("#pr").value,repeat:$("#pre").value,paid:false,snoozedUntil:0,lastNotified:0});logEvent("payment","Pago programado",title);save();closeModal();render();};
+$("#saveP").onclick=()=>{let title=$("#pt").value.trim();if(!title)return alert("Escribe el concepto del pago.");let due=new Date($("#pd").value).getTime();if(!due)return alert("Selecciona una fecha.");state.payments.push({id:uid(),title,amount:$("#pa").value.trim(),due,reminder:+$("#pr").value,repeat:$("#pre").value,paid:false,snoozedUntil:0,lastNotified:0});logEvent("payment","Pago programado",title);save();closeModal();render();};
 $("#cancelP").onclick=closeModal;
 }
 

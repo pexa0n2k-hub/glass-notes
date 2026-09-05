@@ -2,22 +2,28 @@
 
 > Your personal notes. Reimagined.
 
-Glass Notes is a mobile-first PWA for notes, checklists, payments, reminders and the JARVIS assistant concept.
+**V1.3.2 — Stable Checklist**
 
-## ✨ Features
-- 📝 Notes with per-note personalization
-- ✅ Checklists with Liquid Glass checkboxes and strike-through
-- 💳 Payment agenda with due dates and reminders
-- 🤖 JARVIS assistant, memory and contextual summaries
+## Features
+- 📝 Notes
+- ✅ Checklists with visual checkbox, completion and strike-through
+- 💳 Payment reminders
+- 🤖 JARVIS assistant and memory
 - 🎙️ Voice interaction
 - 🔔 Browser notifications
-- 🎨 Custom background and typography architecture
-- 📱 PWA / GitHub Pages friendly
+- 🎨 Liquid Glass UI
+- 🖼️ Custom global and per-note backgrounds
+- 🔤 Custom fonts
+- 📱 PWA / GitHub Pages
 
-## 🛠️ V1.3.1 Stability Fix
-This release hardens the local data migration so older notes without a checklist cannot crash the main screen. Existing checklist items are normalized with stable IDs.
+## V1.3.2 stability fixes
+- Safe recovery for malformed or legacy localStorage data
+- Stable IDs for checklist items
+- Removed a null-element startup crash in the home screen
+- Protected rendering from incompatible persisted data
+- Service-worker version bumped to avoid stale assets
 
-## 📁 Structure
+## Project structure
 ```text
 glass-notes/
 ├── index.html
@@ -25,20 +31,16 @@ glass-notes/
 └── README.md
 ```
 
-## 🚀 GitHub Pages
-Upload/replace `index.html`, `sw.js` and `README.md` in the repository. If the old PWA shell remains cached, refresh the page and, if necessary, clear the site's cached data once.
-
-## 🗺️ Roadmap
+## Roadmap
 - [x] Notes
 - [x] Checklists
 - [x] Payments
 - [x] Reminders
 - [x] JARVIS
-- [x] Voice
+- [x] Voice interaction
 - [x] Custom backgrounds
-- [ ] Reliable push notifications when fully closed
+- [x] Custom fonts
+- [ ] Reliable push notifications while the PWA is closed
 - [ ] Cloud sync
 - [ ] Backup / restore
-- [ ] Advanced JARVIS Command Center
-
-**Version: V1.3.1 Stable**
+- [ ] Advanced JARVIS AI
