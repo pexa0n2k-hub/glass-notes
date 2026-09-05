@@ -17,6 +17,12 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;background-image:var(--u
 <style id="swipe-gestures">
 .note,.list,.payment{touch-action:pan-y}
 .swipe-hint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);padding:8px 14px;border-radius:999px;z-index:9999;display:none;font-size:.78rem}
+</style><style id="directorio-swipe">
+.swipe-wrap{position:relative;border-radius:22px;overflow:hidden;touch-action:pan-y}
+.swipe-wrap .swipe-card{position:relative;z-index:2;transition:transform .18s ease;will-change:transform}
+.swipe-action{position:absolute;inset:0;display:flex;align-items:center;gap:7px;padding:0 24px;font-weight:900;font-size:14px;z-index:1}
+.edit-action{justify-content:flex-start;background:linear-gradient(90deg,rgba(98,245,165,.25),rgba(98,245,165,.08));color:#62f5a5}
+.delete-action{justify-content:flex-end;background:linear-gradient(90deg,rgba(255,89,100,.08),rgba(255,89,100,.28));color:#ff5964}
 </style></head>
 <body>
 <header class="top glass">
@@ -70,21 +76,14 @@ function notes(home){
  const pending=S.tasks.filter(x=>!x.done).length;
  let h=home?`<section class="hero glass"><div class="ey">CENTRO DE MANDO</div><div class="big">Todo bajo control.</div><p class="muted">${S.notes.length} notas · ${pending} pendientes · ${S.payments.length} pagos</p><div class="stats"><div class="stat glass"><b>${S.notes.length}</b><span class="muted">Notas</span></div><div class="stat glass"><b>${pending}</b><span class="muted">Pendientes</span></div></div></section>`:'';
  h+=`<section><div class="head"><h2>Mis notas</h2><button class="btn" onclick="note()">+ Nueva</button></div>`;
- h+=S.notes.length?`<div class="grid">${S.notes.map(n=>`<article class="note glass" onclick="note('${esc(n.id)}')"><h3>${esc(n.title||'Sin título')}</h3><p>${esc(n.body||'')}</p><span class="tag">${new Date(n.updated||n.created||Date.now()).toLocaleDateString('es-MX')}</span></article>`).join('')}</div>`:`<div class="empty glass">📝<br><br>Crea tu primera nota con +</div>`;
+ h+=S.notes.length?`<div class="grid">${S.notes.map(n=>`<div class="swipe-wrap" data-id="${esc(n.id)}"><div class="swipe-action edit-action">✏️ <span>Modificar</span></div><div class="swipe-action delete-action">🗑️ <span>Eliminar</span></div><article class="note glass swipe-card" onclick="note('${esc(n.id)}')"><h3>${esc(n.title||'Sin título')}</h3><p>${esc(n.body||'')}</p><span class="tag">${new Date(n.updated||n.created||Date.now()).toLocaleDateString('es-MX')}</span></article></div>`).join('')}</div>`:`<div class="empty glass">📝<br><br>Crea tu primera nota con +</div>`;
  h+='</section>';document.getElementById('app').innerHTML=h
 }
 function tasks(){
  const p=S.tasks.filter(x=>!x.done),d=S.tasks.filter(x=>x.done);
  document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">LISTA</div><div class="big">Pendientes</div><p class="muted">${p.length} por hacer · ${d.length} completados</p></section><div class="head"><h2>Por hacer</h2><button class="btn" onclick="task()">+ Pendiente</button></div>${p.length?`<div class="grid">${p.map(tc).join('')}</div>`:`<div class="empty glass">✨ Todo listo.</div>`}<div class="head"><h2>Completados</h2><button class="btn" onclick="clearDone()">Limpiar</button></div>${d.length?`<div class="grid">${d.map(tc).join('')}</div>`:''}`
 }
-function tc(t){return `<article class="task glass ${t.done?'done':''}"><input class="check" type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${esc(t.id)}')"><div><div class="title"><b>${esc(t.title)}</b></div><div class="muted">${esc(t.detail||'')}</div></div><button class="btn" onclick="delTask('${esc(t.id)}')">×</button></article>`}
-function payments(){
- const pending=S.payments.filter(x=>x.status!=='paid');
- const paid=S.payments.filter(x=>x.status==='paid');
- const tp=pending.reduce((a,x)=>a+(Number(x.amount)||0),0);
- const tg=paid.reduce((a,x)=>a+(Number(x.amount)||0),0);
- document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">CONTROL</div><div class="big">Pagos</div><p class="muted">Pendiente: <b>$${tp.toFixed(2)}</b> · Pagado: <b>$${tg.toFixed(2)}</b></p></section><div class="head"><h2>Movimientos</h2><button class="btn" onclick="payment()">+ Pago</button></div>${S.payments.length?`<div class="grid">${S.payments.slice().reverse().map(x=>`<article class="payment glass"><div class="head"><div><b>${esc(x.title||'Pago')}</b><div class="muted">${x.status==='paid'?'🟢 Pagado':'🔴 Pendiente'}</div></div><div class="amount">$${(Number(x.amount)||0).toFixed(2)}</div></div><div class="muted">📅 ${esc(x.date||'Sin fecha')} · ⏰ ${esc(x.time||'Sin hora')}</div><div class="muted">📆 Vence: ${esc(x.due||'Sin vencimiento')}</div>${x.note?`<p class="muted">${esc(x.note)}</p>`:''}<div class="actions"><button class="btn" onclick="payment('${esc(x.id)}')">✏️ Editar</button>${x.status!=='paid'?`<button class="btn" onclick="markPaid('${esc(x.id)}')">✓ Pagado</button>`:''}<button class="btn" onclick="delPayment('${esc(x.id)}')">Eliminar</button></div></article>`).join('')}</div>`:`<div class="empty glass">💳 No hay pagos registrados.</div>`}`
-}
+function tc(t){return `<div class="swipe-wrap" data-id="${esc(t.id)}"><div class="swipe-action edit-action">✏️ <span>Modificar</span></div><div class="swipe-action delete-action">🗑️ <span>Eliminar</span></div><article class="task glass swipe-card ${t.done?'done':''}"><input class="check" type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${esc(t.id)}')"><div><div class="title"><b>${esc(t.title)}</b></div><div class="muted">${esc(t.detail||'')}</div></div><button class="btn" onclick="delTask('${esc(t.id)}')">×</button></article></div>`}
 function jarvis(){
  const last=S.messages.at(-1);
  document.getElementById('app').innerHTML=`<section class="card glass" style="text-align:center"><div class="ey">JARVIS CORE</div><div class="orb">J</div><h2>¿En qué puedo ayudarte?</h2><p class="muted">Puedo crear notas, pendientes y consultar tus datos.</p><button class="btn primary" onclick="voice()">🎙️ Hablar con JARVIS</button>${last?`<div class="alert">${esc(last.reply)}</div>`:''}</section><section class="card glass"><h2>Comandos rápidos</h2><div class="grid"><button class="btn" onclick="command('crea una nota llamada Compras con leche y pan')">“Crea una nota…”</button><button class="btn" onclick="command('agrega pendiente pagar la luz')">“Agrega pendiente…”</button><button class="btn" onclick="command('muéstrame mis pendientes')">“Mis pendientes”</button><button class="btn" onclick="command('cuántas notas tengo')">“Cuántas notas tengo”</button></div></section>`
@@ -95,8 +94,8 @@ document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closeModal
 function note(i=''){const n=S.notes.find(x=>x.id===i)||{};open(`<div class="head"><h2>${i?'Editar nota':'Nueva nota'}</h2><button class="ico" onclick="closeModal()">×</button></div><div class="label">Título</div><input id="nt" class="field" value="${esc(n.title)}" placeholder="Ej. Compras"><div class="label">Contenido</div><textarea id="nb" class="field" style="min-height:150px" placeholder="Escribe aquí">${esc(n.body)}</textarea><div class="actions"><button class="btn primary" onclick="saveNote('${esc(i)}')">Guardar</button>${i?`<button class="btn" onclick="delNote('${esc(i)}')">Eliminar</button>`:''}</div>`)}
 function saveNote(i){const a={title:document.getElementById('nt').value.trim()||'Sin título',body:document.getElementById('nb').value.trim(),updated:Date.now()};if(i){Object.assign(S.notes.find(x=>x.id===i),a)}else S.notes.push({id:id(),created:Date.now(),...a});save();closeModal();render()}
 function delNote(i){S.notes=S.notes.filter(x=>x.id!==i);save();closeModal();render()}
-function task(){open(`<div class="head"><h2>Nuevo pendiente</h2><button class="ico" onclick="closeModal()">×</button></div><div class="label">Tarea</div><input id="tt" class="field" placeholder="Ej. Pagar internet"><div class="label">Detalle</div><input id="td" class="field"><div class="actions"><button class="btn primary" onclick="saveTask()">Agregar</button></div>`)}
-function saveTask(){const title=document.getElementById('tt').value.trim();if(!title)return;S.tasks.push({id:id(),title,detail:document.getElementById('td').value.trim(),done:false});save();closeModal();render()}
+function task(i=''){const t=i?S.tasks.find(x=>x.id===i):null;if(t){open(`<div class="head"><h2>Modificar pendiente</h2><button class="ico" onclick="closeModal()">×</button></div><div class="label">Tarea</div><input id="tt" class="field" value="${esc(t.title)}"><div class="label">Detalle</div><input id="td" class="field" value="${esc(t.detail||'')}"><div class="actions"><button class="btn primary" onclick="saveTask('${esc(i)}')">Guardar</button></div>`);return}open(`<div class="head"><h2>Nuevo pendiente</h2><button class="ico" onclick="closeModal()">×</button></div><div class="label">Tarea</div><input id="tt" class="field" placeholder="Ej. Pagar internet"><div class="label">Detalle</div><input id="td" class="field"><div class="actions"><button class="btn primary" onclick="saveTask()">Agregar</button></div>`)}
+function saveTask(i=''){const title=document.getElementById('tt').value.trim();if(!title)return;const detail=document.getElementById('td').value.trim();if(i){const t=S.tasks.find(x=>x.id===i);if(t)Object.assign(t,{title,detail})}else S.tasks.push({id:id(),title,detail,done:false});save();closeModal();render()}
 function toggleTask(i){const t=S.tasks.find(x=>x.id===i);if(t)t.done=!t.done;save();render()}
 function delTask(i){S.tasks=S.tasks.filter(x=>x.id!==i);save();render()}
 function clearDone(){S.tasks=S.tasks.filter(x=>!x.done);save();render()}
@@ -191,6 +190,19 @@ window.addEventListener('hashchange',render);window.addEventListener('load',()=>
   }
  },{passive:true});
 })();
+function bindSwipes(){
+ document.querySelectorAll(".swipe-wrap").forEach(wrap=>{
+  if(wrap.dataset.swipeBound)return;wrap.dataset.swipeBound="1";
+  const card=wrap.querySelector(".swipe-card");if(!card)return;
+  let startX=0,startY=0,dx=0,drag=false;
+  const reset=()=>{card.style.transform="translateX(0)";};
+  wrap.addEventListener("touchstart",e=>{if(e.touches.length!==1)return;startX=e.touches[0].clientX;startY=e.touches[0].clientY;dx=0;drag=true;card.style.transition="none"},{passive:true});
+  wrap.addEventListener("touchmove",e=>{if(!drag)return;dx=e.touches[0].clientX-startX;const dy=e.touches[0].clientY-startY;if(Math.abs(dy)>Math.abs(dx)*1.15){drag=false;card.style.transition="transform .18s ease";reset();return}const limited=Math.max(-125,Math.min(125,dx));card.style.transform=`translateX(${limited}px)`},{passive:true});
+  wrap.addEventListener("touchend",()=>{if(!drag)return;drag=false;card.style.transition="transform .18s ease";const id=wrap.dataset.id;if(dx>75){card.style.transform="translateX(110px)";setTimeout(()=>{reset();if(card.classList.contains("note"))note(id);else if(card.classList.contains("task"))task(id);else payment(id)},140)}else if(dx<-75){card.style.transform="translateX(-110px)";setTimeout(()=>{reset();if(confirm("¿Eliminar este elemento?")){if(card.classList.contains("note"))delNote(id);else if(card.classList.contains("task"))delTask(id);else delPayment(id)}},140)}else reset()},{passive:true});
+  wrap.addEventListener("touchcancel",()=>{drag=false;card.style.transition="transform .18s ease";reset()},{passive:true});
+ });
+}
+new MutationObserver(()=>bindSwipes()).observe(document.body,{childList:true,subtree:true});
 </script>
 </body>
 </html>

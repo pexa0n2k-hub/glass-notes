@@ -46,3 +46,7 @@ Los gestos ahora tienen animación visual: la tarjeta se desliza siguiendo el de
 
 ## V2.0.6 — Slide visible corregido
 Gestos delegados para tarjetas creadas dinámicamente. La tarjeta ahora sigue físicamente el dedo y completa un desplazamiento visual antes de editar o eliminar.
+
+
+## V2.0.7 — Swipe Directorio
+Mecánica de swipe adaptada directamente de `bindSwipes()` del Directorio V2.9 para tarjetas de Notas, Listas y Pagos.
