@@ -42,3 +42,7 @@ En notas, listas y pagos: deslizar de izquierda a derecha abre modificación; de
 
 ## V2.0.5 — Slide visual
 Los gestos ahora tienen animación visual: la tarjeta se desliza siguiendo el dedo, revela las acciones y completa el movimiento al modificar o eliminar. Aplicado a Notas, Listas y Pagos.
+
+
+## V2.0.6 — Slide visible corregido
+Gestos delegados para tarjetas creadas dinámicamente. La tarjeta ahora sigue físicamente el dedo y completa un desplazamiento visual antes de editar o eliminar.
