@@ -16,3 +16,7 @@ Notas, pendientes con checkbox, pagos, JARVIS por texto/voz cuando el navegador 
 
 ## Publicación
 Sube `index.html`, `manifest.json`, `sw.js` y `README.md` a la raíz de `main` en GitHub Pages.
+
+
+## V2.1.1 — Pagos corregidos
+El módulo de pagos ahora incluye fecha, hora, vencimiento, estado, edición, marcado como pagado y totales separados. Los registros existentes se migran sin eliminar los campos que ya tengan.
