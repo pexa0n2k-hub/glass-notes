@@ -1,46 +1,24 @@
-# 🧊 Glass Notes
+# Glass Notes V2.0 — Stable
 
-> Your personal notes. Reimagined.
+Esta versión reemplaza el núcleo que estaba provocando el mensaje **“dato o función incompatible”**.
 
-**V1.3.5 — Safe Boot**
+## Cambios principales
+- Almacenamiento local protegido con validación.
+- Si un dato guardado está corrupto, la interfaz no se cae.
+- Notas, pendientes y pagos.
+- Casillas para tachar pendientes y sección de completados.
+- JARVIS con comandos de texto y reconocimiento de voz cuando el navegador lo permite.
+- Fondo de pantalla desde URL o galería.
+- Color de acento personalizable.
+- Respaldo y restauración JSON.
+- Service Worker nuevo con caché independiente.
 
-## Features
-- 📝 Notes
-- ✅ Checklists with visual checkbox, completion and strike-through
-- 💳 Payment reminders
-- 🤖 JARVIS assistant and memory
-- 🎙️ Voice interaction
-- 🔔 Browser notifications
-- 🎨 Liquid Glass UI
-- 🖼️ Custom global and per-note backgrounds
-- 🔤 Custom fonts
-- 📱 PWA / GitHub Pages
+## Archivos
+- `index.html`
+- `manifest.json`
+- `sw.js`
 
-## V1.3.2 stability fixes
-- Safe recovery for malformed or legacy localStorage data
-- Stable IDs for checklist items
-- Removed a null-element startup crash in the home screen
-- Protected rendering from incompatible persisted data
-- Service-worker version bumped to avoid stale assets
+## Instalación en GitHub Pages
+Sube los tres archivos a la raíz de la rama `main`. GitHub Pages debe publicar `/ (root)` desde `main`.
 
-## Project structure
-```text
-glass-notes/
-├── index.html
-├── sw.js
-└── README.md
-```
-
-## Roadmap
-- [x] Notes
-- [x] Checklists
-- [x] Payments
-- [x] Reminders
-- [x] JARVIS
-- [x] Voice interaction
-- [x] Custom backgrounds
-- [x] Custom fonts
-- [ ] Reliable push notifications while the PWA is closed
-- [ ] Cloud sync
-- [ ] Backup / restore
-- [ ] Advanced JARVIS AI
+Después de publicar, abre la página y haz una recarga completa. Si el navegador conserva el Service Worker anterior, borra los datos/caché del sitio una vez y vuelve a abrirlo.
