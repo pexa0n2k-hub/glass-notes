@@ -38,3 +38,7 @@ Corrección del fondo desde galería y caché actualizado.
 
 ## V2.0.4 — Gestos
 En notas, listas y pagos: deslizar de izquierda a derecha abre modificación; deslizar de derecha a izquierda solicita confirmación y elimina. Los botones existentes permanecen disponibles.
+
+
+## V2.0.5 — Slide visual
+Los gestos ahora tienen animación visual: la tarjeta se desliza siguiendo el dedo, revela las acciones y completa el movimiento al modificar o eliminar. Aplicado a Notas, Listas y Pagos.
