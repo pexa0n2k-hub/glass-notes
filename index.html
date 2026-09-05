@@ -122,40 +122,51 @@ hr{border:0;border-top:1px solid #ffffff12}
 
 <div class="modal hidden" id="modal"><div class="sheet glass"><div class="sheethead"><h2 id="mtitle">Nueva nota</h2><button class="icon" id="close">✕</button></div><div id="mbody"></div></div></div><script>
 window.addEventListener("error",function(e){
-  const s=document.getElementById("screen");
-  if(s && (!s.innerHTML.trim() || s.innerHTML.trim().length<40)){
-    s.innerHTML='<div class="screen"><section class="glass empty"><h2>Glass Notes se está recuperando</h2><p class="muted">La interfaz detectó un dato incompatible. Tus notas y pagos se conservarán.</p><button class="btn primary" onclick="location.reload()">↻ Recargar</button></section></div>';
-  }
-});
-</script>
+ const s=document.getElementById("screen");
+ if(s && !s.innerHTML.trim()) s.innerHTML='<div class="screen"><section class="glass empty"><h2>Glass Notes se está recuperando</h2><p class="muted">La aplicación encontró un dato o función incompatible.</p><button class="btn primary" onclick="location.reload()">↻ Recargar</button></section></div>';
+});</script>
 
 <script>
 if ("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 const KEY="glass_notes_v03";
 const DEFAULT_STATE={notes:[],payments:[],activity:[],settings:{fontName:"",fontData:"",accent:"#66e3ff",bgData:"",applyFontAll:true,notifications:false,jarvisName:"JARVIS",personality:"classic",jarvisAccent:"#66e3ff",welcome:"Bienvenido de nuevo, señor.",voice:false,voiceEnabled:false}};
+const uid=()=> (globalThis.crypto&&typeof crypto.randomUUID==="function")?crypto.randomUUID():"id-"+Date.now()+"-"+Math.random().toString(36).slice(2);
 let state;
 try{
   const raw=localStorage.getItem(KEY);
-  state=raw?JSON.parse(raw):structuredClone(DEFAULT_STATE);
-}catch(e){
-  state=structuredClone(DEFAULT_STATE);
-}
-if(!state||typeof state!=="object") state=structuredClone(DEFAULT_STATE);
-state.notes=Array.isArray(state.notes)?state.notes:[];
-state.payments=Array.isArray(state.payments)?state.payments:[];
-state.activity=Array.isArray(state.activity)?state.activity:[];
-state.settings=(state.settings&&typeof state.settings==="object")?state.settings:{};
-state.payments=state.payments.map(p=>({...p,reminder:p.reminder??2,repeat:p.repeat||"none",snoozedUntil:p.snoozedUntil||0}));
+  state=raw?JSON.parse(raw):null;
+}catch(e){ state=null; }
+if(!state || typeof state!=="object" || Array.isArray(state)) state=JSON.parse(JSON.stringify(DEFAULT_STATE));
+state.notes=Array.isArray(state.notes)?state.notes.filter(n=>n&&typeof n==="object"):[];
+state.payments=Array.isArray(state.payments)?state.payments.filter(p=>p&&typeof p==="object"):[];
+state.activity=Array.isArray(state.activity)?state.activity.filter(a=>a&&typeof a==="object"):[];
+state.settings=(state.settings&&typeof state.settings==="object"&&!Array.isArray(state.settings))?state.settings:{};
 state.settings={...DEFAULT_STATE.settings,...state.settings};
-state.settings.homeName=state.settings.homeName||state.settings.jarvisName||"JARVIS";
-state.settings.homeGreeting=state.settings.homeGreeting||"Buenos días, señor.";
+state.settings.homeName=String(state.settings.homeName||state.settings.jarvisName||"JARVIS");
+state.settings.homeGreeting=String(state.settings.homeGreeting||"Buenos días, señor.");
 state.lastOpened=state.lastOpened||Date.now();
-const uid=()=> (globalThis.crypto&&typeof crypto.randomUUID==="function")?crypto.randomUUID():"id-"+Date.now()+"-"+Math.random().toString(36).slice(2);
-state.notes=state.notes.map(n=>({...n,createdAt:n.createdAt||Date.now(),updatedAt:n.updatedAt||Date.now(),archived:!!n.archived,tags:Array.isArray(n.tags)?n.tags:[],checks:Array.isArray(n.checks)?n.checks.map(c=>({...c,id:c.id||uid(),text:c.text||"",done:!!c.done})):[]}));
+
+state.notes=state.notes.map(n=>{
+  const checks=Array.isArray(n.checks)?n.checks.filter(c=>c&&typeof c==="object").map(c=>({
+    id:c.id||uid(), text:String(c.text??""), done:!!c.done
+  })):[];
+  return {
+    ...n,
+    id:n.id||uid(),
+    title:String(n.title??"Sin título"),
+    body:String(n.body??""),
+    createdAt:n.createdAt||Date.now(),
+    updatedAt:n.updatedAt||Date.now(),
+    archived:!!n.archived,
+    tags:Array.isArray(n.tags)?n.tags.filter(Boolean).map(String):[],
+    checks
+  };
+});
+state.payments=state.payments.map(p=>({...p,id:p.id||uid(),title:String(p.title??"Pago"),reminder:Number.isFinite(Number(p.reminder))?Number(p.reminder):2,repeat:p.repeat||"none",snoozedUntil:p.snoozedUntil||0}));
 function logEvent(type,title,detail=""){state.activity.unshift({id:uid(),type,title,detail,at:Date.now()});state.activity=state.activity.slice(0,80);}
 function recordPattern(){let recurring=state.payments.filter(p=>p.repeat&&p.repeat!=="none");let monthly=recurring.filter(p=>p.repeat==="monthly").length;return {recurring:recurring.length,monthly};}
 function memoryInsights(){
-let r=recordPattern(), notes=state.notes.filter(n=>!n.archived).length, pending=state.notes.reduce((a,n)=>a+n.checks.filter(c=>!c.done).length,0);
+let r=recordPattern(), notes=state.notes.filter(n=>!n.archived).length, pending=state.notes.reduce((a,n)=>a+(n.checks||[]).filter(c=>!c.done).length,0);
 let out=[];
 if(r.monthly)out.push(`He detectado ${r.monthly} pago${r.monthly>1?"s":" mensual"} recurrente${r.monthly>1?"s":""}.`);
 if(pending)out.push(`Tiene ${pending} pendiente${pending>1?"s":""} sin resolver.`);
@@ -176,7 +187,21 @@ function requestNotifications(){if(!("Notification" in window))return alert("Est
 function shouldAlert(p){if(p.paid)return false;let now=Date.now();if(p.snoozedUntil&&p.snoozedUntil>now)return false;return now>=p.due-p.reminder*86400000;}
 function notifyDue(){if(!state.settings.notifications||!("Notification" in window)||Notification.permission!=="granted")return;state.payments.filter(shouldAlert).slice(0,3).forEach(p=>{try{new Notification("JARVIS · Glass Notes",{body:jarvisText(p),icon:"./icon-192.png",tag:"payment-"+p.id});p.lastNotified=Date.now();}catch(e){}});save();}
 function fontStyle(){document.documentElement.style.setProperty("--accent",state.settings.accent||"#66e3ff");if(state.settings.fontData){let id="userFont";let old=$("#"+id);if(old)old.remove();let st=document.createElement("style");st.id=id;st.textContent="@font-face{font-family:'GlassUser';src:url("+state.settings.fontData+") format('truetype');font-display:swap}";document.head.appendChild(st);if(state.settings.applyFontAll)document.body.style.fontFamily="'GlassUser',system-ui,sans-serif";}}
-function render(){fontStyle();notifyDue();if(tab==="home")homeScreen(); else if(tab==="notes")notes();if(tab==="tasks")tasks();if(tab==="payments")payments();if(tab==="jarvis")jarvis();document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));}
+function render(){
+ try{
+  fontStyle(); notifyDue();
+  if(tab==="home") homeScreen();
+  else if(tab==="notes") notes();
+  else if(tab==="tasks") tasks();
+  else if(tab==="payments") payments();
+  else if(tab==="jarvis") jarvis();
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+ }catch(err){
+  console.error("Glass Notes render error:",err);
+  const s=$("#screen");
+  if(s)s.innerHTML=`<div class="screen"><section class="glass empty"><h2>Glass Notes se está recuperando</h2><p class="muted">Se detectó un dato incompatible. La aplicación no se cerrará.</p><button class="btn primary" onclick="localStorage.removeItem(KEY);location.reload()">↻ Recuperar aplicación</button></section></div>`;
+ }
+}
 
 
 
@@ -251,7 +276,7 @@ function executeVoiceCommand(raw){
  if((m=t.match(/(?:agrega|anade|añade)\s+(.+?)\s+(?:a|en)\s+(?:la\s+)?(?:lista|nota)\s+(.+)/i))){
    let item=m[1].trim(), title=m[2].trim();
    let n=state.notes.find(x=>normalizeText(x.title).includes(normalizeText(title)));
-   if(n){n.checks.push({id:uid(),text:item,done:false});n.updatedAt=Date.now();logEvent("voice","Pendiente añadido por voz",item+" → "+n.title);save();render();return voiceReply(raw);}
+   if(n){(n.checks||(n.checks=[])).push({id:uid(),text:item,done:false});n.updatedAt=Date.now();logEvent("voice","Pendiente añadido por voz",item+" → "+n.title);save();render();return voiceReply(raw);}
  }
  // Open sections
  if(t.includes("abre mis notas")||t==="notas"||t.includes("mostrar notas")){tab="notes";render();return voiceReply(raw)}
@@ -326,13 +351,13 @@ function smartVoiceCommand(raw){
  if(am){
    let items=am[1].split(/\s*,\s*|\s+y\s+/i).map(x=>x.trim()).filter(Boolean), title=am[2].trim();
    let n=state.notes.find(x=>normalizeText(x.title).includes(normalizeText(title)));
-   if(n){items.forEach(item=>n.checks.push({id:uid(),text:item,done:false}));n.updatedAt=Date.now();logEvent("voice","JARVIS añadió pendientes",items.join(", "));save();render();speakJarvis("He añadido "+items.length+" pendiente"+(items.length>1?"s":"")+" a "+n.title+".");return "Pendientes añadidos.";}
+   if(n){items.forEach(item=>(n.checks||(n.checks=[])).push({id:uid(),text:item,done:false}));n.updatedAt=Date.now();logEvent("voice","JARVIS añadió pendientes",items.join(", "));save();render();speakJarvis("He añadido "+items.length+" pendiente"+(items.length>1?"s":"")+" a "+n.title+".");return "Pendientes añadidos.";}
  }
  // Completion: "marca leche como hecha en supermercado"
  let cm=raw.match(/(?:marca|marcar)\s+(.+?)\s+(?:como|de)\s+(?:hecho|hecha|listo|lista|completado|completada)\s+(?:en|a)\s+(.+)/i);
  if(cm){
    let item=normalizeText(cm[1]), title=normalizeText(cm[2]), n=state.notes.find(x=>normalizeText(x.title).includes(title));
-   if(n){let c=n.checks.find(x=>normalizeText(x.text).includes(item));if(c){c.done=true;n.updatedAt=Date.now();logEvent("voice","Pendiente completado",c.text);save();render();speakJarvis("Pendiente completado, señor.");return "Pendiente completado."}}
+   if(n){let c=(n.checks||[]).find(x=>normalizeText(x.text).includes(item));if(c){c.done=true;n.updatedAt=Date.now();logEvent("voice","Pendiente completado",c.text);save();render();speakJarvis("Pendiente completado, señor.");return "Pendiente completado."}}
  }
  return executeVoiceCommand(raw);
 }
@@ -439,7 +464,7 @@ state.lastOpened=Date.now();save();
 }
 
 function notes(){
-let pending=state.notes.reduce((a,n)=>a+n.checks.filter(c=>!c.done).length,0);
+let pending=state.notes.reduce((a,n)=>a+(n.checks||[]).filter(c=>!c.done).length,0);
 $("#screen").innerHTML='<div class="screen"><section class="hero glass"><div class="big">🤖 '+(pending?pending+" pendientes":"Todo bajo control")+'</div><p class="muted">'+state.notes.filter(n=>!n.archived).length+" notas · "+state.payments.filter(p=>!p.paid).length+' pagos pendientes</p><span class="badge">JARVIS MEMORY · V1.3.2</span></section><div class="searchbox"><input class="field" id="search" placeholder="Buscar notas, etiquetas o texto..."></div><div class="filterrow"><button class="btn primary" data-filter="all">Todas</button><button class="btn" data-filter="active">Activas</button><button class="btn" data-filter="archived">Archivadas</button></div><div id="notelist"></div></div>';
 const paint=(filter="all",q="")=>{let list=state.notes.filter(n=>filter==="archived"?n.archived:filter==="active"?!n.archived:true).filter(n=>(n.title+" "+n.body+" "+(n.tags||[]).join(" ")).toLowerCase().includes(q.toLowerCase()));$("#notelist").innerHTML=list.length?'<div class="grid">'+list.map(noteCard).join("")+'</div>':'<div class="glass empty">No encontré notas con esos criterios.</div>';document.querySelectorAll("[data-note]").forEach(e=>e.onclick=()=>openNote(e.dataset.note));};
 paint();$("#search").oninput=e=>paint("all",e.target.value);document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("primary"));b.classList.add("primary");paint(b.dataset.filter,$("#search").value)});
@@ -447,12 +472,12 @@ paint();$("#search").oninput=e=>paint("all",e.target.value);document.querySelect
 function home(){homeScreen();}
 
 function noteCard(n){
-let p=n.checks.filter(c=>!c.done).length;
+let p=(n.checks||[]).filter(c=>!c.done).length;
 let bg=n.bg?`<div class="bg" style="background-image:url('${n.bg}')"></div>`:"";
-return `<article class="note glass" data-note="${n.id}" style="--accent:${n.accent||state.settings.accent||"#66e3ff"}">${bg}<h3>${esc(n.title||"Sin título")} ${n.archived?"📦":""}</h3><p>${esc(n.body||"Nota vacía")}</p>${n.checks.length?`<span class="badge">${n.checks.length-p}/${n.checks.length} completados</span>`:""}${(n.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}${n.fontName?`<div class="font-pill" style="margin-top:8px">🔤 ${esc(n.fontName)}</div>`:""}</article>`;
+return `<article class="note glass" data-note="${n.id}" style="--accent:${n.accent||state.settings.accent||"#66e3ff"}">${bg}<h3>${esc(n.title||"Sin título")} ${n.archived?"📦":""}</h3><p>${esc(n.body||"Nota vacía")}</p>${(n.checks||[]).length?`<span class="badge">${(n.checks||[]).length-p}/${(n.checks||[]).length} completados</span>`:""}${(n.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}${n.fontName?`<div class="font-pill" style="margin-top:8px">🔤 ${esc(n.fontName)}</div>`:""}</article>`;
 }
 function tasks(){
-let arr=[];state.notes.forEach(n=>n.checks.forEach(c=>arr.push({...c,nid:n.id,ntitle:n.title})));
+let arr=[];state.notes.forEach(n=>(n.checks||[]).forEach(c=>arr.push({...c,nid:n.id,ntitle:n.title})));
 $("#screen").innerHTML='<div class="screen"><h2>Pendientes</h2>'+(arr.length?'<div class="grid">'+arr.map(t=>`<div class="payment glass"><label class="checkrow"><input type="checkbox" ${t.done?"checked":""} data-task="${t.nid}|${t.id}"><span>${esc(t.text)}<small class="muted" style="display:block">${esc(t.ntitle||"Sin título")}</small></span><span></span></label></div>`).join("")+'</div>':'<div class="glass empty">No tienes pendientes todavía.</div>')+'</div>';
 document.querySelectorAll("[data-task]").forEach(e=>e.onchange=()=>{let [nid,id]=e.dataset.task.split("|"),n=state.notes.find(x=>x.id===nid),c=n?.checks.find(x=>x.id===id);if(c)c.done=e.checked;save();render()});
 }
@@ -519,7 +544,7 @@ tempBg=n.bg;
 openModal(id?"Editar nota":"Nueva nota",`
 <div class="label">Título</div><input class="field" id="nt" value="${esc(n.title)}" placeholder="Gas, supermercado, ideas...">
 <div class="label">Contenido</div><textarea class="field" id="nb" rows="6" placeholder="Escribe aquí...">${esc(n.body)}</textarea>
-<div class="label">Checklist</div><div id="cl">${n.checks.map((c,i)=>`<div class="checkrow"><input type="checkbox" data-ci="${i}" ${c.done?"checked":""}><input class="field" data-ct="${i}" value="${esc(c.text)}"><button class="icon" data-rm="${i}">🗑️</button></div>`).join("")}</div>
+<div class="label">Checklist</div><div id="cl">${(n.checks||[]).map((c,i)=>`<div class="checkrow"><input type="checkbox" data-ci="${i}" ${c.done?"checked":""}><input class="field" data-ct="${i}" value="${esc(c.text)}"><button class="icon" data-rm="${i}">🗑️</button></div>`).join("")}</div>
 <div class="row"><input class="field" id="newc" placeholder="Nuevo pendiente"><button class="btn" id="addc">＋</button></div>
 <div class="label">Etiquetas</div><input class="field" id="tags" value="${esc((n.tags||[]).join(", "))}" placeholder="pagos, casa, trabajo">
 <div class="row between" style="margin-top:10px"><span class="muted small">Archivar nota</span><label class="toggle"><input type="checkbox" id="arch" ${n.archived?"checked":""}><span class="slider"></span></label></div>
@@ -529,16 +554,16 @@ openModal(id?"Editar nota":"Nueva nota",`
 <div class="actions"><button class="btn primary" id="saveN">Guardar</button>${id?'<button class="btn danger" id="delN">Eliminar</button>':""}<button class="btn" id="cancel">Cancelar</button></div>
 <input hidden type="file" id="bgfile" accept="image/*"><input hidden type="file" id="fontfile" accept=".ttf,.otf,.woff,.woff2">
 `);
-$("#addc").onclick=()=>{let v=$("#newc").value.trim();if(!v)return;n.checks.push({id:uid(),text:v,done:false});openNote(n.id)};
+$("#addc").onclick=()=>{let v=$("#newc").value.trim();if(!v)return;(n.checks||(n.checks=[])).push({id:uid(),text:v,done:false});openNote(n.id)};
 $("#nbg").onclick=()=>$("#bgfile").click();
 $("#nfont").onclick=()=>$("#fontfile").click();
 $("#bgfile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{$("#preview").style.backgroundImage=`url('${r.result}')`;tempBg=r.result};r.readAsDataURL(f)};
 $("#fontfile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{n.fontData=r.result;n.fontName=f.name;$("#nfont").textContent="🔤 "+f.name};r.readAsDataURL(f)};
 $("#addc").onclick=()=>{};
-$("#saveN").onclick=()=>{n.title=$("#nt").value.trim()||"Sin título";n.body=$("#nb").value;n.accent=$("#nc").value;n.bg=tempBg;n.fontData=n.fontData||"";n.fontName=n.fontName||"";n.tags=$("#tags").value.split(",").map(x=>x.trim()).filter(Boolean).slice(0,10);n.archived=$("#arch").checked;n.updatedAt=Date.now();n.checks.forEach((c,i)=>{let cb=document.querySelector(`[data-ci="${i}"]`),tx=document.querySelector(`[data-ct="${i}"]`);if(cb)c.done=cb.checked;if(tx)c.text=tx.value});if(!id){n.createdAt=Date.now();state.notes.unshift(n);logEvent("note","Nueva nota",n.title)}else{logEvent("edit","Nota actualizada",n.title)}save();closeModal();render()};
+$("#saveN").onclick=()=>{n.title=$("#nt").value.trim()||"Sin título";n.body=$("#nb").value;n.accent=$("#nc").value;n.bg=tempBg;n.fontData=n.fontData||"";n.fontName=n.fontName||"";n.tags=$("#tags").value.split(",").map(x=>x.trim()).filter(Boolean).slice(0,10);n.archived=$("#arch").checked;n.updatedAt=Date.now();(n.checks||[]).forEach((c,i)=>{let cb=document.querySelector(`[data-ci="${i}"]`),tx=document.querySelector(`[data-ct="${i}"]`);if(cb)c.done=cb.checked;if(tx)c.text=tx.value});if(!id){n.createdAt=Date.now();state.notes.unshift(n);logEvent("note","Nueva nota",n.title)}else{logEvent("edit","Nota actualizada",n.title)}save();closeModal();render()};
 if(id)$("#delN").onclick=()=>{state.notes=state.notes.filter(x=>x.id!==id);save();closeModal();render()};
 $("#cancel").onclick=closeModal;
-document.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{n.checks.splice(+b.dataset.rm,1);openNote(n.id)});
+document.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{(n.checks||[]).splice(+b.dataset.rm,1);openNote(n.id)});
 }
 
 function openPayment(){
@@ -558,7 +583,7 @@ $("#cancelP").onclick=closeModal;
 
 function memoryDashboard(){
 let active=state.notes.filter(n=>!n.archived).length, archived=state.notes.filter(n=>n.archived).length;
-let pending=state.notes.reduce((a,n)=>a+n.checks.filter(c=>!c.done).length,0), paid=state.payments.filter(p=>p.paid).length, unpaid=state.payments.filter(p=>!p.paid).length;
+let pending=state.notes.reduce((a,n)=>a+(n.checks||[]).filter(c=>!c.done).length,0), paid=state.payments.filter(p=>p.paid).length, unpaid=state.payments.filter(p=>!p.paid).length;
 let upcoming=state.payments.filter(p=>!p.paid).sort((a,b)=>a.due-b.due).slice(0,3);
 let events=state.activity.slice(0,8);
 openModal("JARVIS MEMORY",`

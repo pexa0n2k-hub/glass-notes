@@ -1,1 +1,7 @@
-const CACHE="glass-notes-v13-2"; self.addEventListener("install",e=>self.skipWaiting()); self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));
+const CACHE="glass-notes-v13-3";
+self.addEventListener("install",event=>event.waitUntil(self.skipWaiting()));
+self.addEventListener("activate",event=>event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));await self.clients.claim();})()));
+self.addEventListener("fetch",event=>{
+ if(event.request.method!=="GET")return;
+ event.respondWith(fetch(event.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put(event.request,copy));return r}).catch(()=>caches.match(event.request)));
+});

@@ -2,7 +2,7 @@
 
 > Your personal notes. Reimagined.
 
-**V1.3.2 — Stable Checklist**
+**V1.3.3 — Stability & Recovery**
 
 ## Features
 - 📝 Notes
