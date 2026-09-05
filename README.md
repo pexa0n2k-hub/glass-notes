@@ -30,3 +30,7 @@ Corrección aislada del módulo de pagos: fecha, hora, vencimiento, estado, edic
 
 ## V2.0.2 — Cierre de ventanas
 Corrección puntual del botón X: se renombró la función de cierre para evitar conflicto con la API `window.close()` del navegador. También se actualizó el caché del Service Worker.
+
+
+## V2.0.3 — Fondo personalizado
+Corrección del fondo desde galería y caché actualizado.

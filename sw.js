@@ -1,4 +1,4 @@
-const CACHE="glass-notes-v2-stable";
+const CACHE="glass-notes-v2-0-3";
 self.addEventListener("install",e=>{self.skipWaiting()});
 self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch",e=>{
