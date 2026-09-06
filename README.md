@@ -52,5 +52,5 @@ Gestos delegados para tarjetas creadas dinámicamente. La tarjeta ahora sigue f�
 Mecánica de swipe adaptada directamente de `bindSwipes()` del Directorio V2.9 para tarjetas de Notas, Listas y Pagos.
 
 
-## V2.0.8 — Pagos táctiles
-Se eliminó el listener duplicado de gestos y se preservaron los toques de controles; el swipe solo se activa sobre la tarjeta cuando hay un arrastre horizontal claro.
+## V2.0.9 — Pagos restaurados
+Se restauró el render de la pantalla de Pagos y se integró con el swipe de Directorio, sin cambiar Notas ni Listas.

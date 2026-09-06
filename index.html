@@ -148,41 +148,58 @@ function command(text){let reply='No entendí. Prueba “crea una nota llamada C
 function voice(){const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return alert('Este navegador no ofrece reconocimiento de voz. Puedes usar los comandos rápidos.');const r=new R();r.lang='es-MX';r.interimResults=false;r.onresult=e=>command(e.results[0][0].transcript);r.onerror=()=>alert('No pude escuchar el comando. Revisa el permiso del micrófono.');try{r.start()}catch(e){}}
 window.addEventListener('hashchange',render);window.addEventListener('load',()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});render()});
 
+/* V2.0.4: gestos táctiles en Notas, Listas y Pagos.
+   Izquierda -> derecha = modificar
+   Derecha -> izquierda = eliminar */
+(function(){
+ let sx=0,sy=0,dx=0,dy=0,card=null,moved=false;
+ function getId(el){
+  if(!el)return '';
+  if(el.dataset.id)return el.dataset.id;
+  const html=el.innerHTML;
+  const m=html.match(/onclick="[^"]*'([^']+)'/);
+  return m?m[1]:'';
+ }
+ document.addEventListener('touchstart',function(e){
+  const t=e.changedTouches[0];
+  const c=e.target.closest('.note,.list,.payment');
+  if(!c)return;
+  sx=t.clientX;sy=t.clientY;dx=dy=0;card=c;moved=false;
+ },{passive:true});
+ document.addEventListener('touchmove',function(e){
+  if(!card)return;
+  const t=e.changedTouches[0];
+  dx=t.clientX-sx;dy=t.clientY-sy;
+  if(Math.abs(dx)>12 && Math.abs(dx)>Math.abs(dy)*1.15)moved=true;
+ },{passive:true});
+ document.addEventListener('touchend',function(){
+  if(!card||!moved){card=null;return}
+  const c=card,id=getId(c);
+  card=null;
+  if(!id)return;
+  if(dx<=-80){
+   if(confirm('¿Eliminar este elemento?')) {
+    if(c.classList.contains('note') && typeof delNote==='function')delNote(id);
+    else if(c.classList.contains('list') && typeof delList==='function')delList(id);
+    else if(c.classList.contains('payment') && typeof delPayment==='function')delPayment(id);
+   }
+  }else if(dx>=80){
+   if(c.classList.contains('note') && typeof note==='function')note(id);
+   else if(c.classList.contains('list') && typeof list==='function')list(id);
+   else if(c.classList.contains('payment') && typeof payment==='function')payment(id);
+  }
+ },{passive:true});
+})();
 function bindSwipes(){
  document.querySelectorAll(".swipe-wrap").forEach(wrap=>{
-  if(wrap.dataset.swipeBound)return;
-  wrap.dataset.swipeBound="1";
-  const card=wrap.querySelector(".swipe-card");
-  if(!card)return;
-  let startX=0,startY=0,dx=0,drag=false,locked=false;
-  const reset=()=>{card.style.transition="transform .22s cubic-bezier(.22,.61,.36,1)";card.style.transform="translate3d(0,0,0)";};
-  const interactive=e=>!!e.target.closest("button,a,input,select,textarea,[role='button'],label");
-  wrap.addEventListener("touchstart",e=>{
-   if(e.touches.length!==1||interactive(e))return;
-   const t=e.touches[0];startX=t.clientX;startY=t.clientY;dx=0;drag=true;locked=false;
-   card.style.transition="none";
-  },{passive:true});
-  wrap.addEventListener("touchmove",e=>{
-   if(!drag||locked)return;
-   const t=e.touches[0],dy=t.clientY-startY;dx=t.clientX-startX;
-   if(Math.abs(dx)<10&&Math.abs(dy)<10)return;
-   if(Math.abs(dy)>Math.abs(dx)*1.15){locked=true;drag=false;reset();return;}
-   const limited=Math.max(-125,Math.min(125,dx));
-   card.style.transform=`translate3d(${limited}px,0,0)`;
-  },{passive:true});
-  wrap.addEventListener("touchend",e=>{
-   if(!drag||locked){drag=false;return;}
-   drag=false;card.style.transition="transform .22s cubic-bezier(.22,.61,.36,1)";
-   const id=wrap.dataset.id;
-   if(dx>75){
-    card.style.transform="translate3d(110px,0,0)";
-    setTimeout(()=>{reset();if(card.classList.contains("note"))note(id);else if(card.classList.contains("task"))task(id);else if(card.classList.contains("payment"))payment(id)},220);
-   }else if(dx<-75){
-    card.style.transform="translate3d(-110px,0,0)";
-    setTimeout(()=>{reset();if(confirm("¿Eliminar este elemento?")){if(card.classList.contains("note"))delNote(id);else if(card.classList.contains("task"))delTask(id);else if(card.classList.contains("payment"))delPayment(id)}},220);
-   }else reset();
-  },{passive:true});
-  wrap.addEventListener("touchcancel",()=>{drag=false;reset()},{passive:true});
+  if(wrap.dataset.swipeBound)return;wrap.dataset.swipeBound="1";
+  const card=wrap.querySelector(".swipe-card");if(!card)return;
+  let startX=0,startY=0,dx=0,drag=false;
+  const reset=()=>{card.style.transform="translateX(0)";};
+  wrap.addEventListener("touchstart",e=>{if(e.touches.length!==1)return;startX=e.touches[0].clientX;startY=e.touches[0].clientY;dx=0;drag=true;card.style.transition="none"},{passive:true});
+  wrap.addEventListener("touchmove",e=>{if(!drag)return;dx=e.touches[0].clientX-startX;const dy=e.touches[0].clientY-startY;if(Math.abs(dy)>Math.abs(dx)*1.15){drag=false;card.style.transition="transform .18s ease";reset();return}const limited=Math.max(-125,Math.min(125,dx));card.style.transform=`translateX(${limited}px)`},{passive:true});
+  wrap.addEventListener("touchend",()=>{if(!drag)return;drag=false;card.style.transition="transform .18s ease";const id=wrap.dataset.id;if(dx>75){card.style.transform="translateX(110px)";setTimeout(()=>{reset();if(card.classList.contains("note"))note(id);else if(card.classList.contains("task"))task(id);else payment(id)},140)}else if(dx<-75){card.style.transform="translateX(-110px)";setTimeout(()=>{reset();if(confirm("¿Eliminar este elemento?")){if(card.classList.contains("note"))delNote(id);else if(card.classList.contains("task"))delTask(id);else delPayment(id)}},140)}else reset()},{passive:true});
+  wrap.addEventListener("touchcancel",()=>{drag=false;card.style.transition="transform .18s ease";reset()},{passive:true});
  });
 }
 new MutationObserver(()=>bindSwipes()).observe(document.body,{childList:true,subtree:true});
