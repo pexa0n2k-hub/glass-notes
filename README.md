@@ -74,3 +74,7 @@ Pagos usa exactamente la estructura swipe-wrap/swipe-card del sistema que ya ani
 
 ## V2.1.5 — Respaldo y recuperación
 Exporta e importa los datos locales en JSON. Antes de restaurar se crea una copia de seguridad interna y se valida el formato.
+
+
+### V2.1.5b — Ajuste de interfaz
+El respaldo se movió a Ajustes > Datos y seguridad para no saturar la pantalla principal.
