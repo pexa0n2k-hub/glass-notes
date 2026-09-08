@@ -54,3 +54,11 @@ Mecánica de swipe adaptada directamente de `bindSwipes()` del Directorio V2.9 p
 
 ## V2.0.9 — Pagos restaurados
 Se restauró el render de la pantalla de Pagos y se integró con el swipe de Directorio, sin cambiar Notas ni Listas.
+
+
+## V2.1.0 — Pagos restaurados de base estable
+Se recuperó el renderizador completo de Pagos desde la versión estable V2.0.2, manteniendo el resto de la interfaz y los gestos de V2.0.9.
+
+
+## V2.1.1 — Pagos Pro
+Pagos usa un gesto independiente por tarjeta para no bloquear sus botones internos. El arrastre horizontal sigue la tarjeta, muestra Modificar/Eliminar y completa la animación antes de ejecutar la acción.
