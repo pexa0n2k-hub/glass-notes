@@ -62,3 +62,7 @@ Se recuperó el renderizador completo de Pagos desde la versión estable V2.0.2,
 
 ## V2.1.1 — Pagos Pro
 Pagos usa un gesto independiente por tarjeta para no bloquear sus botones internos. El arrastre horizontal sigue la tarjeta, muestra Modificar/Eliminar y completa la animación antes de ejecutar la acción.
+
+
+## V2.1.2 — Pagos funcionando
+Se reincorporó el renderizador completo de Pagos desde la base estable V2.0.2. La navegación a Pagos queda explícita y el módulo vuelve a mostrar movimientos, crear, editar, marcar pagado y eliminar.
