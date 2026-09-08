@@ -66,3 +66,7 @@ Pagos usa un gesto independiente por tarjeta para no bloquear sus botones intern
 
 ## V2.1.2 — Pagos funcionando
 Se reincorporó el renderizador completo de Pagos desde la base estable V2.0.2. La navegación a Pagos queda explícita y el módulo vuelve a mostrar movimientos, crear, editar, marcar pagado y eliminar.
+
+
+## V2.1.3 — Swipe Pagos
+Se añade el gesto visual únicamente a las tarjetas de Pagos, sin interceptar botones internos. La tarjeta sigue el dedo y completa el desplazamiento antes de modificar o eliminar.
