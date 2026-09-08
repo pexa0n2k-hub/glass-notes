@@ -70,3 +70,7 @@ Se reincorporó el renderizador completo de Pagos desde la base estable V2.0.2. 
 
 ## V2.1.4 — Swipe Pagos estable
 Pagos usa exactamente la estructura swipe-wrap/swipe-card del sistema que ya anima Notas y Listas. Se elimina el listener global duplicado.
+
+
+## V2.1.5 — Respaldo y recuperación
+Exporta e importa los datos locales en JSON. Antes de restaurar se crea una copia de seguridad interna y se valida el formato.
