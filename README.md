@@ -81,3 +81,7 @@ Pagos usa exactamente la estructura swipe-wrap/swipe-card del sistema que ya ani
 
 ## V2.2.0 — Buscador Global
 Búsqueda de solo lectura en Notas, Listas y Pagos.
+
+
+## V2.2.1 — Resultados inteligentes
+Los resultados del buscador ahora pueden abrir el elemento correspondiente.
