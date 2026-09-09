@@ -71,10 +71,9 @@ Se reincorporó el renderizador completo de Pagos desde la base estable V2.0.2. 
 ## V2.1.4 — Swipe Pagos estable
 Pagos usa exactamente la estructura swipe-wrap/swipe-card del sistema que ya anima Notas y Listas. Se elimina el listener global duplicado.
 
+## V2.1.5 — Respaldo dentro de Ajustes
 
-## V2.1.5 — Respaldo y recuperación
-Exporta e importa los datos locales en JSON. Antes de restaurar se crea una copia de seguridad interna y se valida el formato.
-
-
-### V2.1.5b — Ajuste de interfaz
-El respaldo se movió a Ajustes > Datos y seguridad para no saturar la pantalla principal.
+- El respaldo y la restauración se mantienen exclusivamente dentro de **Ajustes**.
+- No se inyecta ningún panel de respaldo en `document.body`.
+- No se modifica la lógica de Notas, Pendientes ni Pagos.
+- Se actualiza el nombre de caché del Service Worker para GitHub Pages.

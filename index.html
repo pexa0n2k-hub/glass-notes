@@ -23,14 +23,7 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;background-image:var(--u
 .swipe-action{position:absolute;inset:0;display:flex;align-items:center;gap:7px;padding:0 24px;font-weight:900;font-size:14px;z-index:1}
 .edit-action{justify-content:flex-start;background:linear-gradient(90deg,rgba(98,245,165,.25),rgba(98,245,165,.08));color:#62f5a5}
 .delete-action{justify-content:flex-end;background:linear-gradient(90deg,rgba(255,89,100,.08),rgba(255,89,100,.28));color:#ff5964}
-</style>
-<style id="backup-v215">
-.backup-panel{margin-top:16px;padding:18px;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:rgba(255,255,255,.055);backdrop-filter:blur(18px)}
-.backup-panel h3{margin:0 0 7px;font-size:1.05rem}.backup-panel p{margin:0 0 14px;opacity:.7;font-size:.86rem}
-.backup-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.backup-actions button{min-height:48px;border:0;border-radius:15px;padding:10px 12px;font-weight:700;cursor:pointer}
-.backup-status{margin-top:12px;font-size:.82rem;opacity:.8;min-height:18px}.backup-input{display:none}
-</style>
-</head>
+</style></head>
 <body>
 <header class="top glass">
   <div><div class="ey">GLASS NOTES</div><h1 id="greet">Buenos días, señor.</h1><div class="muted">Tu espacio personal</div></div>
@@ -218,51 +211,5 @@ function bindSwipes(){
 }
 new MutationObserver(()=>bindSwipes()).observe(document.body,{childList:true,subtree:true});
 </script>
-<script>
-(function(){
-  const F="glass-notes-backup-v1";
-  function status(t){const e=document.getElementById("backupStatus");if(e)e.textContent=t}
-  function snapshot(){
-    const d={};
-    for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);d[k]=localStorage.getItem(k)}
-    return {format:F,createdAt:new Date().toISOString(),data:d};
-  }
-  function exportBackup(){
-    try{
-      const b=new Blob([JSON.stringify(snapshot(),null,2)],{type:"application/json"});
-      const u=URL.createObjectURL(b),a=document.createElement("a");
-      a.href=u;a.download="GlassNotes-Backup-"+new Date().toISOString().slice(0,10)+".json";
-      document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
-      status("✅ Respaldo creado correctamente.");
-    }catch(e){console.error(e);status("❌ No se pudo crear el respaldo.")}
-  }
-  function restore(file){
-    const r=new FileReader();
-    r.onload=function(){
-      try{
-        const x=JSON.parse(r.result);
-        if(!x||x.format!==F||!x.data||typeof x.data!=="object")throw Error("invalid");
-        if(!confirm("Se reemplazarán los datos actuales por los del respaldo. ¿Continuar?"))return;
-        localStorage.setItem("__glassnotes_pre_restore_backup__",JSON.stringify(snapshot()));
-        const keep=new Set(Object.keys(x.data));
-        Object.keys(x.data).forEach(k=>{if(k!=="__glassnotes_pre_restore_backup__")localStorage.setItem(k,String(x.data[k]))});
-        for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k!=="__glassnotes_pre_restore_backup__"&&!keep.has(k))localStorage.removeItem(k)}
-        status("✅ Respaldo restaurado. Recargando…");setTimeout(()=>location.reload(),500);
-      }catch(e){console.error(e);status("❌ Respaldo inválido. No se modificó nada.")}
-    };r.readAsText(file)
-  }
-  function mount(){
-    if(document.getElementById("backupPanel"))return;
-    const host=document.querySelector('[data-page="settings"],#settings,.settings')||document.body;
-    const p=document.createElement("section");p.id="backupPanel";p.className="backup-panel";
-    p.innerHTML='<h3>💾 Respaldo y recuperación</h3><p>Guarda tus notas, listas, pagos y configuración local en un archivo.</p><div class="backup-actions"><button type="button" id="backupExport">⬇️ Crear respaldo</button><button type="button" id="backupImportBtn">⬆️ Restaurar respaldo</button></div><input id="backupInput" class="backup-input" type="file" accept=".json,application/json"><div id="backupStatus" class="backup-status"></div>';
-    host.appendChild(p);
-    backupExport.onclick=exportBackup;
-    backupImportBtn.onclick=()=>backupInput.click();
-    backupInput.onchange=e=>{if(e.target.files[0])restore(e.target.files[0]);e.target.value=""};
-  }
-  window.GlassNotesBackup215={create:exportBackup,restore:restore};
-  addEventListener("load",mount);setTimeout(mount,1000);
-})();
-</script></body>
+</body>
 </html>
