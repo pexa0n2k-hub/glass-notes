@@ -23,6 +23,11 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;background-image:var(--u
 .swipe-action{position:absolute;inset:0;display:flex;align-items:center;gap:7px;padding:0 24px;font-weight:900;font-size:14px;z-index:1}
 .edit-action{justify-content:flex-start;background:linear-gradient(90deg,rgba(98,245,165,.25),rgba(98,245,165,.08));color:#62f5a5}
 .delete-action{justify-content:flex-end;background:linear-gradient(90deg,rgba(255,89,100,.08),rgba(255,89,100,.28));color:#ff5964}
+</style><style id="global-search-v22">
+.global-search{display:flex;align-items:center;gap:9px;margin:10px 0 14px;padding:10px 13px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.055);backdrop-filter:blur(16px)}
+.global-search input{width:100%;border:0;outline:0;background:transparent;color:inherit;font-size:.95rem}
+.search-results{display:grid;gap:9px;margin:8px 0}.search-result{padding:13px 14px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:rgba(255,255,255,.045)}
+.search-result .top{display:flex;justify-content:space-between;gap:8px}.search-result .type{font-size:.7rem;opacity:.6;text-transform:uppercase}.search-result .title{font-weight:800}.search-result .text{margin-top:5px;font-size:.82rem;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search-empty{text-align:center;padding:18px;opacity:.55}
 </style></head>
 <body>
 <header class="top glass">
@@ -211,5 +216,34 @@ function bindSwipes(){
 }
 new MutationObserver(()=>bindSwipes()).observe(document.body,{childList:true,subtree:true});
 </script>
-</body>
+<script>
+/* V2.2.0 — Buscador Global: solo lectura */
+(function(){
+ function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+ function get(){
+  const a=[];
+  if(typeof S!=="undefined"&&S){
+   (Array.isArray(S.notes)?S.notes:[]).forEach((x,i)=>a.push({t:"Nota",title:x.title||x.name||"Sin título",text:x.text||x.body||x.content||"",id:x.id,i:i}));
+   (Array.isArray(S.tasks)?S.tasks:[]).forEach((x,i)=>a.push({t:"Lista",title:x.title||x.name||"Pendiente",text:x.text||x.body||"",id:x.id,i:i}));
+   (Array.isArray(S.payments)?S.payments:[]).forEach((x,i)=>a.push({t:"Pago",title:x.title||x.name||"Pago",text:[x.amount,x.due,x.date,x.note].filter(Boolean).join(" • "),id:x.id,i:i}));
+  }
+  return a
+ }
+ function render(q){
+  const b=document.getElementById("globalSearchResults");if(!b)return;
+  q=(q||"").trim().toLowerCase();if(!q){b.innerHTML="";return}
+  const h=get().filter(x=>(x.t+" "+x.title+" "+x.text).toLowerCase().includes(q)).slice(0,30);
+  b.innerHTML=h.length?h.map(x=>'<div class="search-result"><div class="top"><span class="title">'+esc(x.title)+'</span><span class="type">'+esc(x.t)+'</span></div><div class="text">'+esc(x.text||"Sin contenido adicional")+'</div></div>').join(""):'<div class="search-empty">🔎 No encontré coincidencias.</div>'
+ }
+ function mount(){
+  if(document.getElementById("globalSearch"))return;
+  const host=document.querySelector("main")||document.querySelector(".app")||document.body;
+  const w=document.createElement("div");w.id="globalSearch";w.className="global-search";w.innerHTML='🔎 <input id="globalSearchInput" type="search" placeholder="Buscar en Notas, Listas y Pagos…">';
+  const r=document.createElement("div");r.id="globalSearchResults";r.className="search-results";
+  host.insertBefore(r,host.firstChild);host.insertBefore(w,r);
+  globalSearchInput.addEventListener("input",e=>render(e.target.value))
+ }
+ addEventListener("load",mount);setTimeout(mount,900)
+})();
+</script></body>
 </html>

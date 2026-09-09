@@ -77,3 +77,7 @@ Pagos usa exactamente la estructura swipe-wrap/swipe-card del sistema que ya ani
 - No se inyecta ningún panel de respaldo en `document.body`.
 - No se modifica la lógica de Notas, Pendientes ni Pagos.
 - Se actualiza el nombre de caché del Service Worker para GitHub Pages.
+
+
+## V2.2.0 — Buscador Global
+Búsqueda de solo lectura en Notas, Listas y Pagos.
