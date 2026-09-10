@@ -28,13 +28,52 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;background-image:var(--u
 .global-search input{width:100%;border:0;outline:0;background:transparent;color:inherit;font-size:.95rem}
 .search-results{display:grid;gap:9px;margin:8px 0}.search-result{padding:13px 14px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:rgba(255,255,255,.045)}
 .search-result .top{display:flex;justify-content:space-between;gap:8px}.search-result .type{font-size:.7rem;opacity:.6;text-transform:uppercase}.search-result .title{font-weight:800}.search-result .text{margin-top:5px;font-size:.82rem;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search-empty{text-align:center;padding:18px;opacity:.55}
-</style><style id="smart-search-v221">.search-result{transition:transform .18s ease,background .18s ease;cursor:pointer}.search-result:active{transform:scale(.985)}.search-result .go{font-size:.72rem;opacity:.55;margin-top:7px}</style></head>
+</style><style id="smart-search-v221">.search-result{transition:transform .18s ease,background .18s ease;cursor:pointer}.search-result:active{transform:scale(.985)}.search-result .go{font-size:.72rem;opacity:.55;margin-top:7px}</style>
+<style id="search-pro-v222">
+#search-pro-v222{margin:12px 0 18px;padding:14px;border-radius:22px;background:rgba(255,255,255,.07);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.10)}
+#search-pro-v222 .sp-row{display:flex;gap:8px;align-items:center}
+#search-pro-v222 input{flex:1;min-width:0;border:0;outline:0;border-radius:16px;padding:12px 14px;background:rgba(255,255,255,.08);color:inherit}
+#search-pro-v222 select,#search-pro-v222 button{border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.08);color:inherit}
+#search-pro-v222 .sp-tools{display:flex;gap:8px;margin-top:9px;align-items:center}
+#search-pro-v222 #searchCount{font-size:.82rem;opacity:.7;margin-left:auto}
+#search-pro-v222 .search-result{margin-top:9px;padding:12px;border-radius:16px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:transform .15s ease,background .15s ease}
+#search-pro-v222 .search-result:active{transform:scale(.985);background:rgba(255,255,255,.11)}
+#search-pro-v222 .search-result .sr-title{font-weight:700}
+#search-pro-v222 .search-result .sr-meta{font-size:.78rem;opacity:.65;margin-top:3px}
+#search-pro-v222 .search-empty{padding:14px 4px;opacity:.65;text-align:center}
+@media(max-width:480px){
+  #search-pro-v222 .sp-row{flex-direction:column}
+  #search-pro-v222 input,#search-pro-v222 select,#search-pro-v222 button{width:100%}
+  #search-pro-v222 .sp-tools{flex-wrap:wrap}
+  #search-pro-v222 #searchCount{margin-left:0;width:100%}
+}
+</style>
+
+</head>
 <body>
 <header class="top glass">
   <div><div class="ey">GLASS NOTES</div><h1 id="greet">Buenos días, señor.</h1><div class="muted">Tu espacio personal</div></div>
   <div class="icons"><button class="ico" onclick="go('home')">⌂</button><button class="ico" onclick="go('jarvis')">🧠</button><button class="ico" onclick="settings()">⚙️</button></div>
 </header>
-<main id="app" class="screen"></main>
+<main id="app" class="screen">
+
+<div id="search-pro-v222">
+  <div class="sp-row">
+    <input id="globalSearchInput" type="search" placeholder="🔎 Buscar en Glass Notes..." autocomplete="off">
+  </div>
+  <div class="sp-tools">
+    <select id="globalSearchFilter" aria-label="Filtrar búsqueda">
+      <option value="all">Todos</option>
+      <option value="note">📝 Notas</option>
+      <option value="task">✅ Listas</option>
+      <option value="payment">💳 Pagos</option>
+    </select>
+    <button id="searchClear" type="button">Limpiar</button>
+    <span id="searchCount"></span>
+  </div>
+  <div id="globalSearchResults"></div>
+</div>
+</main>
 <nav class="nav glass">
  <button id="n-notes" onclick="go('notes')">📝<span>Notas</span></button>
  <button id="n-tasks" onclick="go('tasks')">✅<span>Pendientes</span></button>
@@ -226,5 +265,95 @@ function render(q){let b=document.getElementById("globalSearchResults");if(!b)re
 function mount(){if(document.getElementById("globalSearch"))return;let host=document.querySelector("main")||document.querySelector(".app")||document.body,w=document.createElement("div");w.id="globalSearch";w.className="global-search";w.innerHTML='🔎 <input id="globalSearchInput" type="search" placeholder="Buscar en Notas, Listas y Pagos…">';let r=document.createElement("div");r.id="globalSearchResults";r.className="search-results";host.insertBefore(r,host.firstChild);host.insertBefore(w,r);globalSearchInput.addEventListener("input",e=>render(e.target.value));r.addEventListener("click",e=>{let el=e.target.closest(".search-result"),x=el&&r._hits?.[+el.dataset.searchIndex];if(x)go(x)})}
 addEventListener("load",mount);setTimeout(mount,900)
 })();
-</script></body>
+</script>
+<script id="search-pro-v222-js">
+(function(){
+  const input = document.getElementById('globalSearchInput');
+  const filter = document.getElementById('globalSearchFilter');
+  const results = document.getElementById('globalSearchResults');
+  const clear = document.getElementById('searchClear');
+  const count = document.getElementById('searchCount');
+  if(!input || !results) return;
+
+  function state(){
+    try { return JSON.parse(localStorage.getItem('glass_notes_v2') || '{}'); }
+    catch(e){ return {}; }
+  }
+
+  function text(v){ return String(v ?? ''); }
+  function lower(v){ return text(v).toLowerCase(); }
+
+  function runSearch(){
+    const q = lower(input.value).trim();
+    const f = filter ? filter.value : 'all';
+    results.innerHTML = '';
+    if(!q){
+      count.textContent = '';
+      return;
+    }
+
+    const S = state();
+    const items = [];
+
+    (S.notes || []).forEach(n=>{
+      if(f!=='all' && f!=='note') return;
+      const hay = lower(text(n.title)+' '+text(n.content)+' '+text(n.text));
+      if(hay.includes(q)) items.push({type:'note',icon:'📝',title:text(n.title||'Nota'),body:text(n.content||n.text||''),id:n.id});
+    });
+
+    (S.tasks || []).forEach(t=>{
+      if(f!=='all' && f!=='task') return;
+      const hay = lower(text(t.title)+' '+text(t.text)+' '+text(t.description));
+      if(hay.includes(q)) items.push({type:'task',icon:'✅',title:text(t.title||t.text||'Lista'),body:text(t.description||''),id:t.id});
+    });
+
+    (S.payments || []).forEach(p=>{
+      if(f!=='all' && f!=='payment') return;
+      const hay = lower(text(p.title)+' '+text(p.concept)+' '+text(p.description)+' '+text(p.amount));
+      if(hay.includes(q)) items.push({type:'payment',icon:'💳',title:text(p.title||p.concept||'Pago'),body:text(p.amount||p.description||''),id:p.id});
+    });
+
+    count.textContent = items.length + (items.length===1 ? ' resultado' : ' resultados');
+
+    if(!items.length){
+      results.innerHTML = '<div class="search-empty">No encontré coincidencias.</div>';
+      return;
+    }
+
+    items.slice(0,50).forEach(item=>{
+      const el=document.createElement('div');
+      el.className='search-result';
+      el.innerHTML='<div class="sr-title">'+item.icon+' '+escapeHtml(item.title)+'</div>'
+        +'<div class="sr-meta">'+escapeHtml(item.body).slice(0,140)+(item.body.length>140?'…':'')+' · Toca para abrir →</div>';
+      el.addEventListener('click',()=>{
+        try{
+          if(item.type==='note'){
+            if(typeof openNote==='function') openNote(item.id);
+            else if(typeof note==='function') note(item.id);
+          }else if(item.type==='task'){
+            if(typeof openTask==='function') openTask(item.id);
+            else if(typeof editTask==='function') editTask(item.id);
+          }else if(item.type==='payment'){
+            if(typeof openPayment==='function') openPayment(item.id);
+            else if(typeof payment==='function') payment(item.id);
+          }
+        }catch(e){ console.warn('Glass Notes search open:',e); }
+      });
+      results.appendChild(el);
+    });
+  }
+
+  function escapeHtml(v){
+    return text(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  input.addEventListener('input',runSearch);
+  if(filter) filter.addEventListener('change',runSearch);
+  if(clear) clear.addEventListener('click',()=>{
+    input.value=''; if(filter) filter.value='all'; runSearch(); input.focus();
+  });
+})();
+</script>
+
+</body>
 </html>
