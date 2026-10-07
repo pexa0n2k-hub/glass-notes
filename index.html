@@ -101,6 +101,43 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;background-image:var(--u
 .pay-center-v25 .pc-ok{background:rgba(100,230,160,.08);border:1px solid rgba(100,230,160,.12)}
 @media(min-width:520px){.pay-center-v25 .pc-grid{grid-template-columns:repeat(4,1fr)}}
 </style>
+
+<style id="gn-date-picker-v261">
+/* Android Chrome: keep native date inputs tappable and visible. */
+input[type="date"],input[type="time"]{
+  -webkit-appearance:auto;
+  appearance:auto;
+  color-scheme:dark;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+</style>
+<script id="gn-date-picker-v261-js">
+(function(){
+  function openPicker(el){
+    if(!el)return;
+    try{
+      if(typeof el.showPicker==="function"){ el.showPicker(); return true; }
+    }catch(e){}
+    try{ el.focus(); }catch(e){}
+    return false;
+  }
+  function bind(){
+    ["pd","px"].forEach(function(id){
+      const el=document.getElementById(id);
+      if(!el||el.dataset.datePicker261)return;
+      el.dataset.datePicker261="1";
+      el.addEventListener("click",function(e){openPicker(el)},false);
+      el.addEventListener("focus",function(){},false);
+    });
+  }
+  const mo=new MutationObserver(bind);
+  mo.observe(document.body,{childList:true,subtree:true});
+  document.addEventListener("DOMContentLoaded",bind);
+  setTimeout(bind,50);
+  setTimeout(bind,300);
+})();
+</script>
 </head>
 <body>
 <header class="top glass">
