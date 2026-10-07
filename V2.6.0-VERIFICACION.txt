@@ -1,0 +1,5 @@
+Glass Notes V2.6.0 — Estabilización inicial
+Base: GlassNotes-V2.5.1-CENTRO-PAGOS-FECHA-FIX.zip
+Renderizador de Pagos encontrado: sí
+Estado visual basado en fecha: sí
+No se modificó la lógica de recurrencia, eliminación ni guardado.

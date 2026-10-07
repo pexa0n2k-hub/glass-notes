@@ -88,6 +88,19 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;background-image:var(--u
 .payment-card.saved-231,.payments-card.saved-231{animation:paymentSaved231 .28s ease-out}
 </style>
 
+
+<style id="payments-center-v25">
+.pay-center-v25{margin:10px 0 15px;padding:14px;border-radius:22px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.pay-center-v25 .pc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pay-center-v25 .pc-title{font-weight:850}.pay-center-v25 .pc-sub{font-size:.72rem;opacity:.62;margin-top:2px}
+.pay-center-v25 .pc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.pay-center-v25 .pc-item{padding:10px;border-radius:15px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.07)}
+.pay-center-v25 .pc-num{font-size:1.08rem;font-weight:850}.pay-center-v25 .pc-label{font-size:.7rem;opacity:.65;margin-top:2px}
+.pay-center-v25 .pc-alert,.pay-center-v25 .pc-ok{margin-top:9px;padding:10px;border-radius:14px;font-size:.78rem}
+.pay-center-v25 .pc-alert{background:rgba(255,90,90,.08);border:1px solid rgba(255,90,90,.12)}
+.pay-center-v25 .pc-ok{background:rgba(100,230,160,.08);border:1px solid rgba(100,230,160,.12)}
+@media(min-width:520px){.pay-center-v25 .pc-grid{grid-template-columns:repeat(4,1fr)}}
+</style>
 </head>
 <body>
 <header class="top glass">
@@ -174,11 +187,28 @@ function tasks(){
 }
 function tc(t){return `<div class="swipe-wrap" data-id="${esc(t.id)}"><div class="swipe-action edit-action">✏️ <span>Modificar</span></div><div class="swipe-action delete-action">🗑️ <span>Eliminar</span></div><article class="task glass swipe-card ${t.done?'done':''}"><input class="check" type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${esc(t.id)}')"><div><div class="title"><b>${esc(t.title)}</b></div><div class="muted">${esc(t.detail||'')}</div></div><button class="btn" onclick="delTask('${esc(t.id)}')">×</button></article></div>`}
 function payments(){
+  (function(){
+    setTimeout(function(){
+      var old=document.getElementById("paymentsCenterV25");
+      if(old) old.remove();
+      var host=document.createElement("div");
+      host.id="paymentsCenterV25";
+      host.className="pay-center-v25";
+      var main=document.querySelector("main");
+      if(main){
+        var children=main.children;
+        var first=children.length?children[0]:null;
+        main.insertBefore(host,first);
+        if(window.GlassNotesPaymentsCenterV25) window.GlassNotesPaymentsCenterV25.render();
+      }
+    },0);
+  })();
+
  const pending=S.payments.filter(x=>x.status!=='paid');
  const paid=S.payments.filter(x=>x.status==='paid');
  const tp=pending.reduce((a,x)=>a+(Number(x.amount)||0),0);
  const tg=paid.reduce((a,x)=>a+(Number(x.amount)||0),0);
- document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">CONTROL</div><div class="big">Pagos</div><p class="muted">Pendiente: <b>$${tp.toFixed(2)}</b> · Pagado: <b>$${tg.toFixed(2)}</b></p></section><div class="head"><h2>Movimientos</h2><button class="btn" onclick="payment()">+ Pago</button></div>${S.payments.length?`<div class="grid">${S.payments.slice().reverse().map(x=>`<article class="payment glass"><div class="head"><div><b>${esc(x.title||'Pago')}</b><div class="muted">${x.status==='paid'?'🟢 Pagado':'🔴 Pendiente'}</div></div><div class="amount">$${(Number(x.amount)||0).toFixed(2)}</div></div><div class="muted">📅 ${esc(x.date||'Sin fecha')} · ⏰ ${esc(x.time||'Sin hora')}</div><div class="muted">📆 Vence: ${esc(x.due||'Sin vencimiento')}</div>${x.note?`<p class="muted">${esc(x.note)}</p>`:''}<div class="actions"><button class="btn" onclick="payment('${esc(x.id)}')">✏️ Editar</button>${x.status!=='paid'?`<button class="btn" onclick="markPaid('${esc(x.id)}')">✓ Pagado</button>`:''}${x.recurrence?.enabled?`<button class="btn" onclick="manualNextPayment('${esc(x.id)}')">⏭️ Siguiente</button>`:''}<button class="btn" onclick="delPayment('${esc(x.id)}')">Eliminar</button></div></article>`).join('')}</div>`:`<div class="empty glass">💳 No hay pagos registrados.</div>`}`
+ document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">CONTROL</div><div class="big">Pagos</div><p class="muted">Pendiente: <b>$${tp.toFixed(2)}</b> · Pagado: <b>$${tg.toFixed(2)}</b></p></section><div class="head"><h2>Movimientos</h2><button class="btn" onclick="payment()">+ Pago</button></div>${S.payments.length?`<div class="grid">${S.payments.slice().reverse().map(x=>`<article class="payment glass"><div class="head"><div><b>${esc(x.title||'Pago')}</b><div class="muted">${GNPaymentDisplayStatusV260(x)==='paid'?'🟢 Pagado':GNPaymentDisplayStatusV260(x)==='overdue'?'🔴 Vencido':GNPaymentDisplayStatusV260(x)==='today'?'⚠️ Vence hoy':'🔴 Pendiente'}</div></div><div class="amount">$${(Number(x.amount)||0).toFixed(2)}</div></div><div class="muted">📅 ${esc(x.date||'Sin fecha')} · ⏰ ${esc(x.time||'Sin hora')}</div><div class="muted">📆 Vence: ${esc(x.due||'Sin vencimiento')}</div>${x.note?`<p class="muted">${esc(x.note)}</p>`:''}<div class="actions"><button class="btn" onclick="payment('${esc(x.id)}')">✏️ Editar</button>${x.status!=='paid'?`<button class="btn" onclick="markPaid('${esc(x.id)}')">✓ Pagado</button>`:''}${x.recurrence?.enabled?`<button class="btn" onclick="manualNextPayment('${esc(x.id)}')">⏭️ Siguiente</button>`:''}<button class="btn" onclick="delPayment('${esc(x.id)}')">Eliminar</button></div></article>`).join('')}</div>`:`<div class="empty glass">💳 No hay pagos registrados.</div>`}`
 }
 function jarvis(){
  const last=S.messages.at(-1);
@@ -441,6 +471,118 @@ addEventListener("load",mount);setTimeout(mount,900)
   obs.observe(document.body,{childList:true,subtree:true});
   document.addEventListener('DOMContentLoaded',enhance);
   setTimeout(enhance,300);
+})();
+</script>
+
+
+<script id="payments-center-v25-js">
+(function(){
+  function dateOnly(v){
+    const m=String(v||"").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if(!m)return null;
+    const d=new Date(+m[1],+m[2]-1,+m[3]);d.setHours(0,0,0,0);return d;
+  }
+  function today(){const d=new Date();d.setHours(0,0,0,0);return d}
+  function kind(p){
+    if(!p||p.status==="paid"||p.paid===true||p.completed===true)return "paid";
+    const d=dateOnly(p.due||p.date);if(!d)return "none";
+    const diff=Math.round((d-today())/86400000);
+    if(diff<0)return "overdue";if(diff===0)return "today";if(diff<=7)return "soon";return "future";
+  }
+  function money(n){return (Number(n)||0).toLocaleString("es-MX",{style:"currency",currency:"MXN",maximumFractionDigits:2})}
+  function render(){
+    const host=document.getElementById("paymentsCenterV25");
+    if(!host||!window.S)return;
+    const ps=Array.isArray(S.payments)?S.payments:[];
+    const overdue=ps.filter(p=>kind(p)==="overdue");
+    const todayN=ps.filter(p=>kind(p)==="today");
+    const soon=ps.filter(p=>kind(p)==="soon");
+    const pending=ps.filter(p=>["overdue","today","soon","future"].includes(kind(p)));
+    const overdueAmt=overdue.reduce((a,p)=>a+(Number(p.amount)||0),0);
+    const pendingAmt=pending.reduce((a,p)=>a+(Number(p.amount)||0),0);
+    host.innerHTML='<div class="pc-head"><div><div class="pc-title">💳 Centro de pagos</div><div class="pc-sub">Lo importante para que no se te pase.</div></div></div>'+
+      '<div class="pc-grid">'+
+      '<div class="pc-item"><div class="pc-num">'+overdue.length+'</div><div class="pc-label">🔴 Vencidos</div></div>'+
+      '<div class="pc-item"><div class="pc-num">'+todayN.length+'</div><div class="pc-label">⚠️ Hoy</div></div>'+
+      '<div class="pc-item"><div class="pc-num">'+soon.length+'</div><div class="pc-label">📅 Próximos 7 días</div></div>'+
+      '<div class="pc-item"><div class="pc-num">'+money(pendingAmt)+'</div><div class="pc-label">💰 Pendiente</div></div></div>'+
+      (overdue.length?'<div class="pc-alert">🚨 <b>'+overdue.length+'</b> pago(s) vencido(s) · '+money(overdueAmt)+'</div>':
+       todayN.length?'<div class="pc-alert">⚠️ Tienes <b>'+todayN.length+'</b> pago(s) que vencen hoy.</div>':
+       '<div class="pc-ok">✅ No tienes pagos vencidos.</div>');
+  }
+  window.GlassNotesPaymentsCenterV25={render,kind};
+  document.addEventListener("DOMContentLoaded",render);
+  setInterval(render,60000);
+})();
+</script>
+
+<script id="payment-overdue-v251">
+(function(){
+ function day(v){
+  const m=String(v||'').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(!m)return null;
+  const d=new Date(+m[1],+m[2]-1,+m[3]);d.setHours(0,0,0,0);return d;
+ }
+ function refresh(){
+  if(!window.S||!Array.isArray(S.payments))return;
+  const cards=document.querySelectorAll('[data-payment-id],.payment-card,.payments-card');
+  cards.forEach(card=>{
+   const id=card.getAttribute('data-payment-id');
+   if(!id)return;
+   const p=S.payments.find(x=>String(x.id)===String(id));
+   if(!p||p.status==='paid'||p.paid===true||p.completed===true)return;
+   const d=day(p.due||p.date),t=new Date();t.setHours(0,0,0,0);
+   if(d&&d<t){
+    const labels=card.querySelectorAll('.status,.badge,.payment-status');
+    labels.forEach(el=>{if(/pendiente/i.test(el.textContent))el.textContent='🔴 Vencido';});
+    card.classList.add('payment-overdue-v251');
+   }
+  });
+ }
+ window.GlassNotesOverdueV251={refresh};
+ document.addEventListener('DOMContentLoaded',refresh);
+ setTimeout(refresh,500);
+})();
+</script>
+<style id="payment-overdue-v251-css">
+.payment-overdue-v251{border-color:rgba(255,80,80,.30)!important}
+</style>
+
+<script id="payment-status-v251">
+(function(){
+ window.GlassNotesPaymentStatusV251=function(p){
+  if(!p)return 'none';
+  if(p.status==='paid'||p.paid===true||p.completed===true)return 'paid';
+  const m=String(p.due||p.date||'').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(!m)return 'pending';
+  const d=new Date(+m[1],+m[2]-1,+m[3]);d.setHours(0,0,0,0);
+  const t=new Date();t.setHours(0,0,0,0);
+  if(d<t)return 'overdue';
+  if(d.getTime()===t.getTime())return 'today';
+  return 'pending';
+ };
+})();
+</script>
+
+<script id="gn-payment-status-v260">
+(function(){
+  function dateOnly(v){
+    const m=String(v||'').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if(!m)return null;
+    const d=new Date(+m[1],+m[2]-1,+m[3]);
+    d.setHours(0,0,0,0);
+    return d;
+  }
+  window.GNPaymentDisplayStatusV260=function(p){
+    if(!p)return 'pending';
+    if(p.status==='paid'||p.paid===true||p.completed===true)return 'paid';
+    const d=dateOnly(p.due||p.date);
+    if(!d)return 'pending';
+    const t=new Date();t.setHours(0,0,0,0);
+    if(d.getTime()<t.getTime())return 'overdue';
+    if(d.getTime()===t.getTime())return 'today';
+    return 'pending';
+  };
 })();
 </script>
 

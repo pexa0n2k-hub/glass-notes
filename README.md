@@ -85,3 +85,7 @@ Búsqueda de solo lectura en Notas, Listas y Pagos.
 
 ## V2.2.1 — Resultados inteligentes
 Los resultados del buscador ahora pueden abrir el elemento correspondiente.
+
+
+## V2.5.0 — Centro de Pagos
+Resumen de pagos vencidos, pagos de hoy, próximos 7 días y total pendiente. No modifica la lógica de recurrencia.
