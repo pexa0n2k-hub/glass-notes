@@ -1,7 +1,8 @@
-const CACHE="glass-notes-v3-3-jarvis-core";
-self.addEventListener("install",e=>{self.skipWaiting()});
-self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));
-self.addEventListener("fetch",e=>{
- if(e.request.method!=="GET")return;
- e.respondWith(fetch(e.request).then(r=>{const c=r.clone();caches.open(CACHE).then(x=>x.put(e.request,c));return r}).catch(()=>caches.match(e.request)));
-});
+const CACHE='glass-notes-v3-4-1';
+const APP=['./','./index.html','./manifest.json'];
+self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(APP)).then(()=>self.skipWaiting()))});
+self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('glass-notes-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put(event.request,copy)).catch(()=>{});return res}).catch(()=>cached)))});
+self.addEventListener('message',event=>{const d=event.data||{};if(d.type==='SHOW_NOTIFICATION'){event.waitUntil(self.registration.showNotification(d.title||'Glass Notes',d.options||{}))}});
+self.addEventListener('push',event=>{let data={};try{data=event.data?event.data.json():{}}catch(e){data={body:event.data?event.data.text():''}};event.waitUntil(self.registration.showNotification(data.title||'Glass Notes', {body:data.body||'Tienes algo pendiente.',icon:data.icon||'./icon-192.png',badge:data.badge||'./icon-192.png',tag:data.tag||'glass-notes',data:data.data||{route:'home'},renotify:true}));});
+self.addEventListener('notificationclick',event=>{event.notification.close();const data=event.notification.data||{};const route=data.route||'home';event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{for(const client of list){if('focus' in client){if('navigate' in client)client.navigate('./#'+route);return client.focus()}}return clients.openWindow('./#'+route)}))});
