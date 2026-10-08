@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
 <link rel="manifest" href="manifest.json">
-<title>Glass Notes V3.2 — JARVIS Voice</title>
+<title>Glass Notes V2.0 — Stable</title>
 <style>
 :root{--a:#66e3ff;--bg:#05070d;--t:#f5f8ff;--m:#ffffff8c;--g:rgba(255,255,255,.075)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
@@ -13,33 +13,7 @@ body:before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradi
 button,input,textarea{font:inherit}.glass{background:var(--g);border:1px solid #ffffff22;box-shadow:0 18px 55px #0005,inset 0 1px #fff1;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
 .top{margin:10px;padding:17px;border-radius:28px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:10px;z-index:5}.ey{font-size:10px;letter-spacing:4px;color:var(--a)}h1{font-size:22px;margin:4px 0}h2{margin:10px 0}.muted{color:var(--m)}.icons{display:flex;gap:7px}.ico,.btn{border:1px solid #ffffff18;background:#ffffff09;color:#fff;border-radius:15px;padding:11px 13px}.ico{width:43px;height:43px;padding:0;font-size:19px}.primary{background:var(--a);color:#041017;border:0;font-weight:800}.screen{max-width:760px;margin:auto;padding:0 14px 180px}.hero,.card{border-radius:28px;padding:20px;margin:12px 0}.big{font-size:28px;font-weight:800}.grid{display:grid;gap:10px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{padding:14px;border-radius:20px}.stat b{font-size:22px;display:block}.note{padding:18px;border-radius:25px;min-height:140px;cursor:pointer;position:relative;overflow:hidden}.note h3{color:var(--a);margin:0 0 7px}.note p{margin:0;color:#fff9;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}.tag{display:inline-block;margin-top:10px;padding:6px 9px;border-radius:999px;background:#ffffff0b;color:var(--a);font-size:11px}.task{display:grid;grid-template-columns:28px 1fr auto;gap:9px;align-items:start;padding:16px;border-radius:22px}.task.done{opacity:.5}.task.done .title{text-decoration:line-through}.check{width:22px;height:22px;accent-color:var(--a)}.payment{padding:17px;border-radius:23px}.amount{font-size:22px;font-weight:800}.nav{position:fixed;left:10px;right:10px;bottom:10px;z-index:10;max-width:700px;margin:auto;padding:7px;border-radius:27px;display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:transparent;color:#fff8;padding:9px 2px;border-radius:19px;font-size:18px}.nav span{display:block;font-size:10px;margin-top:3px}.nav .active{background:#66e3ff1c;color:var(--a)}.fab{position:fixed;right:20px;bottom:96px;z-index:11;width:62px;height:62px;border:0;border-radius:22px;background:var(--a);font-size:32px}.modal{position:fixed;inset:0;background:#000b;z-index:50;display:flex;align-items:flex-end}.hidden{display:none}.sheet{width:100%;max-height:92vh;overflow:auto;border-radius:30px 30px 0 0;padding:20px 18px 34px}.head{display:flex;justify-content:space-between;align-items:center}.label{font-size:12px;color:#fff9;margin:13px 0 6px}.field{width:100%;padding:13px;border-radius:16px;border:1px solid #ffffff18;background:#050810;color:#fff;outline:0}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.empty{text-align:center;padding:28px;border-radius:24px;color:#fff8}.orb{width:100px;height:100px;border-radius:50%;margin:18px auto;background:radial-gradient(circle,#fff 0 4%,var(--a) 12%,#15586c 35%,#06131b 66%,transparent 72%);box-shadow:0 0 30px var(--a),0 0 90px #66e3ff66;display:grid;place-items:center;font-size:32px;animation:p 2.4s ease-in-out infinite}@keyframes p{50%{transform:scale(1.08)}}.alert{padding:13px;border-radius:18px;margin:10px 0;border-left:3px solid var(--a)}
 @media(min-width:700px){.fab{right:max(20px,calc((100vw - 720px)/2 + 20px))}}
-body:after{content:"";position:fixed;inset:0;z-index:-1;background-image:var(--user-bg,none);background-size:cover;background-position:center;background-repeat:no-repeat;pointer-events:none}
-/* V3.1.1 — NEXUS PREMIUM SHEETS */
-.modal{background:rgba(0,0,8,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);align-items:flex-end}
-.sheet{position:relative;max-width:760px;margin:0 auto;background:linear-gradient(145deg,rgba(13,18,35,.96),rgba(7,10,20,.97) 62%,rgba(15,10,31,.96));border:1px solid rgba(125,190,255,.16);box-shadow:0 -25px 90px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.10);padding:12px 18px 30px;border-radius:32px 32px 0 0;overflow:auto}
-.sheet:before{content:'';display:block;width:42px;height:4px;border-radius:99px;margin:2px auto 14px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.38),transparent)}
-.sheet .head{position:sticky;top:-12px;z-index:3;padding:7px 0 14px;background:linear-gradient(180deg,rgba(13,18,35,.98) 72%,transparent);margin-bottom:2px}
-.sheet .head h2{font-size:25px;letter-spacing:-.7px;margin:0;font-weight:900}
-.sheet .head h2:before{content:'GLASS NOTES // ';font-size:8px;letter-spacing:2.5px;color:var(--a);display:block;margin-bottom:4px;opacity:.8}
-.sheet .head .ico{width:46px;height:46px;border-radius:17px;background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.12);font-size:25px}
-.nx-create-intro,.nx-settings-intro{padding:15px 16px;border-radius:22px;background:linear-gradient(135deg,rgba(31,91,150,.25),rgba(92,42,157,.16));border:1px solid rgba(84,205,255,.16);margin:0 0 13px;position:relative;overflow:hidden}
-.nx-create-intro:after,.nx-settings-intro:after{content:'';position:absolute;width:120px;height:120px;border-radius:50%;right:-55px;top:-65px;background:radial-gradient(circle,rgba(74,218,255,.28),transparent 68%);pointer-events:none}
-.nx-kicker{font-size:8px;letter-spacing:2.7px;color:var(--a);font-weight:900}.nx-intro-title{font-size:18px;font-weight:900;margin-top:5px}.nx-intro-sub{font-size:11px;color:rgba(255,255,255,.52);margin-top:3px}
-.nx-create-grid{display:grid;gap:10px}.nx-create-card{position:relative;display:grid;grid-template-columns:52px 1fr 26px;align-items:center;gap:12px;text-align:left;border:1px solid rgba(255,255,255,.10);border-radius:22px;padding:12px 13px;background:linear-gradient(110deg,rgba(255,255,255,.075),rgba(255,255,255,.025));color:#fff;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.055);transition:transform .16s ease,border-color .16s ease,background .16s ease}
-.nx-create-card:active{transform:scale(.985);border-color:rgba(102,227,255,.42);background:rgba(102,227,255,.08)}
-.nx-create-icon{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;font-size:23px;border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px rgba(255,255,255,.16)}
-.nx-create-card.note .nx-create-icon{background:linear-gradient(145deg,rgba(58,208,255,.28),rgba(45,93,255,.10));color:#66e3ff}.nx-create-card.task .nx-create-icon{background:linear-gradient(145deg,rgba(55,237,166,.26),rgba(0,119,105,.10));color:#62f5a5}.nx-create-card.pay .nx-create-icon{background:linear-gradient(145deg,rgba(255,104,133,.25),rgba(160,35,82,.10));color:#ff7d9d}.nx-create-card.jarvis .nx-create-icon{background:linear-gradient(145deg,rgba(119,88,255,.28),rgba(31,171,255,.12));color:#a995ff}.nx-create-card b{font-size:14px}.nx-create-card span{display:block;font-size:10px;color:rgba(255,255,255,.48);margin-top:3px}.nx-arrow{color:rgba(255,255,255,.32);font-size:22px}
-.nx-settings-group{margin-top:15px}.nx-settings-title{display:flex;align-items:center;gap:8px;margin:0 2px 8px;font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.52);font-weight:900}.nx-settings-title i{width:7px;height:7px;border-radius:50%;background:var(--a);box-shadow:0 0 10px var(--a)}
-.nx-setting-card{padding:14px;border-radius:21px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px rgba(255,255,255,.045);margin-bottom:9px}.nx-setting-card .label{margin:0 0 7px;font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.3px}.nx-setting-card .field{background:rgba(2,7,16,.72);border-color:rgba(255,255,255,.09);border-radius:15px;padding:13px 14px}.nx-setting-row{display:grid;grid-template-columns:1fr 74px;gap:10px;align-items:center}.nx-color{height:48px;width:100%;padding:5px;border-radius:15px;cursor:pointer;background:rgba(2,7,16,.72);border:1px solid rgba(255,255,255,.09)}
-.nx-file{position:relative;overflow:hidden}.nx-file input{width:100%;font-size:12px;color:rgba(255,255,255,.65)}.nx-file input::file-selector-button{border:0;border-radius:12px;padding:10px 12px;margin-right:9px;background:linear-gradient(135deg,rgba(102,227,255,.22),rgba(116,78,255,.20));color:#fff;font-weight:800}
-.nx-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.nx-save{grid-column:1/-1!important}.nx-actions .btn{min-height:48px;border-radius:17px;font-weight:800}.nx-actions .primary{background:linear-gradient(135deg,#66e3ff,#7e8cff);box-shadow:0 10px 30px rgba(67,197,255,.18)}
-.nx-data-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.nx-data-btn{min-height:46px;border-radius:16px!important;background:rgba(255,255,255,.055)!important;border:1px solid rgba(255,255,255,.10)!important;color:#fff!important}.nx-note{font-size:10px!important;line-height:1.45;padding:12px 14px!important;border-radius:16px!important;margin-top:10px!important;color:rgba(255,255,255,.48)!important;border-left:2px solid var(--a)!important;background:rgba(102,227,255,.045)!important}
-@media(max-width:420px){.sheet{padding-left:14px;padding-right:14px}.nx-create-card{grid-template-columns:48px 1fr 22px}.nx-create-icon{width:48px;height:48px}.nx-setting-row{grid-template-columns:1fr 64px}}
-\n/* V3.2 JARVIS VOICE */
-.jarvis-v32{padding:18px 0 120px}.j32-core{position:relative;overflow:hidden;border-radius:32px;padding:24px;background:linear-gradient(145deg,rgba(10,20,38,.82),rgba(9,11,24,.72));border:1px solid rgba(111,222,255,.2);box-shadow:0 24px 70px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.08)}.j32-core:before{content:"";position:absolute;inset:-35%;background:radial-gradient(circle at 50% 42%,rgba(64,190,255,.18),transparent 27%),radial-gradient(circle at 80% 20%,rgba(170,72,255,.13),transparent 30%);pointer-events:none}.j32-head{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.j32-kicker{font-size:10px;letter-spacing:4px;color:var(--a);font-weight:800}.j32-title{font-size:32px;font-weight:900;margin:6px 0 2px}.j32-sub{color:#ffffff91;font-size:13px;line-height:1.45}.j32-orb-wrap{position:relative;display:grid;place-items:center;margin:28px auto 22px;width:205px;height:205px}.j32-ring{position:absolute;inset:7px;border:1px solid rgba(102,227,255,.35);border-radius:50%;box-shadow:0 0 35px rgba(72,190,255,.14),inset 0 0 35px rgba(72,190,255,.08);animation:j32pulse 2.8s ease-in-out infinite}.j32-ring.r2{inset:23px;border-color:rgba(168,100,255,.25);animation-delay:.5s}.j32-orb{width:126px;height:126px;border-radius:50%;display:grid;place-items:center;font-size:52px;font-weight:900;color:#dffaff;background:radial-gradient(circle at 42% 35%,#4de8ff,rgba(24,69,120,.8) 36%,rgba(7,12,25,.98) 70%);border:1px solid rgba(155,238,255,.5);box-shadow:0 0 35px rgba(48,200,255,.45),inset 0 0 30px rgba(80,220,255,.25)}.j32-orb.listening{animation:j32listen .9s ease-in-out infinite}.j32-status{text-align:center;font-size:13px;color:#ffffff9e;min-height:20px}.j32-transcript{margin:18px 0;padding:16px 17px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);min-height:58px;color:#fff;line-height:1.4}.j32-transcript em{color:#ffffff55}.j32-talk{width:100%;padding:15px 18px;border-radius:18px;border:1px solid rgba(102,227,255,.35);background:linear-gradient(135deg,rgba(102,227,255,.18),rgba(95,78,255,.13));color:#fff;font-weight:850;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.1)}.j32-talk.listening{border-color:#ff4f93;background:linear-gradient(135deg,rgba(255,52,122,.2),rgba(111,73,255,.16))}.j32-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.j32-cmd{padding:15px;border-radius:19px;text-align:left;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);color:#fff;cursor:pointer}.j32-cmd b{display:block;font-size:13px}.j32-cmd span{display:block;margin-top:5px;color:#ffffff66;font-size:11px}.j32-help{margin-top:12px;padding:17px;border-radius:22px;background:rgba(7,13,27,.55);border:1px solid rgba(255,255,255,.07)}.j32-help h3{margin:0 0 10px}.j32-help div{display:flex;gap:8px;align-items:flex-start;color:#ffffff9a;font-size:12px;line-height:1.45;padding:5px 0}.j32-dot{color:var(--a)}@keyframes j32pulse{50%{transform:scale(1.04);opacity:.7}}@keyframes j32listen{50%{transform:scale(1.08);box-shadow:0 0 55px rgba(255,65,150,.55),inset 0 0 35px rgba(255,80,170,.2)}}
-@media(max-width:430px){.j32-title{font-size:28px}.j32-orb-wrap{width:180px;height:180px}.j32-orb{width:112px;height:112px;font-size:46px}.j32-grid{grid-template-columns:1fr}}
-
-</style>
+body:after{content:"";position:fixed;inset:0;z-index:-1;background-image:var(--user-bg,none);background-size:cover;background-position:center;background-repeat:no-repeat;pointer-events:none}</style>
 <style id="swipe-gestures">
 .note,.list,.payment{touch-action:pan-y}
 .swipe-hint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);padding:8px 14px;border-radius:999px;z-index:9999;display:none;font-size:.78rem}
@@ -179,42 +153,6 @@ input[type="date"],input[type="time"]{
   opacity:.62;
 }
 </style>
-
-<style id="glass-v30-home">
-:root{--cyan:#19dcff;--pink:#ff3bbf;--violet:#8b5cff;--blue:#2f7dff;--panel:rgba(8,15,32,.66)}
-body.home-mode{background:#030711}
-body.home-mode:before{background:radial-gradient(circle at 12% 18%,rgba(0,178,255,.20),transparent 30%),radial-gradient(circle at 86% 18%,rgba(255,0,183,.17),transparent 32%),radial-gradient(circle at 50% 82%,rgba(72,57,255,.12),transparent 34%),linear-gradient(145deg,#02050c,#071224 52%,#05030d)}
-body.home-mode .top{position:relative;top:auto;margin:0;padding:16px 14px 10px;background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0;z-index:4}
-body.home-mode .top>div:first-child{display:flex;align-items:center;gap:11px}
-body.home-mode .top>div:first-child:before{content:'//';font-size:27px;font-weight:950;font-style:italic;letter-spacing:-8px;color:var(--cyan);text-shadow:12px 0 0 var(--pink),22px 0 0 var(--violet);margin-right:7px}
-body.home-mode .top .ey{font-size:15px;letter-spacing:1.5px;color:#eaf7ff;font-weight:900}
-body.home-mode .top h1{display:none}
-body.home-mode .top .muted{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.52);margin-top:2px}
-body.home-mode .top .icons button:first-child,body.home-mode .top .icons button:nth-child(2){display:none}
-body.home-mode .top .icons .ico{width:44px;height:44px;border-radius:50%;background:rgba(80,91,164,.25);border:1px solid rgba(165,180,255,.22);box-shadow:inset 0 1px rgba(255,255,255,.16);font-size:18px}
-body.home-mode #search-pro-v222{margin:2px 14px 8px;padding:0;background:transparent;border:0;backdrop-filter:none;}
-body.home-mode #search-pro-v222 .sp-row{height:52px;border-radius:28px;padding:0 17px;background:rgba(35,52,94,.42);border:1px solid rgba(138,180,255,.24);box-shadow:0 14px 45px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.10)}
-body.home-mode #search-pro-v222 input{font-size:15px}
-body.home-mode #search-pro-v222 .sp-row:before{content:'⌕';font-size:28px;line-height:1;color:#d9efff;margin-right:8px}
-body.home-mode #search-pro-v222 .sp-tools{display:none}
-body.home-mode #search-pro-v222:after{content:' ';display:block;height:1px}
-.v31-home{padding:2px 0 190px}
-.v31-hero{position:relative;min-height:265px;margin:8px 0 13px;border-radius:30px;overflow:hidden;border:1px solid rgba(80,200,255,.25);background:linear-gradient(120deg,rgba(8,22,44,.78),rgba(8,12,27,.38)),radial-gradient(circle at 82% 20%,rgba(0,205,255,.22),transparent 32%),radial-gradient(circle at 80% 80%,rgba(255,0,189,.16),transparent 38%);box-shadow:0 24px 80px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.12)}
-.v31-hero:before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 0 58%,rgba(0,212,255,.10) 59%,transparent 61%),repeating-linear-gradient(90deg,transparent 0 48px,rgba(120,210,255,.035) 49px,transparent 50px);pointer-events:none}
-.v31-hero:after{content:'集中';position:absolute;right:14px;top:72px;color:rgba(255,80,213,.55);font-size:30px;font-weight:900;text-shadow:0 0 18px rgba(255,0,190,.65);writing-mode:vertical-rl;letter-spacing:5px}
-.v31-copy{position:absolute;left:20px;bottom:19px;z-index:2;max-width:72%}
-.v31-kicker{font-size:9px;letter-spacing:3px;color:var(--cyan);font-weight:900}.v31-greet{font-size:36px;line-height:.98;margin:7px 0 8px;font-weight:900;letter-spacing:-1.8px}.v31-date{font-size:13px;color:rgba(255,255,255,.62);text-transform:capitalize}.v31-status{margin-top:14px;display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;background:rgba(33,95,174,.34);border:1px solid rgba(111,196,255,.23);font-size:11px}.v31-status i{width:8px;height:8px;border-radius:50%;background:#36e9ff;box-shadow:0 0 12px #36e9ff}
-.v31-character{position:absolute;right:-10px;top:10px;width:58%;height:100%;opacity:.72;background:radial-gradient(ellipse at 50% 42%,rgba(57,193,255,.30),transparent 28%),linear-gradient(135deg,transparent 42%,rgba(25,88,160,.32) 43% 63%,transparent 64%);clip-path:polygon(30% 0,100% 0,100% 100%,0 100%,0 63%,22% 45%);filter:saturate(1.3)}
-.v31-character:after{content:'JARVIS';position:absolute;right:30px;bottom:45px;font-size:10px;letter-spacing:4px;color:rgba(170,230,255,.35);writing-mode:vertical-rl}
-.v31-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0 0 13px}.v31-stat{min-width:0;min-height:105px;padding:14px 10px;border-radius:22px;background:rgba(16,25,49,.70);border:1px solid rgba(145,173,255,.16);box-shadow:inset 0 1px rgba(255,255,255,.07);overflow:hidden}.v31-stat .s-icon{font-size:19px}.v31-stat .s-num{font-size:24px;font-weight:900;line-height:1;margin-top:11px;white-space:nowrap}.v31-stat .s-label{font-size:10px;color:rgba(255,255,255,.58);margin-top:5px;line-height:1.2}.v31-stat .s-sub{font-size:9px;color:var(--cyan);margin-top:4px}.v31-stat.red{border-color:rgba(255,48,117,.25);background:linear-gradient(145deg,rgba(255,35,100,.16),rgba(17,23,45,.72))}.v31-stat.orange{border-color:rgba(255,150,43,.22);background:linear-gradient(145deg,rgba(255,132,25,.13),rgba(17,23,45,.72))}.v31-stat.blue{border-color:rgba(30,194,255,.24)}.v31-stat.violet{border-color:rgba(159,91,255,.24)}
-.v31-jarvis{display:flex;align-items:center;gap:14px;margin:0 0 14px;padding:15px 18px;border-radius:26px;background:linear-gradient(100deg,rgba(16,56,92,.66),rgba(17,27,58,.74));border:1px solid rgba(46,206,255,.30);box-shadow:0 14px 55px rgba(0,160,255,.10),inset 0 1px rgba(255,255,255,.10);cursor:pointer}.v31-orb{width:72px;height:72px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#fff 0 4%,#37eaff 12%,#1766d6 31%,#08182d 57%,transparent 71%);box-shadow:0 0 20px #29dfff,0 0 45px rgba(55,102,255,.38);font-size:23px;font-weight:950;position:relative}.v31-orb:after{content:'';position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(52,220,255,.55);border-left-color:transparent;animation:jarvisSpin 4s linear infinite}@keyframes jarvisSpin{to{transform:rotate(360deg)}}.v31-jtext{min-width:0;flex:1}.v31-jtext b{font-size:15px}.v31-jtext span{display:block;margin-top:4px;color:rgba(255,255,255,.58);font-size:10px;line-height:1.35}.v31-jwave{color:var(--cyan);font-size:22px;letter-spacing:-3px}
-.v31-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:15px}.v31-action{border:1px solid rgba(130,170,255,.17);border-radius:20px;padding:11px 6px;background:rgba(13,23,46,.68);color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.07)}.v31-action .a-icon{width:39px;height:39px;margin:0 auto 7px;border-radius:50%;display:grid;place-items:center;font-size:18px}.v31-action:nth-child(1) .a-icon{background:rgba(28,234,155,.18);color:#40f5b0}.v31-action:nth-child(2) .a-icon{background:rgba(31,178,255,.18);color:#42d7ff}.v31-action:nth-child(3) .a-icon{background:rgba(255,49,102,.18);color:#ff5d93}.v31-action b{font-size:10px}
-.v31-columns{display:grid;grid-template-columns:1.25fr .95fr;gap:10px}.v31-panel{min-width:0;padding:15px;border-radius:24px;background:rgba(9,17,35,.76);border:1px solid rgba(118,156,229,.17);box-shadow:inset 0 1px rgba(255,255,255,.06)}.v31-panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.v31-panel-head h3{margin:0;font-size:15px}.v31-panel-head button{border:0;background:transparent;color:var(--cyan);font-size:10px;padding:5px}.v31-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)}.v31-row:last-child{border-bottom:0}.v31-check{width:18px;height:18px;border:2px solid #7d9ac7;border-radius:50%;flex:0 0 auto}.v31-check.done{background:#32e8ad;border-color:#32e8ad;position:relative}.v31-check.done:after{content:'✓';color:#06251b;font-size:12px;font-weight:900;position:absolute;left:2px;top:-2px}.v31-rmain{min-width:0;flex:1}.v31-rtitle{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v31-rsub{font-size:9px;color:rgba(255,255,255,.47);margin-top:2px}.v31-badge{font-size:8px;padding:4px 6px;border-radius:999px;background:rgba(255,64,105,.17);color:#ff668f}.v31-price{font-size:11px;font-weight:900;color:#ffb03b;white-space:nowrap}.v31-note-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:5px}.v31-note{min-width:0;padding:10px;border-radius:15px;background:rgba(24,36,62,.72);border:1px solid rgba(150,175,255,.11)}.v31-note .ni{font-size:15px}.v31-note b{display:block;font-size:9px;margin-top:8px;line-height:1.25}.v31-note span{display:block;font-size:8px;color:rgba(255,255,255,.43);margin-top:4px}.v31-quote{min-height:180px;display:flex;align-items:flex-end;padding:17px;background:linear-gradient(180deg,rgba(6,17,35,.24),rgba(9,9,25,.92)),radial-gradient(circle at 65% 40%,rgba(45,103,255,.22),transparent 34%),linear-gradient(135deg,#08172a,#251044);overflow:hidden;position:relative}.v31-quote:before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,transparent 48%,rgba(255,0,196,.16) 49% 51%,transparent 52%),linear-gradient(20deg,transparent 60%,rgba(0,217,255,.16) 61% 62%,transparent 63%)}.v31-quote b{position:relative;z-index:1;font-size:17px;line-height:1.18;max-width:90%}
-.v31-empty{text-align:center;padding:18px 8px;color:rgba(255,255,255,.48);font-size:10px}
-@media(max-width:650px){.v31-stats{grid-template-columns:repeat(2,1fr)}.v31-stat{min-height:96px}.v31-columns{grid-template-columns:1fr}.v31-hero{min-height:255px}.v31-greet{font-size:33px}.v31-character{width:65%;opacity:.58}.v31-copy{max-width:76%}}
-@media(max-width:390px){.v31-hero{min-height:240px}.v31-greet{font-size:29px}.v31-copy{left:16px;bottom:16px}.v31-stat{padding:12px 9px}.v31-stat .s-num{font-size:21px}.v31-panel{padding:13px}.v31-jarvis{padding:13px}.v31-orb{width:62px;height:62px}}
-@media(prefers-reduced-motion:reduce){.v31-orb:after{animation:none}}
-</style>
 </head>
 <body>
 <header class="top glass">
@@ -285,53 +223,9 @@ function render(){document.documentElement.style.setProperty('--user-bg',S.setti
  document.documentElement.style.setProperty('--a',S.settings.accent||'#66e3ff');
  if(S.settings.bg)document.body.style.backgroundImage=`url("${S.settings.bg}")`;
  const h=new Date().getHours();document.getElementById('greet').textContent=(h<12?'Buenos días, ':h<19?'Buenas tardes, ':'Buenas noches, ')+(S.settings.name||'señor')+'.';
- const p=pg();document.body.classList.toggle('home-mode',p==='home');if(p==='tasks')tasks();else if(p==='payments')payments();else if(p==='jarvis')jarvis();else if(p==='home')homeDashboard();else notes(false);
+ const p=pg();if(p==='tasks')tasks();else if(p==='payments')payments();else if(p==='jarvis')jarvis();else notes(p==='home');
  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));const b=document.getElementById('n-'+(p==='home'?'notes':p));if(b)b.classList.add('active')
 }
-function homeDashboard(){
- const now=new Date();
- const pending=S.tasks.filter(x=>!x.done), done=S.tasks.filter(x=>x.done);
- const activePayments=S.payments.filter(x=>x.status!=='paid');
- const overdue=activePayments.filter(x=>paymentKind(x)==='overdue');
- const dueToday=activePayments.filter(x=>paymentKind(x)==='today');
- const soon=activePayments.filter(x=>paymentKind(x)==='soon');
- const pendingAmount=activePayments.reduce((a,x)=>a+(Number(x.amount)||0),0);
- const recentNotes=S.notes.slice().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0)).slice(0,3);
- const nextPayments=activePayments.slice().sort((a,b)=>paymentSort(a)-paymentSort(b)).slice(0,4);
- const dateLabel=now.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
- const greet=now.getHours()<12?'Buenos días,':now.getHours()<19?'Buenas tardes,':'Buenas noches,';
- const firstTask=pending.slice(0,5);
- const taskRows=firstTask.length?firstTask.map((t,i)=>`<div class="v31-row"><div class="v31-check"></div><div class="v31-rmain"><div class="v31-rtitle">${esc(t.title||'Pendiente')}</div><div class="v31-rsub">${esc(t.detail||'Pendiente')}</div></div>${i===0?'<span class="v31-badge">Alta</span>':''}<span class="v31-rsub">${t.time?esc(t.time):''}</span></div>`).join(''):'<div class="v31-empty">✨ Todo al día. No tienes pendientes.</div>';
- const payRows=nextPayments.length?nextPayments.map(p=>`<div class="v31-row"><div class="v31-rmain"><div class="v31-rtitle">${esc(p.title||'Pago')}</div><div class="v31-rsub">${paymentKind(p)==='overdue'?'Vencido':paymentKind(p)==='today'?'Hoy':paymentKind(p)==='soon'?'Próximo':'Pendiente'} · ${esc(p.due||p.date||'Sin fecha')}</div></div><div class="v31-price">$${(Number(p.amount)||0).toLocaleString('es-MX',{maximumFractionDigits:0})}</div></div>`).join(''):'<div class="v31-empty">No hay pagos pendientes.</div>';
- const noteCards=recentNotes.length?recentNotes.map(n=>`<div class="v31-note" onclick="note('${esc(n.id)}')"><div class="ni">📄</div><b>${esc(n.title||'Sin título')}</b><span>${esc(n.updatedLabel||'Reciente')}</span></div>`).join(''):'<div class="v31-empty">No hay notas recientes.</div>';
- const alertCount=overdue.length||dueToday.length||activePayments.length;
- const alertLabel=overdue.length?'Pagos vencidos':dueToday.length?'Vencen hoy':'Pagos pendientes';
- const alertClass=overdue.length?'red':dueToday.length?'orange':'blue';
- document.getElementById('app').innerHTML=`<div class="v31-home">
-  <section class="v31-hero">
-   <div class="v31-character"></div>
-   <div class="v31-copy"><div class="v31-kicker">GLASS NOTES // PERSONAL SPACE</div><div class="v31-greet">${greet}<br><span>${esc(S.settings.name||'señor')}.</span></div><div class="v31-date">${esc(dateLabel)}</div><div class="v31-status"><i></i>Sistema activo · todo bajo control</div></div>
-  </section>
-  <section class="v31-stats">
-   <div class="v31-stat ${alertClass}"><div class="s-icon">${overdue.length?'💳':'💳'}</div><div class="s-num">${alertCount}</div><div class="s-label">${alertLabel}</div><div class="s-sub">$${overdue.length?overdue.reduce((a,x)=>a+(Number(x.amount)||0),0).toLocaleString('es-MX',{maximumFractionDigits:0}):''}</div></div>
-   <div class="v31-stat orange"><div class="s-icon">◷</div><div class="s-num">${soon.length}</div><div class="s-label">Pagos próximos</div><div class="s-sub">$${soon.reduce((a,x)=>a+(Number(x.amount)||0),0).toLocaleString('es-MX',{maximumFractionDigits:0})}</div></div>
-   <div class="v31-stat blue"><div class="s-icon">✓</div><div class="s-num">${pending.length}</div><div class="s-label">Pendientes hoy</div><div class="s-sub">${done.length} completados</div></div>
-   <div class="v31-stat violet"><div class="s-icon">▤</div><div class="s-num">${S.notes.length}</div><div class="s-label">Notas</div><div class="s-sub">${recentNotes.length} recientes</div></div>
-  </section>
-  <section class="v31-jarvis" onclick="go('jarvis')"><div class="v31-orb">J</div><div class="v31-jtext"><b>JARVIS</b><span>${overdue.length?'Hay algo que requiere tu atención.':pending.length?'Todo listo. Tengo tu día bajo vigilancia.':'Todo en orden por ahora. Aquí tienes un resumen de tu día.'}</span></div><div class="v31-jwave">⌁⌁</div></section>
-  <section class="v31-actions"><button class="v31-action" onclick="note()"><div class="a-icon">＋</div><b>Nueva nota</b></button><button class="v31-action" onclick="task()"><div class="a-icon">✓</div><b>Nuevo pendiente</b></button><button class="v31-action" onclick="payment()"><div class="a-icon">▭</div><b>Nuevo pago</b></button></section>
-  <section class="v31-columns">
-   <div class="v31-panel"><div class="v31-panel-head"><h3>Lo que sigue hoy</h3><button onclick="go('tasks')">Ver todos ›</button></div>${taskRows}</div>
-   <div class="v31-panel"><div class="v31-panel-head"><h3>Próximos pagos</h3><button onclick="go('payments')">Ver todos ›</button></div>${payRows}</div>
-   <div class="v31-panel"><div class="v31-panel-head"><h3>Notas recientes</h3><button onclick="go('notes')">Ver todas ›</button></div><div class="v31-note-grid">${noteCards}</div></div>
-   <div class="v31-panel v31-quote"><b>“Disciplina hoy,<br>resultados mañana.”</b></div>
-  </section>
- </div>`;
-}
-function dateOnly(v){const m=String(v||'').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(!m)return null;const d=new Date(+m[1],+m[2]-1,+m[3]);d.setHours(0,0,0,0);return d}
-function paymentKind(p){if(!p||p.status==='paid')return 'paid';const d=dateOnly(p.due||p.date);if(!d)return 'future';const t=new Date();t.setHours(0,0,0,0);const diff=Math.round((d-t)/86400000);if(diff<0)return 'overdue';if(diff===0)return 'today';if(diff<=7)return 'soon';return 'future'}
-function paymentSort(p){const d=dateOnly(p.due||p.date);return d?d.getTime():Number.MAX_SAFE_INTEGER}
-
 function notes(home){
  const pending=S.tasks.filter(x=>!x.done).length;
  let h=home?`<section class="hero glass"><div class="ey">CENTRO DE MANDO</div><div class="big">Todo bajo control.</div><p class="muted">${S.notes.length} notas · ${pending} pendientes · ${S.payments.length} pagos</p><div class="stats"><div class="stat glass"><b>${S.notes.length}</b><span class="muted">Notas</span></div><div class="stat glass"><b>${pending}</b><span class="muted">Pendientes</span></div></div></section>`:'';
@@ -367,6 +261,10 @@ function payments(){
  const tp=pending.reduce((a,x)=>a+(Number(x.amount)||0),0);
  const tg=paid.reduce((a,x)=>a+(Number(x.amount)||0),0);
  document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">CONTROL</div><div class="big">Pagos</div><p class="muted">Pendiente: <b>$${tp.toFixed(2)}</b> · Pagado: <b>$${tg.toFixed(2)}</b></p></section><div class="head"><h2>Movimientos</h2><button class="btn" onclick="payment()">+ Pago</button></div>${S.payments.length?`<div class="grid">${S.payments.slice().reverse().map(x=>`<article class="payment glass"><div class="head"><div><b>${esc(x.title||'Pago')}</b><div class="muted">${GNPaymentDisplayStatusV260(x)==='paid'?'🟢 Pagado':GNPaymentDisplayStatusV260(x)==='overdue'?'🔴 Vencido':GNPaymentDisplayStatusV260(x)==='today'?'⚠️ Vence hoy':'🔴 Pendiente'}</div></div><div class="amount">$${(Number(x.amount)||0).toFixed(2)}</div></div><div class="muted">📅 ${esc(x.date||'Sin fecha')} · ⏰ ${esc(x.time||'Sin hora')}</div><div class="muted">📆 Vence: ${esc(x.due||'Sin vencimiento')}</div>${x.note?`<p class="muted">${esc(x.note)}</p>`:''}<div class="actions"><button class="btn" onclick="payment('${esc(x.id)}')">✏️ Editar</button>${x.status!=='paid'?`<button class="btn" onclick="markPaid('${esc(x.id)}')">✓ Pagado</button>`:''}${x.recurrence?.enabled?`<button class="btn" onclick="manualNextPayment('${esc(x.id)}')">⏭️ Siguiente</button>`:''}<button class="btn" onclick="delPayment('${esc(x.id)}')">Eliminar</button></div></article>`).join('')}</div>`:`<div class="empty glass">💳 No hay pagos registrados.</div>`}`
+}
+function jarvis(){
+ const last=S.messages.at(-1);
+ document.getElementById('app').innerHTML=`<section class="card glass" style="text-align:center"><div class="ey">JARVIS CORE</div><div class="orb">J</div><h2>¿En qué puedo ayudarte?</h2><p class="muted">Puedo crear notas, pendientes y consultar tus datos.</p><button class="btn primary" onclick="voice()">🎙️ Hablar con JARVIS</button>${last?`<div class="alert">${esc(last.reply)}</div>`:''}</section><section class="card glass"><h2>Comandos rápidos</h2><div class="grid"><button class="btn" onclick="command('crea una nota llamada Compras con leche y pan')">“Crea una nota…”</button><button class="btn" onclick="command('agrega pendiente pagar la luz')">“Agrega pendiente…”</button><button class="btn" onclick="command('muéstrame mis pendientes')">“Mis pendientes”</button><button class="btn" onclick="command('cuántas notas tengo')">“Cuántas notas tengo”</button></div></section>`
 }
 function open(x){document.getElementById('modal').classList.remove('hidden');document.getElementById('sheet').innerHTML=x}
 function closeModal(){document.getElementById('modal').classList.add('hidden')}
@@ -440,163 +338,13 @@ function delPayment(i){
  if(!confirm('¿Eliminar este pago?'))return;
  try{S.payments.splice(idx,1);save();closeModal();render()}catch(e){console.error('Eliminar pago',e);alert('No se pudo eliminar el pago.')}
 }
-
-function settings(){
- open(`<div class="head"><h2>Ajustes</h2><button class="ico" onclick="closeModal()">×</button></div>
- <div class="nx-settings-intro"><div class="nx-kicker">NEXUS CONTROL CENTER</div><div class="nx-intro-title">Personaliza tu espacio.</div><div class="nx-intro-sub">Haz que Glass Notes se sienta completamente tuyo.</div></div>
- <div class="nx-settings-group"><div class="nx-settings-title"><i></i>Perfil</div>
-  <div class="nx-setting-card"><div class="label">Cómo quieres que JARVIS te llame</div><input id="sn" class="field" value="${esc(S.settings.name)}" placeholder="señor"></div>
- </div>
- <div class="nx-settings-group"><div class="nx-settings-title"><i></i>Apariencia</div>
-  <div class="nx-setting-card"><div class="label">Color de acento</div><div class="nx-setting-row"><input id="saText" class="field" value="${esc(S.settings.accent)}" aria-label="Color hexadecimal"><input id="sa" class="nx-color" type="color" value="${esc(S.settings.accent)}" aria-label="Seleccionar color"></div></div>
-  <div class="nx-setting-card"><div class="label">Fondo de pantalla · URL</div><input id="sb" class="field" value="${esc(S.settings.bg)}" placeholder="https://..."></div>
-  <div class="nx-setting-card nx-file"><div class="label">Fondo desde tu galería</div><input id="sf" type="file" accept="image/*"></div>
- </div>
- <div class="nx-settings-group"><div class="nx-settings-title"><i></i>Datos</div>
-  <div class="nx-data-actions"><button class="btn nx-data-btn" onclick="backup()">💾 &nbsp;Respaldo</button><button class="btn nx-data-btn" onclick="restore()">📥 &nbsp;Restaurar</button></div>
- </div>
- <div class="nx-actions"><button class="btn primary nx-save" onclick="saveSettings()">Guardar cambios</button></div>
- <div class="alert nx-note">V3.2.1 · Nexus Premium. Tus notas, pendientes y pagos siguen usando el mismo almacenamiento de Glass Notes.</div>`);
- const color=document.getElementById('sa'),colorText=document.getElementById('saText');
- color.oninput=()=>{colorText.value=color.value;document.documentElement.style.setProperty('--a',color.value)};
- colorText.oninput=()=>{if(/^#[0-9a-fA-F]{6}$/.test(colorText.value)){color.value=colorText.value;document.documentElement.style.setProperty('--a',colorText.value)}};
- document.getElementById('sf').onchange=e=>{let f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/'))return alert('Selecciona una imagen.');if(f.size>7*1024*1024)return alert('La imagen es muy pesada. Usa una de menos de 7 MB.');let r=new FileReader();r.onload=()=>{document.getElementById('sb').value=r.result;document.body.style.backgroundImage=`url("${r.result}")`;document.documentElement.style.setProperty('--user-bg',`url("${r.result}")`)};r.readAsDataURL(f)};
-}
+function settings(){open(`<div class="head"><h2>Ajustes</h2><button class="ico" onclick="closeModal()">×</button></div><div class="label">Nombre</div><input id="sn" class="field" value="${esc(S.settings.name)}"><div class="label">Color</div><input id="sa" class="field" type="color" value="${esc(S.settings.accent)}"><div class="label">Fondo de pantalla: URL</div><input id="sb" class="field" value="${esc(S.settings.bg)}" placeholder="https://..."><div class="label">Fondo desde galería</div><input id="sf" class="field" type="file" accept="image/*"><div class="actions"><button class="btn primary" onclick="saveSettings()">Guardar</button><button class="btn" onclick="backup()">💾 Respaldo</button><button class="btn" onclick="restore()">📥 Restaurar</button></div><div class="alert">V2 ya no intenta interpretar datos desconocidos como funciones. Si el almacenamiento está dañado, la interfaz sigue cargando.</div>`);document.getElementById('sf').onchange=e=>{let f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/'))return alert('Selecciona una imagen.');if(f.size>7*1024*1024)return alert('La imagen es muy pesada. Usa una de menos de 7 MB.');let r=new FileReader();r.onload=()=>{document.getElementById('sb').value=r.result;document.documentElement.style.setProperty('--user-bg',`url("${r.result}")`)};r.readAsDataURL(f)}}
 function saveSettings(){S.settings.name=document.getElementById('sn').value.trim()||'señor';S.settings.accent=document.getElementById('sa').value;S.settings.bg=document.getElementById('sb').value.trim();save();closeModal();render()}
 function backup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));a.download='glass-notes-backup.json';a.click()}
-function restore(){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>{const r=new FileReader();r.onload=()=>{const x=safe(r.result);if(!x||typeof x!=='object')return alert('Respaldo inválido');S=norm(x);migratePayments();save();closeModal();render()};if(i.files[0])r.readAsText(i.files[0])};i.click()}
-function quick(){open(`<div class="head"><h2>Crear</h2><button class="ico" onclick="closeModal()">×</button></div>
- <div class="nx-create-intro"><div class="nx-kicker">QUICK ACTIONS</div><div class="nx-intro-title">¿Qué quieres hacer?</div><div class="nx-intro-sub">Accede a tus herramientas principales en un toque.</div></div>
- <div class="nx-create-grid">
-  <button class="nx-create-card note" onclick="closeModal();note()"><div class="nx-create-icon">📝</div><div><b>Nueva nota</b><span>Captura una idea o información</span></div><div class="nx-arrow">›</div></button>
-  <button class="nx-create-card task" onclick="closeModal();task()"><div class="nx-create-icon">✓</div><div><b>Nuevo pendiente</b><span>Agrega algo que no quieres olvidar</span></div><div class="nx-arrow">›</div></button>
-  <button class="nx-create-card pay" onclick="closeModal();payment()"><div class="nx-create-icon">▱</div><div><b>Nuevo pago</b><span>Registra un compromiso económico</span></div><div class="nx-arrow">›</div></button>
-  <button class="nx-create-card jarvis" onclick="closeModal();go('jarvis')"><div class="nx-create-icon">🤖</div><div><b>Hablar con JARVIS</b><span>Abre tu asistente personal</span></div><div class="nx-arrow">›</div></button>
- </div>`)}
-function jarvis(){
- const last=S.messages.at(-1);const supported=!!(window.SpeechRecognition||window.webkitSpeechRecognition);const speaking=!!window.speechSynthesis;
- document.getElementById('app').innerHTML=`<section class="jarvis-v32"><div class="j32-core">
- <div class="j32-head"><div><div class="j32-kicker">NEXUS INTELLIGENCE // V3.2</div><div class="j32-title">JARVIS</div><div class="j32-sub">Tu asistente personal para mantener todo bajo control.</div></div><button class="ico" onclick="go('home')">⌂</button></div>
- <div class="j32-orb-wrap"><div class="j32-ring"></div><div class="j32-ring r2"></div><div id="jOrb" class="j32-orb">J</div></div>
- <div id="jStatus" class="j32-status">${supported?'Listo para escucharte.':'Reconocimiento de voz no disponible en este navegador.'}</div>
- <div id="jTranscript" class="j32-transcript">${last?`<b>Tú:</b> ${esc(last.text)}<br><b>JARVIS:</b> ${esc(last.reply)}`:'<em>Di algo como: “JARVIS, ¿qué tengo pendiente hoy?”</em>'}</div>
- <button id="jTalk" class="j32-talk" onclick="voice()">🎙️ ${supported?'Hablar con JARVIS':'Probar reconocimiento de voz'}</button>
- </div>
- <section class="card glass" style="margin-top:12px"><div class="ey">COMANDOS RÁPIDOS</div><div class="j32-grid">
- <button class="j32-cmd" onclick="command('¿qué tengo pendiente hoy?')"><b>📋 Mi día</b><span>Consulta tus pendientes.</span></button>
- <button class="j32-cmd" onclick="command('¿cuántas notas tengo?')"><b>📝 Mis notas</b><span>Cuenta y consulta tus notas.</span></button>
- <button class="j32-cmd" onclick="command('¿cuánto debo?')"><b>💳 Mis pagos</b><span>Resume tus pagos activos.</span></button>
- <button class="j32-cmd" onclick="command('abre mis pagos')"><b>🚀 Abrir pagos</b><span>Ve directamente al módulo.</span></button>
- </div></section>
- <section class="j32-help"><h3>Lo que ya entiende</h3><div><span class="j32-dot">●</span> “Crea una nota llamada Compras con leche y pan”.</div><div><span class="j32-dot">●</span> “Agrega pendiente pagar la luz”.</div><div><span class="j32-dot">●</span> “¿Qué tengo pendiente hoy?”</div><div><span class="j32-dot">●</span> “¿Cuánto debo?” / “¿Qué pagos tengo?”</div><div><span class="j32-dot">●</span> “Abre mis notas / pendientes / pagos”.</div></section>
- </section>`;
-}
-function jarvisSpeak(text){if(!S.settings.voice||!('speechSynthesis'in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-MX';u.rate=.96;u.pitch=.92;const vs=speechSynthesis.getVoices();const v=vs.find(x=>/^es-MX/i.test(x.lang))||vs.find(x=>/^es/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
-function jarvisStatus(status,transcript,listening=false){const st=document.getElementById('jStatus'),tr=document.getElementById('jTranscript'),orb=document.getElementById('jOrb'),btn=document.getElementById('jTalk');if(st)st.textContent=status;if(tr&&transcript)tr.innerHTML=esc(transcript);if(orb)orb.classList.toggle('listening',!!listening);if(btn){btn.classList.toggle('listening',!!listening);btn.textContent=listening?'⏹️ Escuchando…':'🎙️ Hablar con JARVIS'}}
-function jarvisMoney(v){
- const n=Number(v)||0;
- return n.toLocaleString('es-MX',{style:'currency',currency:'MXN'});
-}
-function jarvisDateWord(text){
- const t=String(text||'').toLowerCase();
- const d=new Date();d.setHours(0,0,0,0);
- if(/pasado\s+mañana/.test(t))d.setDate(d.getDate()+2);
- else if(/mañana/.test(t))d.setDate(d.getDate()+1);
- else if(/hoy/.test(t)){}
- else return '';
- return d.toISOString().slice(0,10);
-}
-function jarvisCleanPhrase(text){
- return String(text||'').replace(/^\s*(?:jarvis[\s,:-]*)/i,'').replace(/\s+/g,' ').trim();
-}
-function command(text){
- text=String(text||'').trim();if(!text)return '';
- const clean=jarvisCleanPhrase(text);
- let reply='No entendí ese comando. Puedes pedirme una nota, un pendiente, registrar un pago, consultar tus datos o abrir una sección.';
- let navigated=false;
- let m;
-
- // Crear nota: “crea una nota llamada Compras con leche y pan” / “anota comprar leche”.
- m=clean.match(/^(?:crea|crear|haz|anota|guarda)\s+(?:una\s+)?nota(?:\s+(?:llamada|titulada|sobre))?\s*[:\-]?\s*(.+)$/i);
- if(m){
-   let raw=m[1].trim();
-   let title='Nueva nota', body=raw;
-   const named=raw.match(/^(.*?)\s+(?:con|que\s+diga|dice)\s+(.+)$/i);
-   if(named){title=named[1].trim()||title;body=named[2].trim()||title;}
-   else if(/^compras?\b/i.test(raw)){title=raw;body=raw;}
-   S.notes.push({id:id(),title,body,created:Date.now(),updated:Date.now()});
-   reply=`Listo. Creé la nota ${title}.`;
- }
- // Crear pendiente: soporta “para mañana” y guarda la fecha sin romper pendientes existentes.
- else if(m=clean.match(/^(?:agrega|añade|crear|crea|registra)\s+(?:un\s+)?(?:pendiente|tarea)\s*[:\-]?\s*(.+)$/i)){
-   let raw=m[1].trim();
-   const due=jarvisDateWord(raw);
-   raw=raw.replace(/\b(?:para\s+)?(?:hoy|mañana|pasado\s+mañana)\b/ig,'').replace(/\s+/g,' ').trim();
-   raw=raw.replace(/^(?:de|para)\s+/i,'').trim()||'Nuevo pendiente';
-   const item={id:id(),title:raw,detail:'',done:false,created:Date.now()};
-   if(due)item.due=due;
-   S.tasks.push(item);
-   reply=due?`Listo. Agregué el pendiente: ${raw}, para ${due===new Date().toISOString().slice(0,10)?'hoy':'mañana'}.`:`Listo. Agregué el pendiente: ${raw}.`;
- }
- // Registrar pago sencillo: “registra pago Internet 399” / “registra pago Internet de 399 para mañana”.
- else if(m=clean.match(/^(?:registra|crea|agrega|añade)\s+(?:un\s+)?pago\s+(.+?)\s+(?:de\s+)?\$?([0-9]+(?:[.,][0-9]{1,2})?)(?:\s+(.*))?$/i)){
-   const title=m[1].trim()||'Pago';
-   const amount=Number(String(m[2]).replace(',','.'));
-   const tail=(m[3]||'').trim();
-   const due=jarvisDateWord(tail);
-   S.payments.push({id:id(),title,amount,date:new Date().toISOString().slice(0,10),time:'',due,status:'pending',note:'Creado por JARVIS',recurrence:{enabled:false,frequency:'monthly',auto:false}});
-   reply=due?`Listo. Registré ${title} por ${jarvisMoney(amount)}, con vencimiento para mañana.`:`Listo. Registré ${title} por ${jarvisMoney(amount)}.`;
- }
- else if(/^(?:qu[eé]|que)\s+(?:tengo\s+)?pendiente|^(?:mis\s+)?pendientes(?:\s+(?:de\s+)?hoy)?/i.test(clean)){
-   const p=S.tasks.filter(x=>!x.done);
-   const today=new Date().toISOString().slice(0,10);
-   const todayItems=p.filter(x=>!x.due||x.due===today);
-   const list=(todayItems.length?todayItems:p).slice(0,4);
-   reply=list.length?`Tienes ${p.length} pendiente${p.length===1?'':'s'}. ${list.map(x=>x.title).join('. ')}.`:'No tienes pendientes. Tu lista está limpia.';
- }
- else if(/^(?:cu[aá]ntas?|dime).*notas|(?:mis\s+notas|notas\s+tengo)/i.test(clean)){
-   reply=`Tienes ${S.notes.length} nota${S.notes.length===1?'':'s'} guardada${S.notes.length===1?'':'s'}.`;
-   if(S.notes.length)reply+=` La más reciente es ${S.notes.at(-1).title||'Sin título'}.`;
- }
- else if(/(?:cu[aá]nto\s+debo|cu[aá]nto.*pag|mis\s+pagos|qu[eé]\s+pagos)/i.test(clean)){
-   const p=S.payments.filter(x=>x.status!=='paid');
-   const total=p.reduce((a,x)=>a+(Number(x.amount)||0),0);
-   reply=p.length?`Tienes ${p.length} pago${p.length===1?'':'s'} activos por ${jarvisMoney(total)}.`:'No tienes pagos activos.';
- }
- else if(/(?:abre|abrir|muestra|mostrar|ve a|ir a)\s+(?:mis\s+)?(?:notas|nota)/i.test(clean)){
-   reply='Abriendo tus notas.';navigated=true;go('notes');
- }
- else if(/(?:abre|abrir|muestra|mostrar|ve a|ir a)\s+(?:mis\s+)?(?:pendientes|tareas)/i.test(clean)){
-   reply='Abriendo tus pendientes.';navigated=true;go('tasks');
- }
- else if(/(?:abre|abrir|muestra|mostrar|ve a|ir a)\s+(?:mis\s+)?pagos/i.test(clean)){
-   reply='Abriendo tus pagos.';navigated=true;go('payments');
- }
- else if(/(?:abre|abrir|muestra|mostrar|ve a|ir a)\s+(?:los\s+)?ajustes|configuraci[oó]n/i.test(clean)){
-   reply='Abriendo ajustes.';navigated=true;settings();
- }
- else if(/(?:abre|abrir|muestra|mostrar|ve a|ir a)\s+(?:inicio|home)/i.test(clean)){
-   reply='Volviendo al inicio.';navigated=true;go('home');
- }
- else if(/(?:hola|buenos|buenas|qui[eé]n eres|qu[eé]\s+puedes)/i.test(clean)){
-   reply=`Hola, ${S.settings.name||'señor'}. Soy JARVIS. Puedo crear notas y pendientes, registrar pagos, consultar tus datos y abrir tus módulos.`;
- }
- S.messages.push({text,reply,time:Date.now()});
- save();
- if(!navigated)render();
- jarvisSpeak(reply);
- return reply;
-}
-function voice(){
- const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){jarvisStatus('Tu navegador no expone reconocimiento de voz.','Prueba Chrome en Android o usa los comandos rápidos.');return;}
- if(window.__jarvisRec){try{window.__jarvisRec.stop()}catch(e){}window.__jarvisRec=null;jarvisStatus('Detenido.','');return;}
- const r=new R();window.__jarvisRec=r;r.lang='es-MX';r.interimResults=true;r.continuous=false;r.maxAlternatives=1;
- r.onstart=()=>jarvisStatus('Escuchando… habla ahora.','Te escucho.',true);
- r.onresult=e=>{let interim='',final='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t;else interim+=t}jarvisStatus(final?'Procesando…':'Escuchando…',final||interim,true);if(final)command(final)};
- r.onerror=e=>{window.__jarvisRec=null;jarvisStatus(e.error==='not-allowed'?'Permiso de micrófono bloqueado.':'No pude escucharte. Intenta de nuevo.',e.error==='not-allowed'?'Activa el micrófono para JARVIS.':'');};
- r.onend=()=>{window.__jarvisRec=null;const orb=document.getElementById('jOrb');if(orb)orb.classList.remove('listening');const btn=document.getElementById('jTalk');if(btn){btn.classList.remove('listening');btn.textContent='🎙️ Hablar con JARVIS'}};
- try{r.start()}catch(e){window.__jarvisRec=null;jarvisStatus('No pude iniciar el micrófono.','Intenta tocar el botón otra vez.');}
-}
+function restore(){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>{const r=new FileReader();r.onload=()=>{const x=safe(r.result);if(!x||typeof x!=='object')return alert('Respaldo inválido');S=norm(x);save();closeModal();render()};r.readAsText(i.files[0])};i.click()}
+function quick(){open(`<div class="head"><h2>Crear</h2><button class="ico" onclick="closeModal()">×</button></div><div class="grid"><button class="btn" onclick="closeModal();note()">📝 Nueva nota</button><button class="btn" onclick="closeModal();task()">☑️ Nuevo pendiente</button><button class="btn" onclick="closeModal();payment()">💳 Nuevo pago</button><button class="btn" onclick="closeModal();go('jarvis')">🤖 JARVIS</button></div>`)}
+function command(text){let reply='No entendí. Prueba “crea una nota llamada Compras con leche y pan”.',m=text.match(/crea(?:r)?\s+(?:una\s+)?nota\s+llamada\s+(.+?)\s+(?:con|que diga)\s+(.+)/i);if(m){S.notes.push({id:id(),title:m[1].trim(),body:m[2].trim(),created:Date.now(),updated:Date.now()});reply='Listo, nota creada.'}else if(/(?:agrega|añade).*(?:pendiente|tarea)/i.test(text)){let t=text.replace(/.*?(?:pendiente|tarea)\s*/i,'').trim()||'Nuevo pendiente';S.tasks.push({id:id(),title:t,done:false,created:Date.now()});reply='Pendiente agregado.'}else if(/mis.*pendiente|mostrar.*pendiente/i.test(text)){const p=S.tasks.filter(x=>!x.done);reply=p.length?'Tienes '+p.length+': '+p.slice(0,4).map(x=>x.title).join(', ')+'.':'No tienes pendientes.'}else if(/cu[aá]ntas?.*notas/i.test(text))reply='Tienes '+S.notes.length+' notas.';S.messages.push({text,reply,time:Date.now()});save();render()}
+function voice(){const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return alert('Este navegador no ofrece reconocimiento de voz. Puedes usar los comandos rápidos.');const r=new R();r.lang='es-MX';r.interimResults=false;r.onresult=e=>command(e.results[0][0].transcript);r.onerror=()=>alert('No pude escuchar el comando. Revisa el permiso del micrófono.');try{r.start()}catch(e){}}
 window.addEventListener('hashchange',render);window.addEventListener('load',()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});render()});
 
 /* V2.0.4: gestos táctiles en Notas, Listas y Pagos.

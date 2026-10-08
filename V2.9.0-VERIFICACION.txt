@@ -1,0 +1,6 @@
+Glass Notes V2.9.0
+Base: GlassNotes-V2.8.2-PENDIENTES-COMPLETAR-FIX.zip
+Incluye capa de respaldo JSON y restauracion validada.
+Incluye helper de busqueda sobre notas, pendientes y pagos.
+Pagos/notas/pendientes: logica existente conservada.
+Estetica: sin rediseño.

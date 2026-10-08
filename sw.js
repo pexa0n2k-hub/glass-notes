@@ -1,4 +1,4 @@
-const CACHE="glass-notes-v2-6-1";
+const CACHE="glass-notes-v3-3-jarvis-core";
 self.addEventListener("install",e=>{self.skipWaiting()});
 self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch",e=>{

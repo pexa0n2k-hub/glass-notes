@@ -1,0 +1,5 @@
+Glass Notes V2.7.0 — Notas PRO
+Base: GlassNotes-V2.6.1-FECHA-FIX.zip
+Pagos: congelado; no se modificó su lógica.
+Estética: congelada.
+Cambios: capa de seguridad para apertura/consulta de notas y helpers funcionales.

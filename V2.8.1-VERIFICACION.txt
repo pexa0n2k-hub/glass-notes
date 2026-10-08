@@ -1,0 +1,6 @@
+Base: GlassNotes-V2.7.1-TAREAS-COMPLETADAS-FIX.zip
+Modulo modificado: Pendientes/Tareas únicamente.
+Pagos: congelado.
+Estetica: congelada.
+toggleTask: protegido correctamente.
+Al completar/descompletar se limpian transformaciones transitorias de swipe.
