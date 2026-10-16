@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
 <link rel="manifest" href="manifest.json">
-<title>Glass Notes V3.4.4 — Pagos separados</title>
+<title>Glass Notes V3.4.5 — Pagos por mes</title>
 <style>
 :root{--a:#66e3ff;--bg:#05070d;--t:#f5f8ff;--m:#ffffff8c;--g:rgba(255,255,255,.075)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
@@ -347,21 +347,34 @@ function tasks(){
  document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">LISTA</div><div class="big">Pendientes</div><p class="muted">${p.length} por hacer · ${d.length} completados</p></section><div class="head"><h2>Por hacer</h2><button class="btn" onclick="task()">+ Pendiente</button></div>${p.length?`<div class="grid">${p.map(tc).join('')}</div>`:`<div class="empty glass">✨ Todo listo.</div>`}<div class="head"><h2>Completados</h2><button class="btn" onclick="clearDone()">Limpiar</button></div>${d.length?`<div class="grid">${d.map(tc).join('')}</div>`:''}`
 }
 function tc(t){return `<div class="swipe-wrap" data-id="${esc(t.id)}"><div class="swipe-action edit-action">✏️ <span>Modificar</span></div><div class="swipe-action delete-action">🗑️ <span>Eliminar</span></div><article class="task glass swipe-card ${t.done?'done':''}"><input class="check" type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${esc(t.id)}')"><div><div class="title"><b>${esc(t.title)}</b></div><div class="muted">${esc(t.detail||'')}</div></div><button class="btn" onclick="delTask('${esc(t.id)}')">×</button></article></div>`}
+function paymentMonthDate(p){return dateOnly(p&& (p.due||p.date))}
+function paymentMonthKey(p){const d=paymentMonthDate(p);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`:'sin-fecha'}
+function paymentMonthLabel(d){return d.toLocaleDateString('es-MX',{month:'long',year:'numeric'}).replace(/^./,c=>c.toLocaleUpperCase())}
 function payments(){
   const view=window._glassNotesPaymentView==='paid'?'paid':'pending';
-  const all=S.payments.slice().reverse();
+  const all=S.payments.slice();
   const pending=all.filter(x=>GNPaymentDisplayStatusV260(x)!=='paid');
   const paid=all.filter(x=>GNPaymentDisplayStatusV260(x)==='paid');
   const tp=pending.reduce((a,x)=>a+(Number(x.amount)||0),0);
   const tg=paid.reduce((a,x)=>a+(Number(x.amount)||0),0);
-  const shown=view==='paid'?paid:pending;
+  const shown=(view==='paid'?paid:pending).slice().sort((a,b)=>paymentSort(a)-paymentSort(b));
+  const now=new Date();now.setDate(1);now.setHours(0,0,0,0);
+  const fixedMonths=[];
+  for(let i=0;i<3;i++){const d=new Date(now.getFullYear(),now.getMonth()+i,1);fixedMonths.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,label:paymentMonthLabel(d),date:d,items:[]})}
+  const grouped=new Map(fixedMonths.map(g=>[g.key,g]));
+  const extra=[];let noDate=[];
+  shown.forEach(x=>{const d=paymentMonthDate(x);if(!d){noDate.push(x);return}const key=paymentMonthKey(x);if(grouped.has(key))grouped.get(key).items.push(x);else{let g=extra.find(v=>v.key===key);if(!g){g={key,label:paymentMonthLabel(new Date(d.getFullYear(),d.getMonth(),1)),date:new Date(d.getFullYear(),d.getMonth(),1),items:[]};extra.push(g)}g.items.push(x)}});
+  extra.sort((a,b)=>a.date-b.date);
+  const groups=[...fixedMonths,...extra];
+  if(noDate.length)groups.push({key:'sin-fecha',label:'Sin fecha asignada',items:noDate});
+  const card=x=>`<article class="payment glass"><div class="head"><div><b>${esc(x.title||'Pago')}</b><div class="muted">${GNPaymentDisplayStatusV260(x)==='paid'?'🟢 Pagado':GNPaymentDisplayStatusV260(x)==='overdue'?'🔴 Vencido':GNPaymentDisplayStatusV260(x)==='today'?'⚠️ Vence hoy':'🔴 Pendiente'}</div></div><div class="amount">$${(Number(x.amount)||0).toFixed(2)}</div></div><div class="muted">📅 ${esc(x.date||'Sin fecha')} · ⏰ ${esc(x.time||'Sin hora')}</div><div class="muted">📆 Vence: ${esc(x.due||'Sin vencimiento')}</div>${x.note?`<p class="muted">${esc(x.note)}</p>`:''}<div class="actions"><button class="btn" onclick="payment('${esc(x.id)}')">✏️ Ver / editar</button>${x.status!=='paid'?`<button class="btn" onclick="markPaid('${esc(x.id)}')">✓ Pagado</button>`:''}${x.recurrence?.enabled?`<button class="btn" onclick="manualNextPayment('${esc(x.id)}')">⏭️ Siguiente</button>`:''}<button class="btn" onclick="delPayment('${esc(x.id)}')">Eliminar</button></div></article>`;
+  const sections=groups.map(g=>`<section style="margin:18px 0"><div class="head" style="align-items:center"><h2 style="margin:0">📅 ${esc(g.label)}</h2><span class="tag">${g.items.length} pago(s) · $${g.items.reduce((a,x)=>a+(Number(x.amount)||0),0).toFixed(2)}</span></div>${g.items.length?`<div class="grid">${g.items.map(card).join('')}</div>`:`<div class="empty glass" style="padding:16px">${g.key==='sin-fecha'?'No hay pagos sin fecha.':'No hay pagos en esta sección.'}</div>`}</section>`).join('');
   document.getElementById('app').innerHTML=`<section class="hero glass"><div class="ey">CONTROL</div><div class="big">Pagos</div><p class="muted">Pendiente: <b>$${tp.toFixed(2)}</b> · Liquidado: <b>$${tg.toFixed(2)}</b></p></section>
   <div class="head"><h2>Mis pagos</h2><button class="btn" onclick="payment()">＋ Nuevo</button></div>
   <div class="actions" style="margin:0 0 14px;display:grid;grid-template-columns:1fr 1fr;gap:9px">
     <button class="btn ${view==='pending'?'primary':''}" onclick="paymentTab('pending')">⏳ Pendientes <span class="muted">(${pending.length})</span></button>
     <button class="btn ${view==='paid'?'primary':''}" onclick="paymentTab('paid')">✓ Liquidados <span class="muted">(${paid.length})</span></button>
-  </div>
-  ${shown.length?`<div class="grid">${shown.map(x=>`<article class="payment glass"><div class="head"><div><b>${esc(x.title||'Pago')}</b><div class="muted">${GNPaymentDisplayStatusV260(x)==='paid'?'🟢 Pagado':GNPaymentDisplayStatusV260(x)==='overdue'?'🔴 Vencido':GNPaymentDisplayStatusV260(x)==='today'?'⚠️ Vence hoy':'🔴 Pendiente'}</div></div><div class="amount">$${(Number(x.amount)||0).toFixed(2)}</div></div><div class="muted">📅 ${esc(x.date||'Sin fecha')} · ⏰ ${esc(x.time||'Sin hora')}</div><div class="muted">📆 Vence: ${esc(x.due||'Sin vencimiento')}</div>${x.note?`<p class="muted">${esc(x.note)}</p>`:''}<div class="actions"><button class="btn" onclick="payment('${esc(x.id)}')">✏️ Ver / editar</button>${x.status!=='paid'?`<button class="btn" onclick="markPaid('${esc(x.id)}')">✓ Pagado</button>`:''}${x.recurrence?.enabled?`<button class="btn" onclick="manualNextPayment('${esc(x.id)}')">⏭️ Siguiente</button>`:''}<button class="btn" onclick="delPayment('${esc(x.id)}')">Eliminar</button></div></article>`).join('')}</div>`:`<div class="empty glass">${view==='paid'?'🧾<br><br>Aún no tienes pagos liquidados. Cuando marques uno como pagado, aparecerá aquí.':'✨<br><br>No tienes pagos pendientes. Todo al corriente, señor.'}</div>`}`;
+  </div>${sections}`;
 }
 function paymentTab(view){window._glassNotesPaymentView=view==='paid'?'paid':'pending';payments()}
 
