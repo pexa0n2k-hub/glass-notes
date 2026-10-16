@@ -1,33 +1,12 @@
-# Glass Notes V3.4.1 — JARVIS Notifications
+# Glass Notes V3.4.4 — Pagos separados
 
-Base: Glass Notes V3.3 JARVIS CORE.
+## Corrección
+- La pantalla principal de Pagos usa las pestañas Pendientes y Liquidados.
+- Se retiró la reinserción del módulo antiguo Centro de Pagos que podía volver a mezclar la vista.
+- Se conservó el almacenamiento existente, el marcado como pagado, la edición/eliminación y la lógica de recurrencias.
+- Se incrementó la versión de caché del Service Worker para forzar que la PWA actualice `index.html` en GitHub Pages.
 
-## V3.4.1
+## Cómo subirlo
+Extrae el ZIP y sube `index.html`, `sw.js` y `manifest.json` a la raíz del repositorio, reemplazando los archivos existentes. No subas los archivos dentro de una subcarpeta.
 
-- Se hizo visible el bloque de Notificaciones al inicio de Ajustes.
-- Botón claro para activar permisos.
-- Botón separado para probar una notificación.
-- Se mantienen las funciones de pagos, pendientes y JARVIS sin cambios.
-
-## V3.4
-- Añade soporte real de notificaciones del sistema mediante Service Worker.
-- Panel Nexus de Notificaciones dentro de Ajustes.
-- Solicitud de permiso mediante acción del usuario.
-- Botón para probar una notificación.
-- Avisos para pagos de hoy y pagos vencidos.
-- Avisos para pendientes con fecha de hoy.
-- Evita repetir el mismo aviso durante el mismo día usando localStorage.
-- Los avisos abren directamente el módulo correspondiente al tocarlos.
-- Service Worker incluido en el paquete y con caché versionada.
-- Manifest PWA incluido.
-
-## Importante
-Esta versión habilita la capa local de notificaciones y su prueba en Android. Para recibir recordatorios programados de forma fiable cuando la PWA esté completamente cerrada, la siguiente fase debe conectar Push API + un servidor/worker de envío (VAPID); una PWA alojada únicamente en GitHub Pages no puede enviar esos pushes por sí sola.
-
-
-## V3.4.2 — Pagos liquidados
-- Se separó la vista de Pagos en dos apartados: Pendientes y Liquidados.
-- Los pagos marcados como pagados dejan de mostrarse en Pendientes y se conservan en Liquidados para consulta.
-- Se muestran contadores y totales separados de pendiente y liquidado.
-- Se mantienen los datos guardados y las funciones de edición, eliminación y pagos recurrentes.
-- No se ha conectado ni modificado el servidor JARVIS Push en esta versión.
+Después de subirlos, abre la web de GitHub Pages en Chrome, recarga y si la app instalada sigue mostrando lo anterior, cierra la PWA y vuelve a abrirla tras unos segundos para que se active el nuevo Service Worker. No borres los datos del sitio.
