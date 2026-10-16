@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070910">
 <link rel="manifest" href="manifest.json">
-<title>Glass Notes V3.4.2 — Pagos liquidados</title>
+<title>Glass Notes V3.4.3 — Pagos separados</title>
 <style>
 :root{--a:#66e3ff;--bg:#05070d;--t:#f5f8ff;--m:#ffffff8c;--g:rgba(255,255,255,.075)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
@@ -1046,6 +1046,31 @@ addEventListener("load",mount);setTimeout(mount,900)
       if(text.includes(q))out.push({type:'Pago',id:p.id,title:p.title||p.name||'Sin título'});
     });
     return out;
+  };
+})();
+</script>
+<script id="gn342-paid-separated-fix">
+/* V3.4.3: definitive split between pending and paid payments */
+(function(){
+  function isPaid(p){ return !!p && (p.status === 'paid' || p.paid === true || p.completed === true); }
+  window.paymentTab = function(view){ window._glassNotesPaymentView = view === 'paid' ? 'paid' : 'pending'; window.payments(); };
+  window.payments = function(){
+    var view = window._glassNotesPaymentView === 'paid' ? 'paid' : 'pending';
+    var all = (window.S && Array.isArray(S.payments) ? S.payments : []).slice().reverse();
+    var paid = all.filter(isPaid), pending = all.filter(function(p){ return !isPaid(p); });
+    var pendingAmount = pending.reduce(function(a,p){ return a + (Number(p.amount)||0); },0);
+    var paidAmount = paid.reduce(function(a,p){ return a + (Number(p.amount)||0); },0);
+    var shown = view === 'paid' ? paid : pending, app = document.getElementById('app');
+    if(!app) return;
+    app.innerHTML = '<section class="hero glass"><div class="ey">CONTROL FINANCIERO</div><div class="big">Centro de pagos</div><div class="stats" style="margin-top:12px"><div class="stat glass"><b>$'+pendingAmount.toLocaleString("es-MX",{minimumFractionDigits:2,maximumFractionDigits:2})+'</b><span class="muted">Por pagar</span></div><div class="stat glass"><b>$'+paidAmount.toLocaleString("es-MX",{minimumFractionDigits:2,maximumFractionDigits:2})+'</b><span class="muted">Ya pagado</span></div></div></section>'+
+      '<div class="head"><h2>'+(view==='paid'?'Pagos liquidados':'Pagos pendientes')+'</h2><button class="btn" onclick="payment()">＋ Nuevo</button></div>'+
+      '<div class="actions" style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 14px"><button class="btn '+(view==='pending'?'primary':'')+'" onclick="paymentTab(\'pending\')">⏳ Pendientes ('+pending.length+')</button><button class="btn '+(view==='paid'?'primary':'')+'" onclick="paymentTab(\'paid\')">✓ Liquidados ('+paid.length+')</button></div>'+
+      (shown.length ? '<div class="grid">'+shown.map(function(x){
+        var k = typeof GNPaymentDisplayStatusV260==='function' ? GNPaymentDisplayStatusV260(x) : 'pending';
+        var status = isPaid(x) ? '🟢 Pagado' : (k==='overdue' ? '🔴 Vencido' : (k==='today' ? '⚠️ Vence hoy' : '🔴 Pendiente'));
+        return '<article class="payment glass"><div class="head"><div><b>'+esc(x.title||'Pago')+'</b><div class="muted">'+status+'</div></div><div class="amount">$'+(Number(x.amount)||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2})+'</div></div><div class="muted">📅 '+esc(x.date||'Sin fecha')+' · ⏰ '+esc(x.time||'Sin hora')+'</div><div class="muted">📆 Vence: '+esc(x.due||'Sin vencimiento')+'</div>'+(x.note?'<p class="muted">'+esc(x.note)+'</p>':'')+'<div class="actions"><button class="btn" onclick="payment(\''+esc(x.id)+'\')">✏️ Ver / editar</button>'+(!isPaid(x)?'<button class="btn" onclick="markPaid(\''+esc(x.id)+'\')">✓ Marcar pagado</button>':'')+(x.recurrence&&x.recurrence.enabled?'<button class="btn" onclick="manualNextPayment(\''+esc(x.id)+'\')">⏭️ Siguiente</button>':'')+'<button class="btn" onclick="delPayment(\''+esc(x.id)+'\')">Eliminar</button></div></article>';
+      }).join('')+'</div>' : '<div class="empty glass">'+(view==='paid'?'🧾<br><br>Aún no tienes pagos liquidados. Cuando marques uno como pagado, aparecerá aquí.':'✨<br><br>No tienes pagos pendientes. Todo al corriente, señor.')+'</div>');
+    var legacy = document.getElementById('paymentsCenterV25'); if(legacy) legacy.remove();
   };
 })();
 </script>
